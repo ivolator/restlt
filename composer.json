@@ -1,0 +1,27 @@
+{
+	"name" : "restlt/restlt",
+	"description" : "REST Lite. A slim REST-full server implementation in PHP",
+	"type" : "library",
+	"homepage": "http://github.com/ivolator/restlt",
+	"keywords" : [
+		"PHP",
+		"REST",
+		"Server"
+	],
+	"license" : [
+		"MIT"
+	],
+	"require" : {
+		"php" : ">=5.4.0"
+	},
+	"autoload" : {
+		"psr-0" : {
+			"restlt\\" : "lib/"
+		}
+	},
+	"minimum-stability" : "beta",
+	"suggest" : {
+		"doctrine/cache" : "1.2.*",
+		"zendframework/zend-cache" : "2.2.@dev"
+	}
+}
