@@ -95,9 +95,11 @@ class Resource1 extends \restlt\Resource {
     }
 }
 ```
- For the just coded resource we have created two methods, `Resource1::get()` and `Resource1::put()`. There is no naming convention for the methods. The names are chosen for better clarity. The method Resource1::get() we will be responding to the 'GET' http method and the URI that will access it is /resource1/123 or any number as per the regex. The latter URI will be prepended with the Server base URI. You set the Server base URI when instantiating the \restlt\Server.
+ For the just coded resource we have created two methods, `Resource1::getMe()` and `Resource1::putMe()`. There is no naming convention for the methods. The names are chosen for better clarity. The method Resource1::get() we will be responding to the 'GET' http method and the URI that will access it is /resource1/123 or any number as per the regex. The latter URI will be prepended with the Server base URI. You set the Server base URI when instantiating the \restlt\Server.
 
-Similar to the 'GET' we have built the 'PUT' method  `Resource1::put()`. When the server receives a 'PUT'  request and the URI is /resource1/save the  `Resource1::put()` method will respond with whatever you decide to return.
+Similar to the 'GET' we have built the 'PUT' method  `Resource1::putMy()`. When the server receives a 'PUT'  request and the URI is /resource1/save the  `Resource1::putMe()` method will respond with whatever you decide to return.
+The methods must return data in order for you to receive it as a XML or JSON formatted string at the client.
+The JSON or XML conversion happens automatically. More on adding your own twist to the output will be discussed in the advanced section.
  
 ## Some advanced usage
 ### Event Hooks
@@ -156,7 +158,7 @@ Follows the callback function signature
 * /
 $f = function (\restlt\Request $request, \restlt\Response $response,\Exception $exception){};
 ```
-
+## register event examples: 
 ### Register ON_BEFORE event hook for a specific resource method
 ```php
         $f1 = function ($r) {
@@ -218,14 +220,57 @@ Here is an example how to you could use that feature.
      return $something;
  }
 ```
+## In need for custom output?
+Out of the box RestLite comse with json and xml output strategies. 
+Let's say you need to provide some home grown obfuscated or even encrypted reponse. 
+For whatever the reason is, you might want to do that one day.
+It could be that you want to communicate with the client via some specific protocol and want to wrap the data in it. 
+Or may be want to change the current ones. Here is how.
+###Adding a custom response of your own.
+First we need to create a class that implements the `\restlt\utils\output\TypeConversionStrategyInterface`. Let's start.
+```php
+namespace my\name\space;
+class SerializeOutputStrategy implements \restlt\utils\output\TypeConversionStrategyInterface {
+    /**
+	 * @see \restlt\utils\output\TypeConversionStrategyInterface::execute()
+	 */
+	public function execute(\restlt\Result $data) {
+		return serialize($data);
+	}
+}
+```
+
+That's it. We have implemented a serializer sutput strategy for our RestLite server.
+Next on the list to make this work is to tell the server about it.
+```php
+$s->getResponse()->addResponseOutputStrategies('sphp', '\my\name\space\SerializeOutputStrategy');
+```
+What we did here is the follwoing. We let the server know that if we encounter '.sphp' extension in our URL we will respond with the associated output, in this case `SerializeOutputStrategy`.
+Now all of your request ( GET, POST, PUT, PATCH ...) with URLs such like:
+ * `http://example.com/my/path/123.sphp` 
+ * `http://example.com/my/path.sphp?q=stuff` 
+ 
+etc. will respond with serialized data accoring to your new output strategy.
+
+###Extending the currently available `\restlt\utils\output\XmlTypeConverter` and `\restlt\utils\output\JsonTypeConverter`.
+To modify the behaviour of the current JSON or XMl converters, you will need to extend them. There is not much to remember here. Extending the class is nothing different than what you do with any other class you do extend.
+However you need to register your new class with the server and associate it with the XML or JSON types.
+```php
+$s->getResponse()->addResponseOutputStrategies('xml', '\my\name\space\MyXmlStrategy');
+```
+Now all requests of the kind `http://example.com/my/path.xml?q=stuff` will be processed by your new class.
+Also,client requests that are made with 'Content-type:application/xml' will be processed by it too. 
+the same goes if you decide to extend the json converter.
+
 
 ##Doc block Meta reference
 
-|Annotation          |   Where    |  Required |
-|--------------------|:----------:|----------:|
-|  @resourceBaseUri  | CLASS      | YES       |
-|  @baseUri          | METHDO     | NO       |
+|Annotation          |   Where    |  Required | Values |
+|--------------------|:----------:|----------:|--------|
+|  @resourceBaseUri  | CLASS      | YES       | string |
+|  @baseUri          | METHDO     | NO        | string/ default '/' |
 | @cacheControlMaxAge| METHOD     | NO | 
+| @method            | METHOD     | YES|
  
 
 ### Resource class doc block
@@ -236,7 +281,8 @@ Here is an example how to you could use that feature.
     @cacheControlMaxAge -> this value directly affects the 'Cache-Control max-age' HTTP header value and has nothing to do with the local caching feature    
 ## Misc. usage tricks    
 ### Forcing the server to respond always with spcified reponse type regardles of the request `Content-type`
-
+The default behavior is specified by the Accept header. If the 'Accept' is plain/text or anything that does not refer to SML of JSON the
+default response will be returned in JSON.
 1. Force response type for all Resources registered with the server to respond with XML or JSON
 ```php
 $s = new \restlt\Server('base/uri');
