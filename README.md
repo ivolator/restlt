@@ -1,8 +1,10 @@
-Rest Lite
+RestLite
 ======
 
 ##A "thin" REST-full server implementation in PHP 
-###Features
+RestLite is a flexible small library that will allow you to build RESTfull service.
+Most of the sub-components are extensibe or replaceable. 
+This would allow you to modify the server's behavior to your requirenets specifics.
 
 ###Basic usage
 ```php
