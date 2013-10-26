@@ -23,7 +23,7 @@ class Resource1 extends \restlt\Resource implements \restlt\ResourceInterface{
 	 */
 	public function getMe($id = '') {
 		$obj = new \stdClass ();
-
+		$custom = var_dump($this->annotations->get('custom'));
 		$obj->a = array (
 				9,
 				8,
@@ -42,7 +42,8 @@ class Resource1 extends \restlt\Resource implements \restlt\ResourceInterface{
 						'a',
 						'b',
 						'c'
-				)
+				),
+				$custom
 		);
 		return $ret;
 	}
