@@ -1,4 +1,5 @@
 <?php
+
 /**
 * The MIT License (MIT)
 *
@@ -23,13 +24,14 @@
 */
 namespace restlt;
 
+use restlt\exceptions\ApplicationException;
+
 /**
  *
  * @author Vo
  *
  */
 class Response implements \restlt\ResponseInterface {
-
 	const OK = 200;
 	const CREATED = 201;
 	const ACCEPTED = 202;
@@ -73,7 +75,7 @@ class Response implements \restlt\ResponseInterface {
 	const APPLICATION_XML = 'application/xml';
 	const TEXT_PLAIN = 'text/plain';
 	protected $headers = array ();
-	protected $responseOutputStrategies = array(
+	protected $responseOutputStrategies = array (
 			'xml' => '\restlt\utils\output\XmlTypeConverter',
 			'json' => '\restlt\utils\output\JsonTypeConverter'
 	);
@@ -92,7 +94,7 @@ class Response implements \restlt\ResponseInterface {
 	protected $resultObject = null;
 
 	/**
-	 * Force the response style - XML, JSON
+	 * Force the response style - self::APPLICATION_JSON, self::APPLICATION_XML
 	 *
 	 * @var string
 	 */
@@ -103,12 +105,6 @@ class Response implements \restlt\ResponseInterface {
 	 * @var \restlt\RequestRouter
 	 */
 	protected $requestRouter = null;
-
-	/**
-	 *
-	 * @var \restlt\Route
-	 */
-	protected $annotations = null;
 
 	/**
 	 *
@@ -128,41 +124,39 @@ class Response implements \restlt\ResponseInterface {
 	protected function getRoutedResponse(RouterInterface $router) {
 		$ret = null;
 		$route = null;
-		if($router)	$route = $router->getRoute ();
+		if ($router)
+			$route = $router->getRoute ();
 
 		if ($route && $route->getClassName () && $route->getFunctionName ()) {
-			$this->annotations = $route;
 			$class = $route->getClassName ();
 			$resourceObj = new $class ( $router->getRequest (), $this );
-			$params = $route->getParams () ? $route->getParams () : array();
+			$params = $route->getParams () ? $route->getParams () : array ();
 			if (is_callable ( array (
 					$resourceObj,
 					$route->getFunctionName ()
 			) )) {
 				try {
 					$cbs = $resourceObj->getCallbacks ();
-					$resourceObj->setAnnotations($route);
+					$resourceObj->setAnnotations ( $route );
 					// before the method was processed
-					$this->executeCallbacks ( Resource::ON_BEFORE, $route->getFunctionName (), $cbs, array($router->getRequest ()) );
-					register_shutdown_function ( array($this,'shutdown') );
+					$this->executeCallbacks ( Resource::ON_BEFORE, $route->getFunctionName (), $cbs, array ($router->getRequest ()) );
+					register_shutdown_function ( array ($this,'shutdown') );
 					// routed call
 					$ret = call_user_func_array ( array ($resourceObj,$route->getFunctionName ()), $params );
 					// after method was processed
-					$this->executeCallbacks ( Resource::ON_AFTER, $route->getFunctionName (), $cbs, array($router->getRequest (),$this,$ret) );
+					$this->executeCallbacks ( Resource::ON_AFTER, $route->getFunctionName (), $cbs, array (	$router->getRequest (),	$this, $ret	) );
 				} catch ( \Exception $e ) {
-					$this->executeCallbacks ( Resource::ON_ERROR, $route->getFunctionName (), $cbs, array($router->getRequest (),$this,$e) );
+					$this->executeCallbacks ( Resource::ON_ERROR, $route->getFunctionName (), $cbs, array (	$router->getRequest (),	$this,$e) );
 					$this->getResponse ()->setStatus ( Response::INTERNALSERVERERROR );
 				}
 				$resourceObj->clearCallbacks ();
 			}
-			$contentType = $route->getOutputTypeOverride () ? 'application/' . $route->getOutputTypeOverride () : $router->getRequest ()->getContentType ();
 		} else {
 			$this->status = self::NOTFOUND;
 		}
 
-		$this->addHeader ( 'Content-Type', $contentType );
 		if ($route && $route->getCacheControlMaxAge ()) {
-			$this->addHeader ( 'Cache-Control', 'max-age=' . $route->getCacheControlMaxAge () );
+			$this->addHeader ( 'Cache-Control', 'private, max-age=' . $route->getCacheControlMaxAge () );
 		} else {
 			$this->addHeader ( "Cache-Control", "no-cache, must-revalidate" );
 		}
@@ -171,13 +165,36 @@ class Response implements \restlt\ResponseInterface {
 
 	/**
 	 * (non-PHPdoc)
+	 *
 	 * @see \restlt\ResponseInterface::send()
 	 */
-	public function send($data = null){
+	public function send($data = null) {
 		if ($this->requestRouter) {
-			$data = $this->getRoutedResponse($this->requestRouter);
+			$data = $this->getRoutedResponse ( $this->requestRouter );
 		}
-		$this->_send($data);
+		if ($data) {
+			$route = $this->requestRouter->getRoute ();
+			$contentType = $this->requestRouter->getRequest ()->getContentType ();
+
+			$conversionStrategy = $this->getConversionStrategy ( $contentType );
+
+			if ($route->getOutputTypeOverrideExt ()) {
+				$conversionStrategy = $this->getConversionStrategy ( $route->getOutputTypeOverrideExt () );
+			} elseif ($this->forceResponseType) {
+				$conversionStrategy = $this->getConversionStrategy ( $this->forceResponseType );
+			}
+
+			if (in_array ( 'application/' . $route->getOutputTypeOverrideExt (), array (
+					self::APPLICATION_JSON,
+					self::APPLICATION_XML
+			) )) {
+				$contentType = 'application/' . $route->getOutputTypeOverrideExt ();
+			}
+
+			$this->addHeader ( 'Content-Type', $contentType );
+		}
+
+		$this->_send ( $data, $conversionStrategy );
 	}
 
 	/**
@@ -185,12 +202,14 @@ class Response implements \restlt\ResponseInterface {
 	 *
 	 * @param string $data
 	 */
-	protected function _send($data = null) {
+	protected function _send($data = null, $conversionStrategy) {
 		if (headers_sent ()) {
 			// TODO - handle
 		}
 
-		header ( 'x-custom-rest-server: Rest Lite' );
+		header ( 'x-custom-rest-server: RestLite' );
+		header ( 'Allow: POST, GET, PUT, DELETE, PATCH' );
+		header ( 'Connection: close' );
 		if (version_compare ( PHP_VERSION, '5.4.0', '>=' )) {
 			http_response_code ( $this->status );
 		} else {
@@ -201,39 +220,44 @@ class Response implements \restlt\ResponseInterface {
 			header ( $hStr, true, $this->status );
 		}
 
-		//prepare the payload if any
+		// prepare the payload if any
 		if ($data) {
 			$this->getResultObject ()->setData ( $data );
-			$conversionStrategy = $this->getConversionStrategy ( $this->headers ['Content-Type'] );
-			if (in_array ( $this->forceResponseType, array(
-					self::APPLICATION_JSON,
-					self::APPLICATION_XML,
-					self::TEXT_PLAIN
-			))) {
-				$conversionStrategy = $this->getConversionStrategy ( $this->forceResponseType );
-			}
 			echo $this->getResultObject ()->toString ( $conversionStrategy );
 		}
 	}
 
 	/**
+	 *
 	 * @todo
+	 *
 	 * @param string $contentType
 	 * @return TypeConversionStrategyInterface
 	 */
 	protected function getConversionStrategy($contentType) {
-		$class = '\restlt\utils\output\JsonTypeConverter';
-		if (stristr ( $contentType, 'xml' ) || stristr ( $contentType, 'html' )) {
+
+		// check for user registered output strategies
+		if (false != ($strategies = preg_grep ( '#' . $contentType . '#', array_keys ( $this->responseOutputStrategies ) ))) {
+			if (count ( $strategies ) > 1) {
+				trigger_error ( 'There were more than one output strategies. This might be a problem. Did you register a custom output strategy?', E_USER_NOTICE );
+			}
+			$class = $this->responseOutputStrategies [array_pop ( $strategies )];
+		}
+
+		if (! $class && stristr ( $contentType, 'xml' ) || stristr ( $contentType, 'html' )) {
 			$class = $this->responseOutputStrategies ['xml'];
 		}
 
-		if (stristr ( $contentType, 'json' )) {
+		if (! $class && stristr ( $contentType, 'json' )) {
 			$class = $this->responseOutputStrategies ['json'];
 		}
 
-		// if this is set no conversion will happen
-		if (stristr ( $contentType, self::TEXT_PLAIN )) {
-			return null; // may be pass through strategy, but why?
+		if ($class && ! class_exists ( $class, true )) {
+			throw new ApplicationException ( 'Conversion strategy not found' );
+		}
+		// fallback to JSON
+		if (! $class) {
+			$class = $this->responseOutputStrategies ['json'];
 		}
 
 		return new $class ();
@@ -336,11 +360,15 @@ class Response implements \restlt\ResponseInterface {
 	}
 
 	/**
+	 * Use this to force overall server responses.
+	 * However this option will be with lower priority if the request URI requests reposne via adding a '.json' or '.xml'
+	 * at the end of the URI path.
+	 * Adding a '.somethinelse' is dictated by the association with a custom output type converter (TypeConversionStrategyInterface)
 	 *
 	 * @param string $forceResponseType
 	 */
 	public function setForceResponseType($forceResponseType) {
-		if ($forceResponseType && in_array ($forceResponseType, array(
+		if ($forceResponseType && in_array ( $forceResponseType, array (
 				self::APPLICATION_JSON,
 				self::APPLICATION_XML,
 				self::TEXT_PLAIN
@@ -361,7 +389,7 @@ class Response implements \restlt\ResponseInterface {
 	 */
 	protected function executeCallbacks($event, $method, $cbs = array(), $param_arr = array()) {
 		if ($cbs && is_array ( $cbs )) {
-			$_cbs = array();
+			$_cbs = array ();
 			if (isset ( $cbs [$event] )) {
 				$_cbs = $cbs [$event];
 			}
@@ -376,7 +404,6 @@ class Response implements \restlt\ResponseInterface {
 				}
 		}
 	}
-
 	public function shutdown() {
 		$error = error_get_last ();
 		if (in_array ( $error ['type'], [
@@ -394,6 +421,7 @@ class Response implements \restlt\ResponseInterface {
 		}
 	}
 	/**
+	 *
 	 * @return \restlt\RouterInterface $requestRouter
 	 */
 	public function getRequestRouter() {
@@ -401,6 +429,7 @@ class Response implements \restlt\ResponseInterface {
 	}
 
 	/**
+	 *
 	 * @param \restlt\RequestRouter $requestRouter
 	 */
 	public function setRequestRouter(RouterInterface $requestRouter) {
@@ -409,11 +438,10 @@ class Response implements \restlt\ResponseInterface {
 	}
 
 	/**
+	 *
 	 * @return \restlt\Route $routeAnnotationMeta
 	 */
 	public function getAnnotation() {
 		return $this->annotations;
 	}
-
-
 }

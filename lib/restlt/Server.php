@@ -184,7 +184,7 @@ class Server {
 
 	/**
 	 *
-	 * @return restlt\Response $response
+	 * @return \restlt\Response $response
 	 */
 	public function getResponse() {
 		return $this->response;

@@ -23,10 +23,7 @@ class Resource1 extends \restlt\Resource implements \restlt\ResourceInterface{
 	 */
 	public function getMe($id = '') {
 		$obj = new \stdClass ();
-		echo '<pre>IM** ' . __FILE__ . ' :: ' . __LINE__ . '<br />';
-		var_dump($this->annotations->get('custom'));
-		echo '</pre>';
-		exit;
+
 		$obj->a = array (
 				9,
 				8,

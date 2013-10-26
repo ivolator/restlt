@@ -82,7 +82,7 @@ class RequestRouter implements \restlt\RouterInterface{
 
 
 		$route = $this->matchResource ( $resourceUri, $method );
-		if($ext) $route->setOutputTypeOverride($ext);
+		if($ext) $route->setOutputTypeOverrideExt($ext);
 
 		return $route;
 	}
@@ -130,6 +130,7 @@ class RequestRouter implements \restlt\RouterInterface{
 		while ( $it->valid () ) {
 			$resMeta = $it->current ();
 			$className = $it->key ();
+			$res = null;
 			$res = array_filter ( $resMeta, $filterMatchingMethods );
 			if($res){
 				$filtered [$className] = $res;

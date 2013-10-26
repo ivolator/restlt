@@ -29,7 +29,7 @@ class Route {
 	protected $functionName = '';
 	protected $params = array();
 	protected $cacheControlMaxAge = array();
-	protected $outputTypeOverride = null;
+	protected $outputTypeOverrideExt = null;
 
 	/**
 	 *
@@ -96,15 +96,15 @@ class Route {
 	/**
 	 * @return the $outputType
 	 */
-	public function getOutputTypeOverride() {
-		return $this->outputTypeOverride;
+	public function getOutputTypeOverrideExt() {
+		return $this->outputTypeOverrideExt;
 	}
 
 	/**
 	 * @param field_type $outputType
 	 */
-	public function setOutputTypeOverride($outputType) {
-		$this->outputTypeOverride = $outputType;
+	public function setOutputTypeOverrideExt($outputType) {
+		$this->outputTypeOverrideExt = $outputType;
 	}
 	/**
 	 * @return the $userAnnotations
