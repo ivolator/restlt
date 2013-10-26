@@ -1,0 +1,355 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Restlt by ivolator</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Restlt</h1>
+        <p> REST Lite. A slim REST-full server implementation in PHP </p>
+
+        <p class="view"><a href="https://github.com/ivolator/restlt">View the Project on GitHub <small>ivolator/restlt</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/ivolator/restlt/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/ivolator/restlt/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/ivolator/restlt">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a name="restlite" class="anchor" href="#restlite"><span class="octicon octicon-link"></span></a>RestLite</h1>
+
+<h2>
+<a name="a-thin-rest-full-server-implementation-in-php" class="anchor" href="#a-thin-rest-full-server-implementation-in-php"><span class="octicon octicon-link"></span></a>A "thin" REST-full server implementation in PHP</h2>
+
+<p>RestLite is a flexible small library that will allow you to build RESTfull service.
+Most of the sub-components are extensibe or replaceable. 
+This would allow you to modify the server's behavior to your requirenets specifics.</p>
+
+<h3>
+<a name="basic-usage" class="anchor" href="#basic-usage"><span class="octicon octicon-link"></span></a>Basic usage</h3>
+
+<div class="highlight highlight-php"><pre><span class="c1">//Get instance of the server by passing the server base url</span>
+<span class="nv">$s</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Server</span> <span class="p">(</span> <span class="s1">'/'</span> <span class="p">);</span>
+<span class="c1">//Tell the server where to find the resources</span>
+<span class="nv">$s</span><span class="o">-&gt;</span><span class="na">registerResourceFolder</span> <span class="p">(</span> <span class="nx">SOME_APPLICATION_ROOT</span> <span class="o">.</span>  <span class="s1">'/resources'</span><span class="p">,</span> <span class="s1">'name\space\resources'</span> <span class="p">);</span>
+<span class="nv">$s</span><span class="o">-&gt;</span><span class="na">serve</span> <span class="p">();</span>
+</pre></div>
+
+<p>###Creating a resource</p>
+
+<p>A resource in Rest Lite is a class that extends the \restlt\Resource class.
+ Each resource can contain methods that respond to multiple GETs, POSTs, PUTs, DELETEs and PATCHs.
+ It is important to mention that when you are registering resources with the server you are either registering a resource folder and prviding a namespace or a single resource by providing the FQNS to resource class. Providing a FQNS (fully qualified name space) is necessary.</p>
+
+<p>To configure the URI for the resource, you need to setup couple of things.
+ All the metadata is configurable via the PHP doc blocks. </p>
+
+<ol>
+<li>Add the @resourceBaseUri in the class doc block.This will set up the base URI for all methods that will be contained in this resource
+'@resourceBaseUri /user' - note the forward slash at the begining</li>
+<li>Add <a href="https://github.com/method" class="user-mention">@method</a> to the doc block of the class method. This will tell the server what HTTP method this function will be responding to
+<code>@method POST</code> or <code>@method GET</code> will set the HTTP method to respond to</li>
+<li>Add @resourceBaseUri value for the method URI. 
+
+<ul>
+<li>
+<code>@methodUri /</code> - you can either just add the "/" or omit the annotation </li>
+<li>
+<code>@methodUri /list</code> - hard coded example</li>
+<li>A regex example <code>@resourceBaseUri ([0-9]+)</code> - always add the '()' around the regex
+Note that the full URI for your resource is a combination of the server base URI, that was set during \restlt\Server initialization and the addition of @resourceBaseUri + @methodUri. In general consider the URI as of a regular expression. This is how it is evaluated and followint the preg_match() rules for binding its third parameter, whatever you surround with "()" ends up as a parameter of your method.</li>
+</ul>
+</li>
+</ol><p>For example, if your complete URI ends up to be /account/([0-9]+)/contact/([a-z]+), your method should be accepting 2 parameters. The first of which will be a sequence of digits and the second one letters.</p>
+
+<p>A resource can have multiple methods that respond to GET, POST, etc.</p>
+
+<p>###A simple resource example</p>
+
+<div class="highlight highlight-php"><pre><span class="k">namespace</span> <span class="nx">restlt\examples\resources</span><span class="p">;</span>
+<span class="sd">/**</span>
+<span class="sd"> * @resourceBaseUri /resource1</span>
+<span class="sd"> */</span>
+<span class="k">class</span> <span class="nc">Resource1</span> <span class="k">extends</span> <span class="nx">\restlt\Resource</span> <span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nx">\restlt\Request</span> <span class="nv">$request</span><span class="p">,</span> <span class="nx">\restlt\Response</span> <span class="nv">$response</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">parent</span><span class="o">::</span><span class="na">__construct</span><span class="p">(</span><span class="nv">$request</span><span class="p">,</span><span class="nv">$resource</span><span class="p">);</span>
+        <span class="nv">$f1</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$r</span><span class="p">)</span> <span class="p">{</span>
+        <span class="p">};</span>
+        <span class="nv">$f2</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$req</span><span class="p">,</span><span class="nv">$res</span><span class="p">,</span><span class="nv">$ret</span><span class="p">)</span> <span class="p">{</span>
+        <span class="p">};</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">on</span> <span class="p">(</span> <span class="s1">'before'</span><span class="p">,</span> <span class="s1">'getMe'</span><span class="p">,</span> <span class="nv">$f1</span> <span class="p">);</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">on</span> <span class="p">(</span> <span class="s1">'after'</span><span class="p">,</span> <span class="s1">'getMe'</span><span class="p">,</span> <span class="nv">$f2</span> <span class="p">);</span>
+    <span class="p">}</span>
+    <span class="sd">/**</span>
+<span class="sd">     * Note that the regex in "()" gets converted to a parameter of the method</span>
+<span class="sd">     * @method GET</span>
+<span class="sd">     * @methodUri /([0-9]+)</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">getMe</span><span class="p">(</span><span class="nv">$id</span> <span class="o">=</span> <span class="s1">''</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nv">$obj</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\stdClass</span> <span class="p">();</span>
+        <span class="nv">$obj</span><span class="o">-&gt;</span><span class="na">a</span> <span class="o">=</span> <span class="k">array</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">7</span><span class="p">);</span>
+        <span class="c1">//obtain the "someParam" - from POST or GET</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">get</span> <span class="p">(</span> <span class="s1">'someParam'</span><span class="p">,</span><span class="nv">$defaultValueIfParamIsMissing</span> <span class="p">);</span>
+        <span class="k">return</span> <span class="nv">$boj</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="sd">/**</span>
+<span class="sd">     *</span>
+<span class="sd">     * @method PUT</span>
+<span class="sd">     * @methodUri /save</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">putMe</span><span class="p">()</span> <span class="p">{</span>
+        <span class="c1">//fetch the parameters from the query string</span>
+        <span class="nv">$params</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">getQueryParams</span> <span class="p">();</span>
+        <span class="nv">$params</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">getPostParams</span> <span class="p">();</span>
+
+        <span class="c1">//get the raw data</span>
+        <span class="nv">$postPayload</span><span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">getRawPost</span> <span class="p">();</span>
+            <span class="o">......</span>
+        <span class="c1">//return whatever you want</span>
+        <span class="k">return</span> <span class="nv">$res</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>For the just coded resource we have created two methods, <code>Resource1::get()</code> and <code>Resource1::put()</code>. There is no naming convention for the methods. The names are chosen for better clarity. The method Resource1::get() we will be responding to the 'GET' http method and the URI that will access it is /resource1/123 or any number as per the regex. The latter URI will be prepended with the Server base URI. You set the Server base URI when instantiating the \restlt\Server.</p>
+
+<p>Similar to the 'GET' we have built the 'PUT' method  <code>Resource1::put()</code>. When the server receives a 'PUT'  request and the URI is /resource1/save the  <code>Resource1::put()</code> method will respond with whatever you decide to return.</p>
+
+<h2>
+<a name="some-advanced-usage" class="anchor" href="#some-advanced-usage"><span class="octicon octicon-link"></span></a>Some advanced usage</h2>
+
+<h3>
+<a name="event-hooks" class="anchor" href="#event-hooks"><span class="octicon octicon-link"></span></a>Event Hooks</h3>
+
+<p>Let's say you need to add some twist to the execution flow or put some checks, logging or whatever comes to mind. There are three event hooks that provide a way to do that. The callbacks provided to these event hooks need to be Callable. The method or function signatures are provided bellow.</p>
+
+<h3>
+<a name="on-before-event----before-the-flow-enters-your-resource-method-" class="anchor" href="#on-before-event----before-the-flow-enters-your-resource-method-"><span class="octicon octicon-link"></span></a>On Before event - * before the flow enters your resource method. *</h3>
+
+<div class="highlight highlight-php"><pre><span class="k">class</span> <span class="nc">Resource1</span> <span class="k">extends</span> <span class="nx">\restlt\Resource</span> <span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nv">$f1</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$r</span><span class="p">)</span> <span class="p">{</span>
+             <span class="c1">//do something</span>
+        <span class="p">};</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">on</span> <span class="p">(</span> <span class="nx">Resource</span><span class="o">::</span><span class="na">ON_BEFORE</span><span class="p">,</span> <span class="s1">'myFunctionName'</span><span class="p">,</span> <span class="nv">$f1</span> <span class="p">);</span>
+    <span class="p">}</span>
+</pre></div>
+
+<p>or instead of a closure, pass a Callable</p>
+
+<div class="highlight highlight-php"><pre>    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">on</span> <span class="p">(</span> <span class="nx">Resource</span><span class="o">::</span><span class="na">ON_BEFORE</span><span class="p">,</span> <span class="s1">'myFunctionName'</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="nv">$obj</span><span class="p">,</span><span class="nv">$method</span><span class="p">)</span> <span class="p">);</span>
+    <span class="p">}</span>
+</pre></div>
+
+<p>The callback function provided for this event has the following signature</p>
+
+<div class="highlight highlight-php"><pre>    <span class="o">/**</span>
+     <span class="o">*</span> <span class="o">@</span><span class="nx">param</span> <span class="nx">\restlt\Request</span> <span class="nv">$r</span> 
+     <span class="o">*</span> <span class="o">@</span><span class="k">return</span> <span class="nx">void</span>
+     <span class="o">*</span> <span class="o">/</span>
+    <span class="nv">$f</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nx">\restlt\Request</span> <span class="nv">$r</span><span class="p">){};</span>
+</pre></div>
+
+<h3>
+<a name="on-after-event----after-the-resource-function-returns-" class="anchor" href="#on-after-event----after-the-resource-function-returns-"><span class="octicon octicon-link"></span></a>On After event - * after the resource function returns *</h3>
+
+<div class="highlight highlight-php"><pre>    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">on</span> <span class="p">(</span> <span class="nx">Resource</span><span class="o">::</span><span class="na">ON_AFTER</span><span class="p">,</span> <span class="s1">'myFunctionName'</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="nv">$obj</span><span class="p">,</span><span class="nv">$method</span><span class="p">)</span> <span class="p">);</span>
+    <span class="sb">```</span>
+<span class="sb">    * The callback function provided for this event has the following signature *</span>
+<span class="sb">    ```</span><span class="nx">php</span>
+    <span class="o">/**</span>
+     <span class="o">*</span> <span class="o">@</span><span class="nx">param</span> <span class="nx">\restlt\Request</span> <span class="nv">$request</span> 
+     <span class="o">*</span> <span class="o">@</span><span class="nx">param</span> <span class="nx">\restlt\Response</span> <span class="nv">$response</span>
+     <span class="o">*</span> <span class="o">@</span><span class="nx">param</span> <span class="nx">mixed</span> <span class="nv">$return</span> <span class="nx">the</span> <span class="nx">result</span> <span class="nx">of</span> <span class="nx">your</span> <span class="nx">resource</span> <span class="nx">method</span>
+     <span class="o">*</span> <span class="o">@</span><span class="k">return</span> <span class="nx">void</span>
+     <span class="o">*</span> <span class="o">/</span>
+    <span class="nv">$f</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nx">\restlt\Request</span> <span class="nv">$request</span><span class="p">,</span> <span class="nx">\restlt\Response</span> <span class="nv">$response</span><span class="p">,</span> <span class="nv">$return</span><span class="p">){};</span>
+</pre></div>
+
+<h3>
+<a name="on-error----when-an-error-occurs-inside-the-method-" class="anchor" href="#on-error----when-an-error-occurs-inside-the-method-"><span class="octicon octicon-link"></span></a>On error - * when an error occurs inside the method *</h3>
+
+<p>If you throw an exception within a method it will get eventually caught in the top layer and you'll get 500. This event actually is triggered when E_ERROR,E_USER_ERROR,E_WARNING,E_USER_WARNING,E_CORE_ERROR,E_CORE_WARNING,E_DEPRECATED,E_STRICT are thrown.</p>
+
+<div class="highlight highlight-php"><pre>    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">on</span> <span class="p">(</span> <span class="nx">Resource</span><span class="o">::</span><span class="na">ON_ERROR</span><span class="p">,</span> <span class="s1">'myFunctionName'</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="nv">$obj</span><span class="p">,</span><span class="nv">$method</span><span class="p">)</span> <span class="p">);</span>
+</pre></div>
+
+<p>Follows the callback function signature</p>
+
+<div class="highlight highlight-php"><pre><span class="o">/**</span>
+<span class="o">*</span> <span class="o">@</span><span class="nx">param</span> <span class="nx">\restlt\Request</span> <span class="nv">$r</span> 
+<span class="o">*</span> <span class="o">@</span><span class="nx">param</span> <span class="nx">\restlt\Response</span> <span class="nv">$r</span>
+<span class="o">*</span> <span class="o">@</span><span class="k">return</span> <span class="nx">\Exception</span> <span class="nv">$exception</span> <span class="o">-</span> <span class="nx">the</span> <span class="nx">result</span> <span class="nx">of</span> <span class="nx">your</span> <span class="nx">resource</span> <span class="nx">method</span>
+<span class="o">*</span> <span class="o">@</span><span class="k">return</span> <span class="nx">void</span>
+<span class="o">*</span> <span class="o">/</span>
+<span class="nv">$f</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nx">\restlt\Request</span> <span class="nv">$request</span><span class="p">,</span> <span class="nx">\restlt\Response</span> <span class="nv">$response</span><span class="p">,</span><span class="nx">\Exception</span> <span class="nv">$exception</span><span class="p">){};</span>
+</pre></div>
+
+<h2>
+<a name="example-usage" class="anchor" href="#example-usage"><span class="octicon octicon-link"></span></a>Example usage:</h2>
+
+<h3>
+<a name="register-on_before-event-hook-for-a-specific-resource-method" class="anchor" href="#register-on_before-event-hook-for-a-specific-resource-method"><span class="octicon octicon-link"></span></a>Register ON_BEFORE event hook for a specific resource method</h3>
+
+<div class="highlight highlight-php"><pre>        <span class="nv">$f1</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$r</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">//do something</span>
+        <span class="p">};</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">on</span> <span class="p">(</span><span class="nx">\restlt\Resource</span><span class="o">::</span><span class="na">ON_BEFORE</span><span class="p">,</span> <span class="s1">'getMe'</span><span class="p">,</span> <span class="nv">$f1</span> <span class="p">);</span>
+</pre></div>
+
+<h3>
+<a name="register-on_before-event-hook-for-any-resource-method" class="anchor" href="#register-on_before-event-hook-for-any-resource-method"><span class="octicon octicon-link"></span></a>Register ON_BEFORE event hook for any resource method</h3>
+
+<div class="highlight highlight-php"><pre>        <span class="nv">$f1</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$r</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">//do something</span>
+        <span class="p">};</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">on</span> <span class="p">(</span><span class="nx">\restlt\Resource</span><span class="o">::</span><span class="na">ON_BEFORE</span><span class="p">,</span> <span class="k">NULL</span><span class="p">,</span> <span class="nv">$f1</span> <span class="p">);</span>
+</pre></div>
+
+<h2>
+<a name="adding-some-cache" class="anchor" href="#adding-some-cache"><span class="octicon octicon-link"></span></a>Adding some cache</h2>
+
+<pre><code>Since the addition of a great amound of resource could cost us performance, Rest Lite uses some caching to aleviate this issue.
+</code></pre>
+
+<p>In it's most basic implementation the server supports natively Memcached extention. However there are ways to add third party caching systems that are already supporting multitude of backend cache adapters.</p>
+
+<h3>
+<a name="using-built-in-memcached-implementation" class="anchor" href="#using-built-in-memcached-implementation"><span class="octicon octicon-link"></span></a>Using built in Memcached implementation</h3>
+
+<div class="highlight highlight-php"><pre>    <span class="nv">$memcached</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Memcached</span> <span class="p">();</span>
+    <span class="nv">$memcached</span><span class="o">-&gt;</span><span class="na">addServer</span> <span class="p">(</span> <span class="s1">'localhost'</span><span class="p">,</span> <span class="mi">11211</span> <span class="p">);</span>
+    <span class="nv">$s</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Server</span> <span class="p">(</span> <span class="s1">'/'</span> <span class="p">);</span>
+    <span class="nv">$s</span><span class="o">-&gt;</span><span class="na">setCacheAdapter</span> <span class="p">(</span> <span class="k">new</span> <span class="nx">\restlt\utils\cache\RestltMemcachedAdapter</span><span class="p">(</span> <span class="nv">$memcached</span> <span class="p">)</span> <span class="p">);</span>
+    <span class="nv">$s</span><span class="o">-&gt;</span><span class="na">serve</span> <span class="p">();</span>
+</pre></div>
+
+<h3>
+<a name="using-zend-cache-component---zend-cache-httpframeworkzendcommanual20enmoduleszendcachestorageadapterhtml" class="anchor" href="#using-zend-cache-component---zend-cache-httpframeworkzendcommanual20enmoduleszendcachestorageadapterhtml"><span class="octicon octicon-link"></span></a>Using Zend Cache component - [Zend Cache] <a href="http://framework.zend.com/manual/2.0/en/modules/zend.cache.storage.adapter.html">http://framework.zend.com/manual/2.0/en/modules/zend.cache.storage.adapter.html</a>)</h3>
+
+<p>If you are already using ZF2 caching component there is an easy way to add it to Rest Lite.
+Here assuming that you know how to use <code>Zend\Cache\StorageFactory::adapterFactory</code> you need to obtain a
+StorageAdapter. </p>
+
+<div class="highlight highlight-php"><pre>    <span class="nv">$zendCache</span> <span class="o">=</span> <span class="nx">Zend\Cache\StorageFactory</span><span class="o">::</span><span class="na">adapterFactory</span><span class="p">(</span><span class="s1">'apc'</span><span class="p">,</span><span class="nv">$options</span><span class="p">);</span>
+    <span class="nv">$s</span><span class="o">-&gt;</span><span class="na">setCacheAdapter</span> <span class="p">(</span> <span class="k">new</span> <span class="nx">\restlt\utils\cache\ZFCacheAdapter</span> <span class="p">(</span> <span class="nv">$zendCache</span> <span class="p">)</span> <span class="p">);</span>
+</pre></div>
+
+<h3>
+<a name="using-doctrines-cache-implementation---doctrine-cache" class="anchor" href="#using-doctrines-cache-implementation---doctrine-cache"><span class="octicon octicon-link"></span></a>Using Doctrine's cache implementation - <a href="http://docs.doctrine-project.org/en/latest/reference/caching.html">Doctrine Cache</a>
+</h3>
+
+<pre><code>Here you should know how to obtain a Doctrine CacheProvider.
+</code></pre>
+
+<div class="highlight highlight-php"><pre>    <span class="nv">$memcache</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Memcache</span><span class="p">();</span>
+    <span class="nv">$memcache</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s1">'memcache_host'</span><span class="p">,</span> <span class="mi">11211</span><span class="p">);</span>
+    <span class="nv">$doctrineCacheProvider</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\Doctrine\Common\Cache\MemcacheCache</span><span class="p">();</span>
+    <span class="nv">$doctrineCacheProvider</span><span class="o">-&gt;</span><span class="na">setMemcache</span><span class="p">(</span><span class="nv">$memcache</span><span class="p">);</span>
+    <span class="nv">$s</span><span class="o">-&gt;</span><span class="na">setCacheAdapter</span> <span class="p">(</span> <span class="k">new</span> <span class="nx">\restlt\utils\cache\DoctrineCacheAdapter</span><span class="p">(</span><span class="nv">$doctrineCacheProvider</span><span class="p">)</span> <span class="p">);</span>
+</pre></div>
+
+<h2>
+<a name="doc-block-meta-reference" class="anchor" href="#doc-block-meta-reference"><span class="octicon octicon-link"></span></a>Doc block Meta reference</h2>
+
+<table>
+<thead><tr>
+<th>Annotation</th>
+<th align="center">Where</th>
+<th align="right">Required</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>@resourceBaseUri</td>
+<td align="center">CLASS</td>
+<td align="right">YES</td>
+</tr>
+<tr>
+<td>@baseUri</td>
+<td align="center">METHDO</td>
+<td align="right">NO</td>
+</tr>
+</tbody>
+</table><h3>
+<a name="resource-class-doc-block" class="anchor" href="#resource-class-doc-block"><span class="octicon octicon-link"></span></a>Resource class doc block</h3>
+
+<pre><code>@resourceBaseUri -&gt; specifies the resource base URI relative to the Server base URI
+</code></pre>
+
+<h3>
+<a name="resource-method-doc-block" class="anchor" href="#resource-method-doc-block"><span class="octicon octicon-link"></span></a>Resource method doc block</h3>
+
+<pre><code>@method -&gt; specifies what HTTP method this resource method respnds to. POST, GET, PUT, PATCH, DELETE are allowed
+@methodBaseUri -&gt; URI relative to the resource base uri value specified in the @resourceBaseUri
+@cacheControlMaxAge -&gt; this value directly affects the 'Cache-Control max-age' HTTP header value and has nothing to do with the local caching feature    
+</code></pre>
+
+<h2>
+<a name="misc-usage-tricks" class="anchor" href="#misc-usage-tricks"><span class="octicon octicon-link"></span></a>Misc. usage tricks</h2>
+
+<h3>
+<a name="forcing-the-server-to-respond-always-with-spcified-reponse-type-regardles-of-the-request-content-type" class="anchor" href="#forcing-the-server-to-respond-always-with-spcified-reponse-type-regardles-of-the-request-content-type"><span class="octicon octicon-link"></span></a>Forcing the server to respond always with spcified reponse type regardles of the request <code>Content-type</code>
+</h3>
+
+<ol>
+<li>
+<p>Force response type for all Resources registered with the server to respond with XML or JSON</p>
+
+<div class="highlight highlight-php"><pre><span class="nv">$s</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\restlt\Server</span><span class="p">(</span><span class="s1">'base/uri'</span><span class="p">);</span>
+<span class="nv">$s</span><span class="o">-&gt;</span><span class="na">getResponse</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">setForceResponseType</span><span class="p">(</span><span class="nx">Response</span><span class="o">::</span><span class="na">APPLICATION_JSON</span><span class="p">);</span>
+</pre></div>
+</li>
+<li>
+<p>Forcing a method to always respond with XML or JSON.</p>
+
+<div class="highlight highlight-php"><pre><span class="sd">/**</span>
+<span class="sd">* @resourceBaseUri /entity</span>
+<span class="sd">*/</span>
+<span class="k">class</span> <span class="nc">myResource</span> <span class="k">extends</span> <span class="nx">\restlt\Resource</span>
+<span class="sd">/**</span>
+<span class="sd">* @methodUri /submit</span>
+<span class="sd">* @method POST</span>
+<span class="sd">*/</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">myMethod</span><span class="p">(){</span>
+<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getResponse</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">setForceResponseType</span><span class="p">(</span><span class="nx">\restlt\Response</span><span class="o">::</span><span class="na">APPLICATION_XML</span><span class="p">);</span>
+<span class="c1">#some code here ...</span>
+<span class="k">return</span> <span class="nv">$result</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</li>
+<li>
+<p>Non-coding trick to force desired response
+When creating the URL for the client simply append to the end of the URI (not the  query part) .json or .xml</p>
+
+<ul>
+<li>'GET' request - <a href="http://example.com/user/list.json?p=1&amp;q=sam">http://example.com/user/list.json?p=1&amp;q=sam</a>
+</li>
+<li>'POST' request - <a href="http://example.com/user.json">http://example.com/user.json</a>
+</li>
+<li>'GET' request - <a href="http://example.com/user/103.xml">http://example.com/user/103.xml</a> - get user resource with XML. not te integer 103 will be preserved as part of the URI and will be passed along to your method if it was defined as a regex in the meta for the resource method</li>
+</ul>
+</li>
+</ol>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/ivolator">ivolator</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
