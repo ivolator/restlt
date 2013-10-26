@@ -4,20 +4,15 @@ Rest Lite
 ##A "thin" REST-full server implementation in PHP 
 ###Features
 
-### Basic usage
-
-
+###Basic usage
 ```php
 //Get instance of the server by passing the server base url
 $s = new Server ( '/' );
 //Tell the server where to find the resources
 $s->registerResourceFolder ( SOME_APPLICATION_ROOT .  '/resources', 'name\space\resources' );
 $s->serve ();
-```
- 
- 
- 
- ### Creating a resource
+``` 
+ ###Creating a resource
  
  A resource in Rest Lite is a class that extends the \restlt\Resource class.
  Each resource can contain methods that respond to multiple GETs, POSTs, PUTs, DELETEs and PATCHs.
@@ -42,7 +37,7 @@ For example, if your complete URI ends up to be /account/([0-9]+)/contact/([a-z]
  
  A resource can have multiple methods that respond to GET, POST, etc.
  
- ### A simple resource example
+ ###A simple resource example
  ```php
  <?php
 
@@ -147,7 +142,7 @@ or instead of closure pass Callable
     $f = function (\restlt\Request $request, \restlt\Response $response, $return){};
     ```
     * ####On error
-     ```php
+    ```php
     $this->on ( Resource::ON_ERROR, 'myFunctionName', array($obj,$method) );
     ```
     Follows the callback function signature
@@ -199,7 +194,7 @@ Here assuming that you know how to use `Zend\Cache\StorageFactory::adapterFactor
     ```
 
     * ####Using Doctrine's cache implementation - [Doctrine Cache](http://docs.doctrine-project.org/en/latest/reference/caching.html)
-Here you should know how to obtain a Doctrine `CacheProvider`.
+    Here you should know how to obtain a Doctrine CacheProvider.
     ```php
     $memcache = new Memcache();
     $memcache->connect('memcache_host', 11211);
