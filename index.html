@@ -1,42 +1,39 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Restlt by ivolator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
 
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+
+    <title>RestLite by ivolator</title>
   </head>
+
   <body>
-    <div class="wrapper">
-      <header>
-        <h1>Restlt</h1>
-        <p> REST Lite. A slim REST-full server implementation in PHP </p>
+    <header>
+      <div class="inner">
+        <h1>RestLite</h1>
+        <h2>REST done easy with PHP</h2>
+        <a href="https://github.com/ivolator/restlt" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
 
-        <p class="view"><a href="https://github.com/ivolator/restlt">View the Project on GitHub <small>ivolator/restlt</small></a></p>
-
-
-        <ul>
-          <li><a href="https://github.com/ivolator/restlt/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/ivolator/restlt/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/ivolator/restlt">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
-      <section>
-        <h1>
-<a name="restlite" class="anchor" href="#restlite"><span class="octicon octicon-link"></span></a>RestLite</h1>
-
-<h2>
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h2>
 <a name="a-thin-rest-full-server-implementation-in-php" class="anchor" href="#a-thin-rest-full-server-implementation-in-php"><span class="octicon octicon-link"></span></a>A "thin" REST-full server implementation in PHP</h2>
 
 <p>RestLite is a flexible small library that will allow you to build RESTfull service.
-Most of the sub-components are extensibe or replaceable. 
-This would allow you to modify the server's behavior to your requirenets specifics.</p>
+Most of the sub-components are extensible or replaceable. This would let you modify the server's behavior.
+The current version is still in alpha. Any feedback is appreciated!</p>
 
 <h3>
 <a name="basic-usage-server-end-point-setup" class="anchor" href="#basic-usage-server-end-point-setup"><span class="octicon octicon-link"></span></a>Basic usage (server end point setup)</h3>
@@ -69,21 +66,21 @@ This would allow you to modify the server's behavior to your requirenets specifi
  It is important to mention that when you are registering resources with the server you are either registering a resource folder and prviding a namespace or a single resource by providing the FQNS to resource class. Providing a FQNS (fully qualified name space) is necessary.</p>
 
 <p>To configure the URI for the resource, you need to setup couple of things.
- All the metadata is configurable via the PHP doc blocks. </p>
+ All the metadata is configurable via the PHP doc blocks. Examples are shown later.</p>
 
 <ol>
 <li>Add the @resourceBaseUri in the class doc block.This will set up the base URI for all methods that will be contained in this resource
 '@resourceBaseUri /user' - note the forward slash at the begining</li>
-<li>Add <a href="https://github.com/method" class="user-mention">@method</a> to the doc block of the class method. This will tell the server what HTTP method this function will be responding to
-<code>@method POST</code> or <code>@method GET</code> will set the HTTP method to respond to</li>
-<li>Add @resourceBaseUri value for the method URI. 
+<li>Add <a href="https://github.com/method" class="user-mention">@method</a> to the doc block of the class method. This will tell the server what HTTP method this function will be responding to. For example, <code>@method POST</code> or <code>@method GET</code> will tell the server that the HTTP method is GET or POST</li>
+<li>Add @methodUri value for the method URI. 
 
 <ul>
 <li>
 <code>@methodUri /</code> - you can either just add the "/" or omit the annotation </li>
 <li>
 <code>@methodUri /list</code> - hard coded example</li>
-<li>A regex example <code>@resourceBaseUri ([0-9]+)</code> - always add the '()' around the regex
+<li>
+<code>@methodUri /user/([0-9]+)</code> - regex example - always add the '()' around the regex
 Note that the full URI for your resource is a combination of the server base URI, that was set during \restlt\Server initialization and the addition of @resourceBaseUri + @methodUri. In general consider the URI as of a regular expression. This is how it is evaluated and followint the preg_match() rules for binding its third parameter, whatever you surround with "()" ends up as a parameter of your method.</li>
 </ul>
 </li>
@@ -447,13 +444,25 @@ When creating the URL for the client simply append to the end of the URI (not th
 </ul>
 </li>
 </ol>
-      </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/ivolator">ivolator</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
-      </footer>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/ivolator/restlt/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/ivolator/restlt/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/ivolator/restlt"></a> is maintained by <a href="https://github.com/ivolator">ivolator</a>.</p>
+
+          <p>This page was generated by <a href="pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
     </div>
-    <script src="javascripts/scale.fix.js"></script>
-    
+
+  
   </body>
 </html>
