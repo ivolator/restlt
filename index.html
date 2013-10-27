@@ -39,16 +39,30 @@ Most of the sub-components are extensibe or replaceable.
 This would allow you to modify the server's behavior to your requirenets specifics.</p>
 
 <h3>
-<a name="basic-usage" class="anchor" href="#basic-usage"><span class="octicon octicon-link"></span></a>Basic usage</h3>
+<a name="basic-usage-server-end-point-setup" class="anchor" href="#basic-usage-server-end-point-setup"><span class="octicon octicon-link"></span></a>Basic usage (server end point setup)</h3>
 
 <div class="highlight highlight-php"><pre><span class="c1">//Get instance of the server by passing the server base url</span>
 <span class="nv">$s</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Server</span> <span class="p">(</span> <span class="s1">'/'</span> <span class="p">);</span>
 <span class="c1">//Tell the server where to find the resources</span>
 <span class="nv">$s</span><span class="o">-&gt;</span><span class="na">registerResourceFolder</span> <span class="p">(</span> <span class="nx">SOME_APPLICATION_ROOT</span> <span class="o">.</span>  <span class="s1">'/resources'</span><span class="p">,</span> <span class="s1">'name\space\resources'</span> <span class="p">);</span>
+<span class="nv">$s</span><span class="o">-&gt;</span><span class="na">registerResourceClass</span><span class="p">(</span><span class="s1">'example\name\space\Resource'</span><span class="p">);</span>
 <span class="nv">$s</span><span class="o">-&gt;</span><span class="na">serve</span> <span class="p">();</span>
 </pre></div>
 
-<p>###Creating a resource</p>
+<p>In your base server directory add an .htaccess file with the follwing content</p>
+
+<pre><code>&lt;IfModule mod_rewrite.c&gt;
+    RewriteEngine On
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^(.*)$ index.php?_url=/$1 [QSA,L]
+&lt;/IfModule&gt;
+</code></pre>
+
+<p>Now you have bootstraped RestLite.</p>
+
+<h3>
+<a name="creating-a-resource" class="anchor" href="#creating-a-resource"><span class="octicon octicon-link"></span></a>Creating a resource</h3>
 
 <p>A resource in Rest Lite is a class that extends the \restlt\Resource class.
  Each resource can contain methods that respond to multiple GETs, POSTs, PUTs, DELETEs and PATCHs.
@@ -77,7 +91,8 @@ Note that the full URI for your resource is a combination of the server base URI
 
 <p>A resource can have multiple methods that respond to GET, POST, etc.</p>
 
-<p>###A simple resource example</p>
+<h3>
+<a name="a-simple-resource-example" class="anchor" href="#a-simple-resource-example"><span class="octicon octicon-link"></span></a>A simple resource example</h3>
 
 <div class="highlight highlight-php"><pre><span class="k">namespace</span> <span class="nx">restlt\examples\resources</span><span class="p">;</span>
 <span class="sd">/**</span>
@@ -124,9 +139,11 @@ Note that the full URI for your resource is a combination of the server base URI
 <span class="p">}</span>
 </pre></div>
 
-<p>For the just coded resource we have created two methods, <code>Resource1::get()</code> and <code>Resource1::put()</code>. There is no naming convention for the methods. The names are chosen for better clarity. The method Resource1::get() we will be responding to the 'GET' http method and the URI that will access it is /resource1/123 or any number as per the regex. The latter URI will be prepended with the Server base URI. You set the Server base URI when instantiating the \restlt\Server.</p>
+<p>For the just coded resource we have created two methods, <code>Resource1::getMe()</code> and <code>Resource1::putMe()</code>. There is no naming convention for the methods. The names are chosen for better clarity. The method Resource1::get() we will be responding to the 'GET' http method and the URI that will access it is /resource1/123 or any number as per the regex. The latter URI will be prepended with the Server base URI. You set the Server base URI when instantiating the \restlt\Server.</p>
 
-<p>Similar to the 'GET' we have built the 'PUT' method  <code>Resource1::put()</code>. When the server receives a 'PUT'  request and the URI is /resource1/save the  <code>Resource1::put()</code> method will respond with whatever you decide to return.</p>
+<p>Similar to the 'GET' we have built the 'PUT' method  <code>Resource1::putMy()</code>. When the server receives a 'PUT'  request and the URI is /resource1/save the  <code>Resource1::putMe()</code> method will respond with whatever you decide to return.
+The methods must return data in order for you to receive it as a XML or JSON formatted string at the client.
+The JSON or XML conversion happens automatically. More on adding your own twist to the output will be discussed in the advanced section.</p>
 
 <h2>
 <a name="some-advanced-usage" class="anchor" href="#some-advanced-usage"><span class="octicon octicon-link"></span></a>Some advanced usage</h2>
@@ -199,7 +216,7 @@ Note that the full URI for your resource is a combination of the server base URI
 </pre></div>
 
 <h2>
-<a name="example-usage" class="anchor" href="#example-usage"><span class="octicon octicon-link"></span></a>Example usage:</h2>
+<a name="register-event-examples" class="anchor" href="#register-event-examples"><span class="octicon octicon-link"></span></a>register event examples:</h2>
 
 <h3>
 <a name="register-on_before-event-hook-for-a-specific-resource-method" class="anchor" href="#register-on_before-event-hook-for-a-specific-resource-method"><span class="octicon octicon-link"></span></a>Register ON_BEFORE event hook for a specific resource method</h3>
@@ -207,25 +224,26 @@ Note that the full URI for your resource is a combination of the server base URI
 <div class="highlight highlight-php"><pre>        <span class="nv">$f1</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$r</span><span class="p">)</span> <span class="p">{</span>
         <span class="c1">//do something</span>
         <span class="p">};</span>
+        <span class="c1">//the context here is the Resource, hence $this</span>
         <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">on</span> <span class="p">(</span><span class="nx">\restlt\Resource</span><span class="o">::</span><span class="na">ON_BEFORE</span><span class="p">,</span> <span class="s1">'getMe'</span><span class="p">,</span> <span class="nv">$f1</span> <span class="p">);</span>
 </pre></div>
 
 <h3>
-<a name="register-on_before-event-hook-for-any-resource-method" class="anchor" href="#register-on_before-event-hook-for-any-resource-method"><span class="octicon octicon-link"></span></a>Register ON_BEFORE event hook for any resource method</h3>
+<a name="register-on_before-event-hook-for-any-resource-method" class="anchor" href="#register-on_before-event-hook-for-any-resource-method"><span class="octicon octicon-link"></span></a>Register ON_BEFORE event hook for ANY resource method</h3>
 
 <div class="highlight highlight-php"><pre>        <span class="nv">$f1</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$r</span><span class="p">)</span> <span class="p">{</span>
         <span class="c1">//do something</span>
         <span class="p">};</span>
+        <span class="c1">//the context here is the Resource, hence $this</span>
         <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">on</span> <span class="p">(</span><span class="nx">\restlt\Resource</span><span class="o">::</span><span class="na">ON_BEFORE</span><span class="p">,</span> <span class="k">NULL</span><span class="p">,</span> <span class="nv">$f1</span> <span class="p">);</span>
 </pre></div>
 
 <h2>
 <a name="adding-some-cache" class="anchor" href="#adding-some-cache"><span class="octicon octicon-link"></span></a>Adding some cache</h2>
 
-<pre><code>Since the addition of a great amound of resource could cost us performance, Rest Lite uses some caching to aleviate this issue.
-</code></pre>
-
-<p>In it's most basic implementation the server supports natively Memcached extention. However there are ways to add third party caching systems that are already supporting multitude of backend cache adapters.</p>
+<p>Since the addition of a great amound of resources could cost us in performance, RestLite uses some caching to aleviate this issue.
+In it's most basic implementation the server supports natively Memcached extention. However there are ways to add third party caching systems that are already supporting multitude of backend cache adapters.
+The cache is stores the metadata used to resolve the resource routes.</p>
 
 <h3>
 <a name="using-built-in-memcached-implementation" class="anchor" href="#using-built-in-memcached-implementation"><span class="octicon octicon-link"></span></a>Using built in Memcached implementation</h3>
@@ -240,7 +258,7 @@ Note that the full URI for your resource is a combination of the server base URI
 <h3>
 <a name="using-zend-cache-component---zend-cache-httpframeworkzendcommanual20enmoduleszendcachestorageadapterhtml" class="anchor" href="#using-zend-cache-component---zend-cache-httpframeworkzendcommanual20enmoduleszendcachestorageadapterhtml"><span class="octicon octicon-link"></span></a>Using Zend Cache component - [Zend Cache] <a href="http://framework.zend.com/manual/2.0/en/modules/zend.cache.storage.adapter.html">http://framework.zend.com/manual/2.0/en/modules/zend.cache.storage.adapter.html</a>)</h3>
 
-<p>If you are already using ZF2 caching component there is an easy way to add it to Rest Lite.
+<p>If you are already using ZF2 caching component there is an easy way to add it to RestLite.
 Here assuming that you know how to use <code>Zend\Cache\StorageFactory::adapterFactory</code> you need to obtain a
 StorageAdapter. </p>
 
@@ -263,6 +281,78 @@ StorageAdapter. </p>
 </pre></div>
 
 <h2>
+<a name="adding-your-own-annotations-to-the-resource-methods-or-the-resource-classes" class="anchor" href="#adding-your-own-annotations-to-the-resource-methods-or-the-resource-classes"><span class="octicon octicon-link"></span></a>Adding your own annotations to the Resource methods or the Resource classes</h2>
+
+<p>If you need to lock some data needed for processing during request execution you can add a custom annotation to your methods.
+Here is an example how to you could use that feature.</p>
+
+<div class="highlight highlight-php"><pre><span class="sd">/**</span>
+<span class="sd"> * @method POST</span>
+<span class="sd"> * @baseUri /save</span>
+<span class="sd"> * @allowedRoles admin, mega-admin</span>
+<span class="sd"> */</span>
+ <span class="k">public</span> <span class="k">function</span> <span class="nf">saveUser</span><span class="p">(){</span>
+     <span class="nv">$roles</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">annotations</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'allowedRoles'</span><span class="p">);</span>
+     <span class="c1">//do something here with the data. $roles now has the string 'admin, mega-admin'</span>
+     <span class="k">return</span> <span class="nv">$something</span><span class="p">;</span>
+ <span class="p">}</span>
+</pre></div>
+
+<h2>
+<a name="in-need-for-custom-output" class="anchor" href="#in-need-for-custom-output"><span class="octicon octicon-link"></span></a>In need for custom output?</h2>
+
+<p>Out of the box RestLite comse with json and xml output strategies. 
+Let's say you need to provide some home grown obfuscated or even encrypted reponse. 
+For whatever the reason is, you might want to do that one day.
+It could be that you want to communicate with the client via some specific protocol and want to wrap the data in it. 
+Or may be want to change the current ones. Here is how.</p>
+
+<h3>
+<a name="adding-a-custom-response-of-your-own" class="anchor" href="#adding-a-custom-response-of-your-own"><span class="octicon octicon-link"></span></a>Adding a custom response of your own.</h3>
+
+<p>First we need to create a class that implements the <code>\restlt\utils\output\TypeConversionStrategyInterface</code>. Let's start.</p>
+
+<div class="highlight highlight-php"><pre><span class="k">namespace</span> <span class="nx">my\name\space</span><span class="p">;</span>
+<span class="k">class</span> <span class="nc">SerializeOutputStrategy</span> <span class="k">implements</span> <span class="nx">\restlt\utils\output\TypeConversionStrategyInterface</span> <span class="p">{</span>
+    <span class="sd">/**</span>
+<span class="sd">     * @see \restlt\utils\output\TypeConversionStrategyInterface::execute()</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">execute</span><span class="p">(</span><span class="nx">\restlt\Result</span> <span class="nv">$data</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nb">serialize</span><span class="p">(</span><span class="nv">$data</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>That's it. We have implemented a serializer sutput strategy for our RestLite server.
+Next on the list to make this work is to tell the server about it.</p>
+
+<div class="highlight highlight-php"><pre><span class="nv">$s</span><span class="o">-&gt;</span><span class="na">getResponse</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">addResponseOutputStrategies</span><span class="p">(</span><span class="s1">'sphp'</span><span class="p">,</span> <span class="s1">'\my\name\space\SerializeOutputStrategy'</span><span class="p">);</span>
+</pre></div>
+
+<p>What we did here is the follwoing. We let the server know that if we encounter '.sphp' extension in our URL we will respond with the associated output, in this case <code>SerializeOutputStrategy</code>.
+Now all of your request ( GET, POST, PUT, PATCH ...) with URLs such like:</p>
+
+<ul>
+<li>
+<code>http://example.com/my/path/123.sphp</code> </li>
+<li>
+<code>http://example.com/my/path.sphp?q=stuff</code> </li>
+</ul><p>etc. will respond with serialized data accoring to your new output strategy.</p>
+
+<h3>
+<a name="extending-the-currently-available-restltutilsoutputxmltypeconverter-and-restltutilsoutputjsontypeconverter" class="anchor" href="#extending-the-currently-available-restltutilsoutputxmltypeconverter-and-restltutilsoutputjsontypeconverter"><span class="octicon octicon-link"></span></a>Extending the currently available <code>\restlt\utils\output\XmlTypeConverter</code> and <code>\restlt\utils\output\JsonTypeConverter</code>.</h3>
+
+<p>To modify the behaviour of the current JSON or XMl converters, you will need to extend them. There is not much to remember here. Extending the class is nothing different than what you do with any other class you do extend.
+However you need to register your new class with the server and associate it with the XML or JSON types.</p>
+
+<div class="highlight highlight-php"><pre><span class="nv">$s</span><span class="o">-&gt;</span><span class="na">getResponse</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">addResponseOutputStrategies</span><span class="p">(</span><span class="s1">'xml'</span><span class="p">,</span> <span class="s1">'\my\name\space\MyXmlStrategy'</span><span class="p">);</span>
+</pre></div>
+
+<p>Now all requests of the kind <code>http://example.com/my/path.xml?q=stuff</code> will be processed by your new class.
+Also,client requests that are made with 'Content-type:application/xml' will be processed by it too. 
+the same goes if you decide to extend the json converter.</p>
+
+<h2>
 <a name="doc-block-meta-reference" class="anchor" href="#doc-block-meta-reference"><span class="octicon octicon-link"></span></a>Doc block Meta reference</h2>
 
 <table>
@@ -270,17 +360,32 @@ StorageAdapter. </p>
 <th>Annotation</th>
 <th align="center">Where</th>
 <th align="right">Required</th>
+<th>Values</th>
 </tr></thead>
 <tbody>
 <tr>
 <td>@resourceBaseUri</td>
 <td align="center">CLASS</td>
 <td align="right">YES</td>
+<td>string</td>
 </tr>
 <tr>
 <td>@baseUri</td>
 <td align="center">METHDO</td>
 <td align="right">NO</td>
+<td>string/ default '/'</td>
+</tr>
+<tr>
+<td>@cacheControlMaxAge</td>
+<td align="center">METHOD</td>
+<td align="right">NO</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://github.com/method" class="user-mention">@method</a></td>
+<td align="center">METHOD</td>
+<td align="right">YES</td>
+<td></td>
 </tr>
 </tbody>
 </table><h3>
@@ -304,35 +409,34 @@ StorageAdapter. </p>
 <a name="forcing-the-server-to-respond-always-with-spcified-reponse-type-regardles-of-the-request-content-type" class="anchor" href="#forcing-the-server-to-respond-always-with-spcified-reponse-type-regardles-of-the-request-content-type"><span class="octicon octicon-link"></span></a>Forcing the server to respond always with spcified reponse type regardles of the request <code>Content-type</code>
 </h3>
 
-<ol>
-<li>
-<p>Force response type for all Resources registered with the server to respond with XML or JSON</p>
+<p>The default behavior is specified by the Accept header. If the 'Accept' is plain/text or anything that does not refer to SML of JSON the
+default response will be returned in JSON.
+1. Force response type for all Resources registered with the server to respond with XML or JSON</p>
 
 <div class="highlight highlight-php"><pre><span class="nv">$s</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\restlt\Server</span><span class="p">(</span><span class="s1">'base/uri'</span><span class="p">);</span>
 <span class="nv">$s</span><span class="o">-&gt;</span><span class="na">getResponse</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">setForceResponseType</span><span class="p">(</span><span class="nx">Response</span><span class="o">::</span><span class="na">APPLICATION_JSON</span><span class="p">);</span>
 </pre></div>
-</li>
-<li>
-<p>Forcing a method to always respond with XML or JSON.</p>
 
-<div class="highlight highlight-php"><pre><span class="sd">/**</span>
-<span class="sd">* @resourceBaseUri /entity</span>
-<span class="sd">*/</span>
-<span class="k">class</span> <span class="nc">myResource</span> <span class="k">extends</span> <span class="nx">\restlt\Resource</span>
-<span class="sd">/**</span>
-<span class="sd">* @methodUri /submit</span>
-<span class="sd">* @method POST</span>
-<span class="sd">*/</span>
-<span class="k">public</span> <span class="k">function</span> <span class="nf">myMethod</span><span class="p">(){</span>
-<span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getResponse</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">setForceResponseType</span><span class="p">(</span><span class="nx">\restlt\Response</span><span class="o">::</span><span class="na">APPLICATION_XML</span><span class="p">);</span>
-<span class="c1">#some code here ...</span>
-<span class="k">return</span> <span class="nv">$result</span><span class="p">;</span>
-<span class="p">}</span>
-</pre></div>
+<ol>
+<li>Forcing a method to always respond with XML or JSON.
+<code>php
+/**
+* @resourceBaseUri /entity
+*/
+class myResource extends \restlt\Resource
+/**
+* @methodUri /submit
+* @method POST
+*/
+public function myMethod(){
+$this-&gt;getResponse()-&gt;setForceResponseType(\restlt\Response::APPLICATION_XML);
+#some code here ...
+return $result;
+}
+</code>
 </li>
-<li>
-<p>Non-coding trick to force desired response
-When creating the URL for the client simply append to the end of the URI (not the  query part) .json or .xml</p>
+<li>Non-coding trick to force desired response
+When creating the URL for the client simply append to the end of the URI (not the  query part) .json or .xml
 
 <ul>
 <li>'GET' request - <a href="http://example.com/user/list.json?p=1&amp;q=sam">http://example.com/user/list.json?p=1&amp;q=sam</a>
