@@ -1,10 +1,7 @@
-RestLite
-======
-
 ##A "thin" REST-full server implementation in PHP 
 RestLite is a flexible small library that will allow you to build RESTfull service.
-Most of the sub-components are extensibe or replaceable. 
-This would allow you to modify the server's behavior to your requirenets specifics.
+Most of the sub-components are extensible or replaceable. This would let you modify the server's behavior.
+The current version is still in alpha. Any feedback is appreciated!
 
 ###Basic usage (server end point setup)
 ```php
@@ -33,16 +30,15 @@ Now you have bootstraped RestLite.
  It is important to mention that when you are registering resources with the server you are either registering a resource folder and prviding a namespace or a single resource by providing the FQNS to resource class. Providing a FQNS (fully qualified name space) is necessary.
  
  To configure the URI for the resource, you need to setup couple of things.
- All the metadata is configurable via the PHP doc blocks. 
+ All the metadata is configurable via the PHP doc blocks. Examples are shown later.
  
  1. Add the @resourceBaseUri in the class doc block.This will set up the base URI for all methods that will be contained in this resource
     '@resourceBaseUri /user' - note the forward slash at the begining
- 2. Add @method to the doc block of the class method. This will tell the server what HTTP method this function will be responding to
-    `@method POST` or `@method GET` will set the HTTP method to respond to
- 3. Add @resourceBaseUri value for the method URI. 
+ 2. Add @method to the doc block of the class method. This will tell the server what HTTP method this function will be responding to. For example, `@method POST` or `@method GET` will tell the server that the HTTP method is GET or POST
+ 3. Add @methodUri value for the method URI. 
     * `@methodUri /` - you can either just add the "/" or omit the annotation 
     * `@methodUri /list` - hard coded example
-    * A regex example `@resourceBaseUri ([0-9]+)` - always add the '()' around the regex
+    * `@methodUri /user/([0-9]+)` - regex example - always add the '()' around the regex
     Note that the full URI for your resource is a combination of the server base URI, that was set during \restlt\Server initialization and the addition of @resourceBaseUri + @methodUri. In general consider the URI as of a regular expression. This is how it is evaluated and followint the preg_match() rules for binding its third parameter, whatever you surround with "()" ends up as a parameter of your method.
 
 For example, if your complete URI ends up to be /account/([0-9]+)/contact/([a-z]+), your method should be accepting 2 parameters. The first of which will be a sequence of digits and the second one letters.
@@ -205,6 +201,31 @@ StorageAdapter.
     $doctrineCacheProvider->setMemcache($memcache);
     $s->setCacheAdapter ( new \restlt\utils\cache\DoctrineCacheAdapter($doctrineCacheProvider) );
 ```
+### Addig your favorite cache implementation
+In order for us to be able to use a third party Cache library we need to create a class that implements `restlt\utils\cache\CacheAdapterInterface`
+```php
+class OtherframeworkCacheAdapter implements CacheAdapterInterface {
+        public function __construct($cacheInstance = null) {
+                // 
+        }
+        public function test($key) {
+                //
+        }
+
+        public function set($key, $item) {
+                //
+        }
+
+        public function get($key) {
+                //
+        }
+}
+```
+Now you have to tell the server to use it in your bootsrap routine.
+```php
+$s->setCacheAdapter ( new \restlt\utils\cache\OtherfameworkCacheAdapter($otherframeworkInstance) );
+```
+
 ##Adding your own annotations to the Resource methods or the Resource classes
 If you need to lock some data needed for processing during request execution you can add a custom annotation to your methods.
 Here is an example how to you could use that feature.
