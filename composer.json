@@ -1,18 +1,18 @@
 {
 	"name" : "restlt/restlt",
-	"description" : "REST Lite. A slim REST-full server implementation in PHP",
+	"description" : "RestLite. A slim REST-full server implementation in PHP",
 	"type" : "library",
-	"homepage": "http://github.com/ivolator/restlt",
 	"keywords" : [
 		"PHP",
 		"REST",
 		"Server"
 	],
+	"homepage" : "http://ivolator.github.io/restlt",
 	"license" : [
 		"MIT"
 	],
 	"require" : {
-		"php" : ">=5.4.0"
+		"php" : ">=5.3.0"
 	},
 	"autoload" : {
 		"psr-0" : {
