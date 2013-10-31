@@ -236,7 +236,7 @@ class Response implements \restlt\ResponseInterface {
 	 */
 	protected function getConversionStrategy($contentType) {
 
-                $class  = null;
+        $class  = null;
 		// check for user registered output strategies
 		if (false != ($strategies = preg_grep ( '#' . $contentType . '#', array_keys ( $this->responseOutputStrategies ) ))) {
 			if (count ( $strategies ) > 1) {

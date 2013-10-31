@@ -98,7 +98,7 @@ class RequestRouter implements \restlt\RouterInterface{
 		$filterMatchingMethods = function (&$el) use($uri, $requestMethod) {
 			$ret = false;
 			$matches = false;
-
+			if(empty($el ['method'])) return false;
 			$methodMatch = strtolower ( $requestMethod ) === strtolower ( $el ['method'] );
 			$methodUri = rtrim($el ['methodUri'],'/');
 			$uri = rtrim($uri,'/');
