@@ -102,8 +102,8 @@ Note that the full URI for your resource is a combination of the server base URI
         <span class="p">};</span>
         <span class="nv">$f2</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$req</span><span class="p">,</span><span class="nv">$res</span><span class="p">,</span><span class="nv">$ret</span><span class="p">)</span> <span class="p">{</span>
         <span class="p">};</span>
-        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">on</span> <span class="p">(</span>  <span class="nx">Resource</span><span class="o">::</span><span class="na">ON_BEFORE</span><span class="p">,</span> <span class="s1">'getMe'</span><span class="p">,</span> <span class="nv">$f1</span> <span class="p">);</span>
-        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">on</span> <span class="p">(</span>  <span class="nx">Resource</span><span class="o">::</span><span class="na">ON_AFTER</span><span class="p">,</span> <span class="s1">'getMe'</span><span class="p">,</span> <span class="nv">$f2</span> <span class="p">);</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">on</span> <span class="p">(</span> <span class="s1">'before'</span><span class="p">,</span> <span class="s1">'getMe'</span><span class="p">,</span> <span class="nv">$f1</span> <span class="p">);</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">on</span> <span class="p">(</span> <span class="s1">'after'</span><span class="p">,</span> <span class="s1">'getMe'</span><span class="p">,</span> <span class="nv">$f2</span> <span class="p">);</span>
     <span class="p">}</span>
     <span class="sd">/**</span>
 <span class="sd">     * Note that the regex in "()" gets converted to a parameter of the method</span>
@@ -141,6 +141,30 @@ Note that the full URI for your resource is a combination of the server base URI
 <p>Similar to the 'GET' we have built the 'PUT' method  <code>Resource1::putMy()</code>. When the server receives a 'PUT'  request and the URI is /resource1/save the  <code>Resource1::putMe()</code> method will respond with whatever you decide to return.
 The methods must return data in order for you to receive it as a XML or JSON formatted string at the client.
 The JSON or XML conversion happens automatically. More on adding your own twist to the output will be discussed in the advanced section.</p>
+
+<h3>
+<a name="accessing-the-get-post-and-raw-data-within-the-resources-methods" class="anchor" href="#accessing-the-get-post-and-raw-data-within-the-resources-methods"><span class="octicon octicon-link"></span></a>Accessing the GET, POST and raw data within the resources' methods.</h3>
+
+<div class="highlight highlight-php"><pre><span class="c1">//accessing GET</span>
+        <span class="nv">$params</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">getQueryParams</span> <span class="p">();</span>
+<span class="c1">//accessing POST</span>
+        <span class="nv">$params</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">getPostParams</span> <span class="p">();</span>
+</pre></div>
+
+<p>Get the raw data as it was submited in the body</p>
+
+<div class="highlight highlight-php"><pre>        <span class="nv">$postPayload</span><span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">getRawPost</span> <span class="p">();</span> 
+</pre></div>
+
+<p>Get one parameter at a time</p>
+
+<div class="highlight highlight-php"><pre>        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getRequest</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="nv">$paramName</span><span class="p">);</span>
+</pre></div>
+
+<p>Obtain the parameter ($_REQUEST) and at the same time provide a default value. This helps you avoid the checks for set or empty values</p>
+
+<div class="highlight highlight-php"><pre>        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getRequest</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'page'</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+</pre></div>
 
 <h2>
 <a name="some-advanced-usage" class="anchor" href="#some-advanced-usage"><span class="octicon octicon-link"></span></a>Some advanced usage</h2>
@@ -181,12 +205,10 @@ The JSON or XML conversion happens automatically. More on adding your own twist 
 <a name="on-after-event----after-the-resource-function-returns-" class="anchor" href="#on-after-event----after-the-resource-function-returns-"><span class="octicon octicon-link"></span></a>On After event - * after the resource function returns *</h3>
 
 <div class="highlight highlight-php"><pre>    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">on</span> <span class="p">(</span> <span class="nx">Resource</span><span class="o">::</span><span class="na">ON_AFTER</span><span class="p">,</span> <span class="s1">'myFunctionName'</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="nv">$obj</span><span class="p">,</span><span class="nv">$method</span><span class="p">)</span> <span class="p">);</span>
-</pre></div>
-
-<pre><code>* The callback function provided for this event has the following signature *
-</code></pre>
-
-<div class="highlight highlight-php"><pre>    <span class="o">/**</span>
+    <span class="sb">```</span>
+<span class="sb">    * The callback function provided for this event has the following signature *</span>
+<span class="sb">    ```</span><span class="nx">php</span>
+    <span class="o">/**</span>
      <span class="o">*</span> <span class="o">@</span><span class="nx">param</span> <span class="nx">\restlt\Request</span> <span class="nv">$request</span> 
      <span class="o">*</span> <span class="o">@</span><span class="nx">param</span> <span class="nx">\restlt\Response</span> <span class="nv">$response</span>
      <span class="o">*</span> <span class="o">@</span><span class="nx">param</span> <span class="nx">mixed</span> <span class="nv">$return</span> <span class="nx">the</span> <span class="nx">result</span> <span class="nx">of</span> <span class="nx">your</span> <span class="nx">resource</span> <span class="nx">method</span>
@@ -279,6 +301,34 @@ StorageAdapter. </p>
     <span class="nv">$s</span><span class="o">-&gt;</span><span class="na">setCacheAdapter</span> <span class="p">(</span> <span class="k">new</span> <span class="nx">\restlt\utils\cache\DoctrineCacheAdapter</span><span class="p">(</span><span class="nv">$doctrineCacheProvider</span><span class="p">)</span> <span class="p">);</span>
 </pre></div>
 
+<h3>
+<a name="addig-your-favorite-cache-implementation" class="anchor" href="#addig-your-favorite-cache-implementation"><span class="octicon octicon-link"></span></a>Addig your favorite cache implementation</h3>
+
+<p>In order for us to be able to use a third party Cache library we need to create a class that implements <code>restlt\utils\cache\CacheAdapterInterface</code></p>
+
+<div class="highlight highlight-php"><pre><span class="k">class</span> <span class="nc">OtherframeworkCacheAdapter</span> <span class="k">implements</span> <span class="nx">CacheAdapterInterface</span> <span class="p">{</span>
+        <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nv">$cacheInstance</span> <span class="o">=</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// </span>
+        <span class="p">}</span>
+        <span class="k">public</span> <span class="k">function</span> <span class="nf">test</span><span class="p">(</span><span class="nv">$key</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">//</span>
+        <span class="p">}</span>
+
+        <span class="k">public</span> <span class="k">function</span> <span class="nf">set</span><span class="p">(</span><span class="nv">$key</span><span class="p">,</span> <span class="nv">$item</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">//</span>
+        <span class="p">}</span>
+
+        <span class="k">public</span> <span class="k">function</span> <span class="nf">get</span><span class="p">(</span><span class="nv">$key</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">//</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>Now you have to tell the server to use it in your bootsrap routine.</p>
+
+<div class="highlight highlight-php"><pre><span class="nv">$s</span><span class="o">-&gt;</span><span class="na">setCacheAdapter</span> <span class="p">(</span> <span class="k">new</span> <span class="nx">\restlt\utils\cache\OtherfameworkCacheAdapter</span><span class="p">(</span><span class="nv">$otherframeworkInstance</span><span class="p">)</span> <span class="p">);</span>
+</pre></div>
+
 <h2>
 <a name="adding-your-own-annotations-to-the-resource-methods-or-the-resource-classes" class="anchor" href="#adding-your-own-annotations-to-the-resource-methods-or-the-resource-classes"><span class="octicon octicon-link"></span></a>Adding your own annotations to the Resource methods or the Resource classes</h2>
 
@@ -300,7 +350,7 @@ Here is an example how to you could use that feature.</p>
 <h2>
 <a name="in-need-for-custom-output" class="anchor" href="#in-need-for-custom-output"><span class="octicon octicon-link"></span></a>In need for custom output?</h2>
 
-<p>Out of the box RestLite comse with json and xml output strategies. 
+<p>Out of the box RestLite comes with json and xml output strategies. 
 Let's say you need to provide some home grown obfuscated or even encrypted reponse. 
 For whatever the reason is, you might want to do that one day.
 It could be that you want to communicate with the client via some specific protocol and want to wrap the data in it. 
@@ -372,7 +422,7 @@ the same goes if you decide to extend the json converter.</p>
 <td>@baseUri</td>
 <td align="center">METHDO</td>
 <td align="right">NO</td>
-<td>string/ default '/'</td>
+<td>string - default '/'</td>
 </tr>
 <tr>
 <td>@cacheControlMaxAge</td>
