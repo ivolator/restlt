@@ -116,7 +116,28 @@ Obtain the parameter ($_REQUEST) and at the same time provide a default value. T
 ```php
         $this->getRequest()->get('page',1);
 ```
-
+##Handling errors
+###Exceptions
+All exceptions thrown by the server will end up as 404 or 500 errors.
+If you throw your own error the result code will be 500, but you have the controll of what gets thrown or caught. 
+The message resulting from the latter will be sent to the server in the error object as part of the result.
+For example if you throw `throw new \Exception('My Error',1000);` you will get the follwing in the response body.
+The HTTP status code however will be 500.
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<result>
+  <errors>
+    <error>
+      <error>
+        <message>My Error</message>
+        <code>1000</code>
+      </error>
+    </error>
+  </errors>
+</result>
+```
+###PHP/user errors
+Errors caused by  E_ERROR, E_USER_ERROR, E_WARNING, E_USER_WARNING, E_CORE_ERROR, E_CORE_WARNING, E_DEPRECATED and E_STRICT will end up as 500. You can see this error in the php error log.  
 ## Some advanced usage
 ### Event Hooks
 Let's say you need to add some twist to the execution flow or put some checks, logging or whatever comes to mind. There are three event hooks that provide a way to do that. The callbacks provided to these event hooks need to be Callable. The method or function signatures are provided bellow.

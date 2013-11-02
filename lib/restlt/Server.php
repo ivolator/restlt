@@ -115,6 +115,7 @@ class Server {
 		} catch ( \Exception $e ) {
 			$this->getResponse ()->setStatus ( Response::INTERNALSERVERERROR );
 		}
+
 		$this->getResponse ()->send ();
 		exit;
 	}

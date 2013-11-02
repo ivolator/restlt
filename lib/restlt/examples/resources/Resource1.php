@@ -70,6 +70,7 @@ class Resource1 extends \restlt\Resource implements \restlt\ResourceInterface{
 				),
 				$obj
 		);
+		throw new \Exception('My Error',1000);
 		return $obj;
 	}
 

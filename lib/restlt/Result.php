@@ -59,7 +59,7 @@ class Result implements ResultInterface {
 	}
 
 	public function addError($errorMessage, $errorCode) {
-		$this->errors[] = array($errorMessage,$errorCode);
+		$this->errors['error'][] = array('message'=>$errorMessage,'code'=>$errorCode);
 	}
 
 	/**

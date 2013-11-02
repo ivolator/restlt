@@ -108,6 +108,12 @@ class Response implements \restlt\ResponseInterface {
 
 	/**
 	 *
+	 * @var \Exception
+	 */
+	protected $displayError = false;
+
+	/**
+	 *
 	 * @param string $name
 	 * @param string $value
 	 */
@@ -146,7 +152,8 @@ class Response implements \restlt\ResponseInterface {
 					$this->executeCallbacks ( Resource::ON_AFTER, $route->getFunctionName (), $cbs, array (	$router->getRequest (),	$this, $ret	) );
 				} catch ( \Exception $e ) {
 					$this->executeCallbacks ( Resource::ON_ERROR, $route->getFunctionName (), $cbs, array (	$router->getRequest (),	$this,$e) );
-					$this->getResponse ()->setStatus ( Response::INTERNALSERVERERROR );
+					$this->setStatus ( Response::INTERNALSERVERERROR );
+					$this->displayError = $e;
 				}
 				$resourceObj->clearCallbacks ();
 			}
@@ -168,15 +175,18 @@ class Response implements \restlt\ResponseInterface {
 	 * @see \restlt\ResponseInterface::send()
 	 */
 	public function send() {
+		$data = null;
 		if ($this->status === self::OK && $this->requestRouter && $this->requestRouter->getRoute ()) {
 			$data = $this->getRoutedResponse ( $this->requestRouter );
+		}
+		$contentType = $this->requestRouter->getRequest ()->getContentType ();
+		$conversionStrategy = $this->getConversionStrategy ( $contentType );
+		if ($this->forceResponseType) {
+			$conversionStrategy = $this->getConversionStrategy ( $this->forceResponseType );
 		}
 
 		if ($data) {
 			$route = $this->requestRouter->getRoute ();
-			$contentType = $this->requestRouter->getRequest ()->getContentType ();
-
-			$conversionStrategy = $this->getConversionStrategy ( $contentType );
 
 			if ($route->getOutputTypeOverrideExt ()) {
 				$conversionStrategy = $this->getConversionStrategy ( $route->getOutputTypeOverrideExt () );
@@ -193,7 +203,7 @@ class Response implements \restlt\ResponseInterface {
 
 			$this->addHeader ( 'Content-Type', $contentType );
 		}
-		$this->_send ( $data, $conversionStrategy );
+		$this->_send ( $data?$data:null, $conversionStrategy );
 	}
 
 	/**
@@ -201,7 +211,7 @@ class Response implements \restlt\ResponseInterface {
 	 *
 	 * @param string $data
 	 */
-	protected function _send($data = null, $conversionStrategy) {
+	protected function _send($data = null, $conversionStrategy = null) {
 		if (headers_sent ()) {
 			// TODO - handle
 		}
@@ -222,6 +232,10 @@ class Response implements \restlt\ResponseInterface {
 		// prepare the payload if any
 		if ($data && $this->requestRouter->getRequest()->getMethod() !== Request::HEAD) {
 			$this->getResultObject ()->setData ( $data );
+			echo $this->getResultObject ()->toString ( $conversionStrategy );
+		}
+		if($this->displayError){
+			$this->getResultObject ()->addError($this->displayError->getMessage(),$this->displayError->getCode());
 			echo $this->getResultObject ()->toString ( $conversionStrategy );
 		}
 	}
@@ -284,7 +298,6 @@ class Response implements \restlt\ResponseInterface {
 	/**
 	 *
 	 * @return ResultInterface $reultObject
-	 * @return Response
 	 */
 	public function getResultObject() {
 		if (! $this->resultObject) {
@@ -404,6 +417,7 @@ class Response implements \restlt\ResponseInterface {
 				}
 		}
 	}
+
 	public function shutdown() {
 		$error = error_get_last ();
 		if (in_array ( $error ['type'], [
