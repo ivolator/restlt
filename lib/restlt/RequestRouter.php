@@ -80,7 +80,7 @@ class RequestRouter implements \restlt\RouterInterface{
 		$resourceUri = str_replace ( $this->serverBaseUri, '/', $uri );
 		$resourceUri = str_replace ( '//', '/', $resourceUri );
 
-
+		if(Request::HEAD === strtoupper($method)) $method = Request::GET;
 		$route = $this->matchResource ( $resourceUri, $method );
 		if($ext) $route->setOutputTypeOverrideExt($ext);
 

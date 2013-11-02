@@ -123,9 +123,8 @@ class Response implements \restlt\ResponseInterface {
 	 */
 	protected function getRoutedResponse(RouterInterface $router) {
 		$ret = null;
-		$route = null;
-		if ($router)
-			$route = $router->getRoute ();
+
+		$route = $router->getRoute ();
 
 		if ($route && $route->getClassName () && $route->getFunctionName ()) {
 			$class = $route->getClassName ();
@@ -152,7 +151,7 @@ class Response implements \restlt\ResponseInterface {
 				$resourceObj->clearCallbacks ();
 			}
 		} else {
-			$this->status = self::NOTFOUND;
+			$this->status = $this->status && Response::OK === $this->status ? self::NOTFOUND : $this->status;
 		}
 
 		if ($route && $route->getCacheControlMaxAge ()) {
@@ -168,10 +167,11 @@ class Response implements \restlt\ResponseInterface {
 	 *
 	 * @see \restlt\ResponseInterface::send()
 	 */
-	public function send($data = null) {
-		if ($this->requestRouter) {
+	public function send() {
+		if ($this->status === self::OK && $this->requestRouter && $this->requestRouter->getRoute ()) {
 			$data = $this->getRoutedResponse ( $this->requestRouter );
 		}
+
 		if ($data) {
 			$route = $this->requestRouter->getRoute ();
 			$contentType = $this->requestRouter->getRequest ()->getContentType ();
@@ -193,7 +193,6 @@ class Response implements \restlt\ResponseInterface {
 
 			$this->addHeader ( 'Content-Type', $contentType );
 		}
-
 		$this->_send ( $data, $conversionStrategy );
 	}
 
@@ -208,7 +207,7 @@ class Response implements \restlt\ResponseInterface {
 		}
 
 		header ( 'x-custom-rest-server: RestLite' );
-		header ( 'Allow: POST, GET, PUT, DELETE, PATCH' );
+		header ( 'Allow: POST, GET, PUT, DELETE, PATCH, HEAD' );
 		header ( 'Connection: close' );
 		if (version_compare ( PHP_VERSION, '5.4.0', '>=' )) {
 			http_response_code ( $this->status );
@@ -221,7 +220,7 @@ class Response implements \restlt\ResponseInterface {
 		}
 
 		// prepare the payload if any
-		if ($data) {
+		if ($data && $this->requestRouter->getRequest()->getMethod() !== Request::HEAD) {
 			$this->getResultObject ()->setData ( $data );
 			echo $this->getResultObject ()->toString ( $conversionStrategy );
 		}

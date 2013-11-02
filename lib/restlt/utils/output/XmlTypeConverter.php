@@ -40,7 +40,6 @@ class XmlTypeConverter implements TypeConversionStrategyInterface {
 	 */
 	public function execute(Result $data) {
 		$this->dom = new \DOMDocument ( '1.0', 'UTF-8' );
-		$data = json_decode ( json_encode ( $data ), true );
 		$domEl = $this->fromMixed ( $data );
 		$this->dom->appendChild ( $domEl );
 		$this->dom->formatOutput = true;
@@ -53,7 +52,7 @@ class XmlTypeConverter implements TypeConversionStrategyInterface {
 	 * @param \DOMElement $domEl
 	 * @return DOMElement
 	 */
-	function fromMixed(array $mixed,\DOMElement $domEl = null) {
+	function fromMixed($mixed,\DOMElement $domEl = null) {
 		if (! $domEl) {
 			$domEl = $this->dom->createElement ( 'result' );
 		}
@@ -65,7 +64,12 @@ class XmlTypeConverter implements TypeConversionStrategyInterface {
 			if (is_scalar ( $value )) {
 				$el = $this->dom->createElement ( ( string ) $name, $value );
 				$domEl->appendChild ( $el );
-			} else {
+			} elseif(is_object($value)){
+				$name = get_class($value);
+				$el = $this->dom->createElement ( ( string ) $name );
+				$el = $this->fromMixed ( $value, $el );
+				$domEl->appendChild ( $el );
+			} elseif(is_array($value)) {
 				$el = $this->dom->createElement ( ( string ) $name );
 				$el = $this->fromMixed ( $value, $el );
 				$domEl->appendChild ( $el );

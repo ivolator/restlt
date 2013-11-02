@@ -36,6 +36,7 @@ class Request implements \restlt\RequestInterface{
 	const PUT = 'PUT';
 	const DELETE = 'DELETE';
 	const PATCH = 'PATCH';
+	const HEAD = 'HEAD';
 
 	/**
 	 *
@@ -88,7 +89,8 @@ class Request implements \restlt\RequestInterface{
 		$_POST = null;
 		$_GET = null;
 		$this->headers = $this->buildHeadersList ( $_SERVER );
-		$this->setMethod ( ! empty ( $_SERVER ['X-HTTP-METHOD-OVERRIDE'] ) ? $_SERVER ['X-HTTP-METHOD-OVERRIDE'] : $_SERVER ['REQUEST_METHOD'] );
+		$method = ! empty ( $_SERVER ['X-HTTP-METHOD-OVERRIDE'] ) ? $_SERVER ['X-HTTP-METHOD-OVERRIDE'] : $_SERVER ['REQUEST_METHOD'];
+		$this->setMethod (strtoupper($method));
 		$res = parse_url ( $_SERVER ['REQUEST_URI'] );
 		$this->uri = $res ['path'] ? $res ['path'] : '/';
 	}

@@ -28,7 +28,7 @@ namespace restlt;
  *
  */
 interface ResponseInterface {
-	public function send($data = null);
+	public function send();
 	public function setStatus($status);
 	public function addHeader($name, $value);
 }

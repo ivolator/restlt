@@ -67,13 +67,13 @@ class Server {
 
 	/**
 	 *
-	 * @var restlt\utils\CacheAdaperInterface
+	 * @var \restlt\utils\CacheAdaperInterface
 	 */
 	protected $cacheAdapter;
 
 	/**
 	 *
-	 * @var restlt\utils\MetadataBuilder
+	 * @var \restlt\utils\MetadataBuilder
 	 */
 	protected $metadataBuilder = null;
 
@@ -167,7 +167,7 @@ class Server {
 	 */
 	public function getRequestRouter() {
 		if (! $this->requestRouter) {
-			$this->requestRouter = new RequestRouter ( $this->baseUri );
+			$this->requestRouter = new RequestRouter ($this->getRequest(), $this->baseUri );
 		}
 		return $this->requestRouter;
 	}

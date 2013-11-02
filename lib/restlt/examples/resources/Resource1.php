@@ -30,7 +30,7 @@ class Resource1 extends \restlt\Resource implements \restlt\ResourceInterface{
 				7
 		);
 		$ret = array (
-				1,
+				$obj,
 				2,
 				4,
 				array (

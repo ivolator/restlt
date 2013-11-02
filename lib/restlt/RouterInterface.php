@@ -33,5 +33,6 @@ interface RouterInterface {
 	 * @return \restlt\Route
 	 */
 	public function getRoute();
+	public function getRequest();
 }
 

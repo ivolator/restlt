@@ -97,6 +97,26 @@ Similar to the 'GET' we have built the 'PUT' method  `Resource1::putMy()`. When 
 The methods must return data in order for you to receive it as a XML or JSON formatted string at the client.
 The JSON or XML conversion happens automatically. More on adding your own twist to the output will be discussed in the advanced section.
  
+### Accessing the GET, POST and raw data within the resources' methods.
+```php
+//accessing GET
+        $params = $this->request->getQueryParams ();
+//accessing POST
+        $params = $this->request->getPostParams ();
+```   
+Get the raw data as it was submited in the body
+```php
+        $postPayload= $this->request->getRawPost (); 
+```
+Get one parameter at a time
+```php
+        $this->getRequest()->get($paramName);
+```
+Obtain the parameter ($_REQUEST) and at the same time provide a default value. This helps you avoid the checks for set or empty values
+```php
+        $this->getRequest()->get('page',1);
+```
+
 ## Some advanced usage
 ### Event Hooks
 Let's say you need to add some twist to the execution flow or put some checks, logging or whatever comes to mind. There are three event hooks that provide a way to do that. The callbacks provided to these event hooks need to be Callable. The method or function signatures are provided bellow.
@@ -242,7 +262,7 @@ Here is an example how to you could use that feature.
  }
 ```
 ## In need for custom output?
-Out of the box RestLite comse with json and xml output strategies. 
+Out of the box RestLite comes with json and xml output strategies. 
 Let's say you need to provide some home grown obfuscated or even encrypted reponse. 
 For whatever the reason is, you might want to do that one day.
 It could be that you want to communicate with the client via some specific protocol and want to wrap the data in it. 
@@ -253,11 +273,11 @@ First we need to create a class that implements the `\restlt\utils\output\TypeCo
 namespace my\name\space;
 class SerializeOutputStrategy implements \restlt\utils\output\TypeConversionStrategyInterface {
     /**
-	 * @see \restlt\utils\output\TypeConversionStrategyInterface::execute()
-	 */
-	public function execute(\restlt\Result $data) {
-		return serialize($data);
-	}
+     * @see \restlt\utils\output\TypeConversionStrategyInterface::execute()
+     */
+    public function execute(\restlt\Result $data) {
+        return serialize($data);
+    }
 }
 ```
 
@@ -289,9 +309,9 @@ the same goes if you decide to extend the json converter.
 |Annotation          |   Where    |  Required | Values |
 |--------------------|:----------:|----------:|--------|
 |  @resourceBaseUri  | CLASS      | YES       | string |
-|  @baseUri          | METHDO     | NO        | string/ default '/' |
-| @cacheControlMaxAge| METHOD     | NO | 
-| @method            | METHOD     | YES|
+|  @baseUri          | METHDO     | NO        | string/regex or empty |
+| @cacheControlMaxAge| METHOD     | NO        | integer| 
+| @method            | METHOD     | YES       | GET, POST, PUT, PATCH, DELETE |
  
 
 ### Resource class doc block
