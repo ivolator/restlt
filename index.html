@@ -167,6 +167,36 @@ The JSON or XML conversion happens automatically. More on adding your own twist 
 </pre></div>
 
 <h2>
+<a name="handling-errors" class="anchor" href="#handling-errors"><span class="octicon octicon-link"></span></a>Handling errors</h2>
+
+<h3>
+<a name="exceptions" class="anchor" href="#exceptions"><span class="octicon octicon-link"></span></a>Exceptions</h3>
+
+<p>All exceptions thrown by the server will end up as 404 or 500 errors.
+If you throw your own error the result code will be 500, but you have the controll of what gets thrown or caught. 
+The message resulting from the latter will be sent to the server in the error object as part of the result.
+For example if you throw <code>throw new \Exception('My Error',1000);</code> you will get the follwing in the response body.
+The HTTP status code however will be 500.</p>
+
+<div class="highlight highlight-xml"><pre><span class="cp">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="nt">&lt;result&gt;</span>
+  <span class="nt">&lt;errors&gt;</span>
+    <span class="nt">&lt;error&gt;</span>
+      <span class="nt">&lt;error&gt;</span>
+        <span class="nt">&lt;message&gt;</span>My Error<span class="nt">&lt;/message&gt;</span>
+        <span class="nt">&lt;code&gt;</span>1000<span class="nt">&lt;/code&gt;</span>
+      <span class="nt">&lt;/error&gt;</span>
+    <span class="nt">&lt;/error&gt;</span>
+  <span class="nt">&lt;/errors&gt;</span>
+<span class="nt">&lt;/result&gt;</span>
+</pre></div>
+
+<h3>
+<a name="phpuser-errors" class="anchor" href="#phpuser-errors"><span class="octicon octicon-link"></span></a>PHP/user errors</h3>
+
+<p>Errors caused by  E_ERROR, E_USER_ERROR, E_WARNING, E_USER_WARNING, E_CORE_ERROR, E_CORE_WARNING, E_DEPRECATED and E_STRICT will end up as 500. You can see this error in the php error log.  </p>
+
+<h2>
 <a name="some-advanced-usage" class="anchor" href="#some-advanced-usage"><span class="octicon octicon-link"></span></a>Some advanced usage</h2>
 
 <h3>
@@ -422,19 +452,19 @@ the same goes if you decide to extend the json converter.</p>
 <td>@baseUri</td>
 <td align="center">METHDO</td>
 <td align="right">NO</td>
-<td>string - default '/'</td>
+<td>string/regex or empty</td>
 </tr>
 <tr>
 <td>@cacheControlMaxAge</td>
 <td align="center">METHOD</td>
 <td align="right">NO</td>
-<td></td>
+<td>integer</td>
 </tr>
 <tr>
 <td><a href="https://github.com/method" class="user-mention">@method</a></td>
 <td align="center">METHOD</td>
 <td align="right">YES</td>
-<td></td>
+<td>GET, POST, PUT, PATCH, DELETE</td>
 </tr>
 </tbody>
 </table><h3>
