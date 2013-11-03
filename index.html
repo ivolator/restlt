@@ -36,7 +36,38 @@ Most of the sub-components are extensible or replaceable. This would let you mod
 The current version is still in alpha. Any feedback is appreciated!</p>
 
 <h3>
+<a name="installing-the-library" class="anchor" href="#installing-the-library"><span class="octicon octicon-link"></span></a>Installing the library</h3>
+
+<h2>
+<a name="composer" class="anchor" href="#composer"><span class="octicon octicon-link"></span></a>Composer</h2>
+
+<p>If you are using <a href="http://getcomposer.org">Composer</a> to manage your dependencies you need to add RestLte to you composer.js file.</p>
+
+<div class="highlight highlight-json"><pre><span class="p">{</span>
+    <span class="nt">"require"</span><span class="p">:{</span>
+        <span class="nt">"restlt/restlt"</span><span class="p">:</span><span class="s2">"1.0.*@dev"</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>Note the <code>@dev</code> after the version. The reason for this is that the project is still in alpha.
+Once the project is tagged as a non alpha or beta release , you can skip that part.</p>
+
+<h2>
+<a name="downloading-the-zip-or-tar-files" class="anchor" href="#downloading-the-zip-or-tar-files"><span class="octicon octicon-link"></span></a>Downloading the ZIP or TAR files</h2>
+
+<p>Simply download the compressed file and unzip in your library folder.</p>
+
+<h3>
 <a name="basic-usage-server-end-point-setup" class="anchor" href="#basic-usage-server-end-point-setup"><span class="octicon octicon-link"></span></a>Basic usage (server end point setup)</h3>
+
+<p>RestLite is using <a href="http://getcomposer.org/doc/01-basic-usage.md#autoloading">Composer's autoloader</a>. If you have installed the lirary using the <a href="http://getcomposer.org">Composer</a>, you should use it.</p>
+
+<div class="highlight highlight-php"><pre>    <span class="nv">$al</span> <span class="o">=</span> <span class="k">require_once</span> <span class="nx">pat</span><span class="o">/</span><span class="nx">to</span><span class="o">/</span><span class="nx">vendor</span><span class="o">/</span><span class="nx">autoload</span><span class="o">.</span><span class="nx">php</span><span class="s2">";</span>
+</pre></div>
+
+<p>If you have installed from the zip, then use an autoloader of your own. 
+The autoloader should be able to resolve namespaces.</p>
 
 <div class="highlight highlight-php"><pre><span class="c1">//Get instance of the server by passing the server base url</span>
 <span class="nv">$s</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Server</span> <span class="p">(</span> <span class="s1">'/'</span> <span class="p">);</span>
