@@ -180,29 +180,28 @@ class Response implements \restlt\ResponseInterface {
 			$data = $this->getRoutedResponse ( $this->requestRouter );
 		}
 		$contentType = $this->requestRouter->getRequest ()->getContentType ();
+
 		$conversionStrategy = $this->getConversionStrategy ( $contentType );
 		if ($this->forceResponseType) {
 			$conversionStrategy = $this->getConversionStrategy ( $this->forceResponseType );
 		}
 
-		if ($data) {
-			$route = $this->requestRouter->getRoute ();
-
-			if ($route->getOutputTypeOverrideExt ()) {
-				$conversionStrategy = $this->getConversionStrategy ( $route->getOutputTypeOverrideExt () );
-			} elseif ($this->forceResponseType) {
-				$conversionStrategy = $this->getConversionStrategy ( $this->forceResponseType );
-			}
-
-			if (in_array ( 'application/' . $route->getOutputTypeOverrideExt (), array (
-					self::APPLICATION_JSON,
-					self::APPLICATION_XML
-			) )) {
-				$contentType = 'application/' . $route->getOutputTypeOverrideExt ();
-			}
-
-			$this->addHeader ( 'Content-Type', $contentType );
+		$route = $this->requestRouter->getRoute ();
+		if ($route->getOutputTypeOverrideExt ()) {
+			$conversionStrategy = $this->getConversionStrategy ( $route->getOutputTypeOverrideExt () );
+		} elseif ($this->forceResponseType) {
+			$conversionStrategy = $this->getConversionStrategy ( $this->forceResponseType );
 		}
+
+		if (in_array ( 'application/' . $route->getOutputTypeOverrideExt (), array (
+				self::APPLICATION_JSON,
+				self::APPLICATION_XML
+		) )) {
+			$contentType = 'application/' . $route->getOutputTypeOverrideExt ();
+		}
+
+		$this->addHeader ( 'Content-Type', $contentType );
+
 		$this->_send ( $data?$data:null, $conversionStrategy );
 	}
 
@@ -233,7 +232,7 @@ class Response implements \restlt\ResponseInterface {
 		if ($data && $this->requestRouter->getRequest()->getMethod() !== Request::HEAD) {
 			$this->getResultObject ()->setData ( $data );
 			echo $this->getResultObject ()->toString ( $conversionStrategy );
-		}
+		} else
 		if($this->displayError){
 			$this->getResultObject ()->addError($this->displayError->getMessage(),$this->displayError->getCode());
 			echo $this->getResultObject ()->toString ( $conversionStrategy );
@@ -241,8 +240,6 @@ class Response implements \restlt\ResponseInterface {
 	}
 
 	/**
-	 *
-	 * @todo
 	 *
 	 * @param string $contentType
 	 * @return TypeConversionStrategyInterface
@@ -269,6 +266,7 @@ class Response implements \restlt\ResponseInterface {
 		if ($class && ! class_exists ( $class, true )) {
 			throw new ApplicationException ( 'Conversion strategy not found' );
 		}
+
 		// fallback to JSON
 		if (! $class) {
 			$class = $this->responseOutputStrategies ['json'];
@@ -420,7 +418,7 @@ class Response implements \restlt\ResponseInterface {
 
 	public function shutdown() {
 		$error = error_get_last ();
-		if (in_array ( $error ['type'], [
+		if (in_array ( $error ['type'], array(
 				E_ERROR,
 				E_USER_ERROR,
 				E_WARNING,
@@ -429,7 +427,7 @@ class Response implements \restlt\ResponseInterface {
 				E_CORE_WARNING,
 				E_DEPRECATED,
 				E_STRICT
-		] )) {
+		) )) {
 			$msg = 'An error with message ' . $error ['message'] . ' occured at line ' . $error ['line'] . ' in ' . $error ['file'];
 			throw new \Exception ( $msg, Response::INTERNALSERVERERROR );
 		}

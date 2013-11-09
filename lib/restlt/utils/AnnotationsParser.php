@@ -33,19 +33,6 @@ use restlt\exceptions\SystemException;
  */
 class AnnotationsParser {
 
-	protected $validMethodAnnnotations = array('method', 'methodUri','cacheControlMaxAge');
-	protected $validClassAnnotations = array('resourceBaseUri' );
-
-	/**
-	 *
-	 * @param array $resourceFiles
-	 */
-	public function __construct($resourceFiles = array()) {
-		if ($resourceFiles) {
-			$this->resourceFiles = $resourceFiles;
-		}
-	}
-
 	/**
 	 * Retruns uri meta for given class
 	 *
@@ -56,7 +43,7 @@ class AnnotationsParser {
 	public function getClassMeta($className) {
 		try {
 			$classRefl = new \ReflectionClass ( $className );
-			$classDocComment = $this->parseDocComment ( $classRefl->getDocComment ()/* , $this->validClassAnnotations */ );
+			$classDocComment = $this->parseDocComment ( $classRefl->getDocComment ());
 		} catch (\ReflectionException $e ) {
 			throw new SystemException ( $e->getMessage (), $e->getCode (), $e );
 		}
@@ -75,7 +62,7 @@ class AnnotationsParser {
 		try {
 			$classRefl = new \ReflectionClass ( $className );
 			foreach ( $classRefl->getMethods () as $methodRefl ) {
-				$res = $this->parseDocComment ( $methodRefl->getDocComment ()/* , $this->validMethodAnnnotations */ );
+				$res = $this->parseDocComment ( $methodRefl->getDocComment () );
 				if($res){
 					$res['function'] = $methodRefl->getName();
 					$ret[] = $res;
@@ -94,7 +81,7 @@ class AnnotationsParser {
 	 * @return array
 	 * @throws \InvalidArgumentException
 	 */
-	protected function parseDocComment($docComment, array $whitelist = array()) {
+	protected function parseDocComment($docComment) {
 		if (! $docComment) {
 			return array();
 		}
@@ -104,42 +91,10 @@ class AnnotationsParser {
 		if ($res) {
 			foreach ( array_values ( $res ) as $value ) {
 				$line = explode ( ' ', $value );
-				$docName = preg_replace ( '#^@#', '', array_shift ( $line ) );
-				if (! $whitelist || ($whitelist && in_array ( $docName, $whitelist ))) {
-					$ret [$docName] = trim ( implode ( ' ', $line ) );
-				}
+				$docName = trim(preg_replace ( '#^@#', '', array_shift ( $line ) ));
+				$ret [$docName] = trim ( implode ( ' ', $line ) );
 			}
 		}
 		return $ret;
 	}
-
-	/**
-	 * @return the $validClassAnnotations
-	 */
-	public function getValidClassAnnotations() {
-		return $this->validClassAnnotations;
-	}
-
-	/**
-	 * @param multitype:string  $validClassAnnotations
-	 */
-	public function addClassAnnotation($classAnnotation) {
-		$this->validClassAnnotations[] = $classAnnotation;
-	}
-
-	/**
-	 * @return the $validMethodAnnnotations
-	 */
-	public function getValidMethodAnnnotations() {
-		return $this->validMethodAnnnotations;
-	}
-
-	/**
-	 * @param multitype:string  $validClassAnnotations
-	 */
-	public function addMethodAnnotation($methodAnnotation) {
-		$this->validMethodAnnnotations[] = $methodAnnotation;
-	}
-
-
 }

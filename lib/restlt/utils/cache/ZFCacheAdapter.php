@@ -53,7 +53,7 @@ class ZFCacheAdapter implements CacheAdapterInterface {
 		if ($cacheInstance && in_array ( 'Zend\Cache\Storage\StorageInterface', $ifaces )) {
 			$this->zendCache = $cacheInstance;
 		} else {
-			throw ApplicationException::cacheException ( 'You need to pass an instance implementin StorageInterface' );
+			throw ApplicationException::cacheException ( 'You need to pass an instance implementing Zend\Cache\Storage\StorageInterface' );
 		}
 	}
 

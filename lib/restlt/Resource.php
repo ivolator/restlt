@@ -8,13 +8,13 @@ use restlt\exceptions\ApplicationException;
  * @author Vo
  *
  */
-class Resource {
+class Resource implements ResourceInterface{
 
 	const ON_BEFORE = 'before';
 	const ON_AFTER = 'after';
 	const ON_ERROR = 'error';
 
-	protected $callbacks = [ ];
+	protected $callbacks = array();
 
 	/**
 	 *
@@ -34,7 +34,7 @@ class Resource {
 	 */
 	protected $annotations = null;
 
-	public function __construct(\restlt\Request $request,\restlt\Response $response){
+	public function __construct(\restlt\RequestInterface $request, \restlt\ResponseInterface $response){
 		$this->setRequest($request);
 		$this->setResponse($response);
 	}
