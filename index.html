@@ -36,38 +36,7 @@ Most of the sub-components are extensible or replaceable. This would let you mod
 The current version is still in alpha. Any feedback is appreciated!</p>
 
 <h3>
-<a name="installing-the-library" class="anchor" href="#installing-the-library"><span class="octicon octicon-link"></span></a>Installing the library</h3>
-
-<h2>
-<a name="composer" class="anchor" href="#composer"><span class="octicon octicon-link"></span></a>Composer</h2>
-
-<p>If you are using <a href="http://getcomposer.org">Composer</a> to manage your dependencies you need to add RestLte to you composer.js file.</p>
-
-<div class="highlight highlight-json"><pre><span class="p">{</span>
-    <span class="nt">"require"</span><span class="p">:{</span>
-        <span class="nt">"restlt/restlt"</span><span class="p">:</span><span class="s2">"1.0.*@dev"</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-
-<p>Note the <code>@dev</code> after the version. The reason for this is that the project is still in alpha.
-Once the project is tagged as a non alpha or beta release , you can skip that part.</p>
-
-<h2>
-<a name="downloading-the-zip-or-tar-files" class="anchor" href="#downloading-the-zip-or-tar-files"><span class="octicon octicon-link"></span></a>Downloading the ZIP or TAR files</h2>
-
-<p>Simply download the compressed file and unzip in your library folder.</p>
-
-<h3>
 <a name="basic-usage-server-end-point-setup" class="anchor" href="#basic-usage-server-end-point-setup"><span class="octicon octicon-link"></span></a>Basic usage (server end point setup)</h3>
-
-<p>RestLite is using <a href="http://getcomposer.org/doc/01-basic-usage.md#autoloading">Composer's autoloader</a>. If you have installed the lirary using the <a href="http://getcomposer.org">Composer</a>, you should use it.</p>
-
-<div class="highlight highlight-php"><pre>    <span class="nv">$al</span> <span class="o">=</span> <span class="k">require_once</span> <span class="nx">pat</span><span class="o">/</span><span class="nx">to</span><span class="o">/</span><span class="nx">vendor</span><span class="o">/</span><span class="nx">autoload</span><span class="o">.</span><span class="nx">php</span><span class="s2">";</span>
-</pre></div>
-
-<p>If you have installed from the zip, then use an autoloader of your own. 
-The autoloader should be able to resolve namespaces.</p>
 
 <div class="highlight highlight-php"><pre><span class="c1">//Get instance of the server by passing the server base url</span>
 <span class="nv">$s</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Server</span> <span class="p">(</span> <span class="s1">'/'</span> <span class="p">);</span>
@@ -127,15 +96,7 @@ Note that the full URI for your resource is a combination of the server base URI
 <span class="sd"> * @resourceBaseUri /resource1</span>
 <span class="sd"> */</span>
 <span class="k">class</span> <span class="nc">Resource1</span> <span class="k">extends</span> <span class="nx">\restlt\Resource</span> <span class="p">{</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nx">\restlt\Request</span> <span class="nv">$request</span><span class="p">,</span> <span class="nx">\restlt\Response</span> <span class="nv">$response</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">parent</span><span class="o">::</span><span class="na">__construct</span><span class="p">(</span><span class="nv">$request</span><span class="p">,</span><span class="nv">$resource</span><span class="p">);</span>
-        <span class="nv">$f1</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$r</span><span class="p">)</span> <span class="p">{</span>
-        <span class="p">};</span>
-        <span class="nv">$f2</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$req</span><span class="p">,</span><span class="nv">$res</span><span class="p">,</span><span class="nv">$ret</span><span class="p">)</span> <span class="p">{</span>
-        <span class="p">};</span>
-        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">on</span> <span class="p">(</span> <span class="s1">'before'</span><span class="p">,</span> <span class="s1">'getMe'</span><span class="p">,</span> <span class="nv">$f1</span> <span class="p">);</span>
-        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">on</span> <span class="p">(</span> <span class="s1">'after'</span><span class="p">,</span> <span class="s1">'getMe'</span><span class="p">,</span> <span class="nv">$f2</span> <span class="p">);</span>
-    <span class="p">}</span>
+
     <span class="sd">/**</span>
 <span class="sd">     * Note that the regex in "()" gets converted to a parameter of the method</span>
 <span class="sd">     * @method GET</span>
@@ -155,8 +116,8 @@ Note that the full URI for your resource is a combination of the server base URI
 <span class="sd">     */</span>
     <span class="k">public</span> <span class="k">function</span> <span class="nf">putMe</span><span class="p">()</span> <span class="p">{</span>
         <span class="c1">//fetch the parameters from the query string</span>
-        <span class="nv">$params</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">getQueryParams</span> <span class="p">();</span>
-        <span class="nv">$params</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">getPostParams</span> <span class="p">();</span>
+        <span class="nv">$queryParams</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">getQueryParams</span> <span class="p">();</span>
+        <span class="nv">$postParams</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">getPostParams</span> <span class="p">();</span>
 
         <span class="c1">//get the raw data</span>
         <span class="nv">$postPayload</span><span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">getRawPost</span> <span class="p">();</span>
