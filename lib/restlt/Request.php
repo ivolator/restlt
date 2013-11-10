@@ -123,27 +123,12 @@ class Request implements \restlt\RequestInterface{
 
 	/**
 	 *
-	 * @param array $queryStringParams
-	 */
-	public function setQueryParams($queryStringParams) {
-		$this->queryParams = $queryStringParams;
-	}
-
-	/**
-	 *
 	 * @return the $postParams
 	 */
 	public function getPostParams() {
 		return $this->postParams;
 	}
 
-	/**
-	 *
-	 * @param array $postParams
-	 */
-	public function setPostParams($postParams) {
-		$this->postParams = $postParams;
-	}
 
 	/**
 	 *
@@ -151,14 +136,6 @@ class Request implements \restlt\RequestInterface{
 	 */
 	public function getRawPost() {
 		return $this->rawPost;
-	}
-
-	/**
-	 *
-	 * @param string $rawPost
-	 */
-	public function setRawPost($rawPost) {
-		$this->rawPost = $rawPost;
 	}
 
 	/**
@@ -171,18 +148,10 @@ class Request implements \restlt\RequestInterface{
 
 	/**
 	 *
-	 * @param array $headers
-	 */
-	public function setHeaders($headers) {
-		$this->headers = $headers;
-	}
-
-	/**
-	 *
 	 * @param array $SERVER
 	 * @return array
 	 */
-	public function buildHeadersList(array $SERVER = array()) {
+	protected function buildHeadersList(array $SERVER = array()) {
 		$ret = array ();
 		if($SERVER) {
 			foreach ( $SERVER as $k => $v ) {

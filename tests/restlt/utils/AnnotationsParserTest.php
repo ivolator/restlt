@@ -13,8 +13,8 @@ class AnnotationsParserTest extends \PHPUnit_Framework_TestCase
     protected function setUp ()
     {
         parent::setUp();
-        $this->ap = $this->getMockBuilder('\restlt\utils\AnnotationsParser')->getMock();
-        $this->ap = new \restlt\utils\AnnotationsParser();
+        $this->ap = $this->getMockBuilder('\restlt\utils\meta\AnnotationsParser')->getMock();
+        $this->ap = new \restlt\utils\meta\AnnotationsParser();
     }
 
     /**

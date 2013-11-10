@@ -1,5 +1,4 @@
 <?php
-
 /**
 * The MIT License (MIT)
 *
@@ -102,7 +101,7 @@ class Response implements \restlt\ResponseInterface {
 
 	/**
 	 *
-	 * @var \restlt\RequestRouter
+	 * @var \restlt\utils\routing\RouterInterface
 	 */
 	protected $requestRouter = null;
 
@@ -127,7 +126,7 @@ class Response implements \restlt\ResponseInterface {
 	 * @param Request $request
 	 * @param Result $returnValue
 	 */
-	protected function getRoutedResponse(RouterInterface $router) {
+	protected function getRoutedResponse(\restlt\utils\routing\RouterInterface $router) {
 		$ret = null;
 
 		$route = $router->getRoute ();
@@ -446,7 +445,7 @@ class Response implements \restlt\ResponseInterface {
 	 *
 	 * @param \restlt\RequestRouter $requestRouter
 	 */
-	public function setRequestRouter(RouterInterface $requestRouter) {
+	public function setRequestRouter(\restlt\utils\routing\RouterInterface $requestRouter) {
 		$this->requestRouter = $requestRouter;
 		return $this;
 	}

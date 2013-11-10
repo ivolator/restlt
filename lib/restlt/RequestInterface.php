@@ -39,4 +39,9 @@ interface RequestInterface {
 	 * @return array
 	 */
 	public function getHeaders();
+
+	/**
+	 * @return string
+	 */
+	public function getContentType();
 }

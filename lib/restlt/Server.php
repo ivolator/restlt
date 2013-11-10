@@ -29,6 +29,7 @@ use restlt\utils\meta\MetadataBuilder;
 use restlt\exceptions\ServerException;
 use restlt\utils\di\ServiceContainer;
 use restlt\utils\meta\MetadataBuilderInterface;
+use restlt\utils\meta\AnnotationsParser;
 
 /**
  *
@@ -172,7 +173,7 @@ class Server {
 	 */
 	public function getRequestRouter() {
 		if (! $this->requestRouter) {
-			$this->requestRouter = new RequestRouter ( $this->request, $this->baseUri );
+			$this->requestRouter = new \restlt\utils\routing\RequestRouter( $this->request, $this->baseUri );
 		}
 		return $this->requestRouter;
 	}
@@ -182,7 +183,7 @@ class Server {
 	 * @param field_type $requestRouter
 	 * @return \restlt\Server
 	 */
-	public function setRequestRouter(RouterInterface $requestRouter) {
+	public function setRequestRouter(\restlt\utils\routing\RouterInterface $requestRouter) {
 		$this->requestRouter = $requestRouter;
 		return $this;
 	}
@@ -258,7 +259,7 @@ class Server {
 	public function getMetadataBuilder() {
 		if (! $this->metadataBuilder) {
 			$mdb = new MetadataBuilder ( $this, $this->getResourceClasses() );
-			$mdb->setAnnotationsParser(new utils\AnnotationsParser ());
+			$mdb->setAnnotationsParser(new AnnotationsParser());
 			if ($this->getCacheAdapter ()) {
 				$cache = new Cache ( $this->getCacheAdapter () );
 				$mdb->setCache ( $cache );
