@@ -17,7 +17,6 @@ class Resource1 extends \restlt\Resource {
 		$f3 = function ($request, $response, $e) {
 			mail('user@example.com', 'Error in resource', $e->getMessage());
 		};
-
 		$this->on ( self::ON_BEFORE, 'getMe', $f1 );
 		$this->on ( self::ON_AFTER, 'getMe', $f2 );
 		$this->on ( self::ON_ERROR, 'getMe', $f3 );
@@ -31,6 +30,9 @@ class Resource1 extends \restlt\Resource {
 	public function getMe($id = '') {
 		$obj = new \stdClass ();
 		$custom = $this->annotations->get('custom');
+		$this->addError('Wrong Value 1','1001');
+		$this->addError('Wrong Value 2','1002');
+		$this->addError('Wrong Value 3','1003');
 		$obj->a = array (
 				9,
 				8,

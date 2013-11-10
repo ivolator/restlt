@@ -156,6 +156,7 @@ class Response implements \restlt\ResponseInterface {
 					$this->displayError = $e;
 				}
 				$resourceObj->clearCallbacks ();
+				$this->setUserErrors($resourceObj);
 			}
 		} else {
 			$this->status = $this->status && Response::OK === $this->status ? self::NOTFOUND : $this->status;
@@ -179,6 +180,7 @@ class Response implements \restlt\ResponseInterface {
 		if ($this->status === self::OK && $this->requestRouter && $this->requestRouter->getRoute ()) {
 			$data = $this->getRoutedResponse ( $this->requestRouter );
 		}
+
 		$contentType = $this->requestRouter->getRequest ()->getContentType ();
 
 		$conversionStrategy = $this->getConversionStrategy ( $contentType );
@@ -186,14 +188,20 @@ class Response implements \restlt\ResponseInterface {
 			$conversionStrategy = $this->getConversionStrategy ( $this->forceResponseType );
 		}
 
-		$route = $this->requestRouter->getRoute ();
-		if ($route->getOutputTypeOverrideExt ()) {
+		$route = null;
+		try{
+			$route = $this->requestRouter->getRoute ();
+		} catch (\restlt\exceptions\ServerException $e){
+			$this->setStatus($e->getCode());
+		}
+
+		if ($route && $route->getOutputTypeOverrideExt ()) {
 			$conversionStrategy = $this->getConversionStrategy ( $route->getOutputTypeOverrideExt () );
 		} elseif ($this->forceResponseType) {
 			$conversionStrategy = $this->getConversionStrategy ( $this->forceResponseType );
 		}
 
-		if (in_array ( 'application/' . $route->getOutputTypeOverrideExt (), array (
+		if ($route && in_array ( 'application/' . $route->getOutputTypeOverrideExt (), array (
 				self::APPLICATION_JSON,
 				self::APPLICATION_XML
 		) )) {
@@ -202,7 +210,7 @@ class Response implements \restlt\ResponseInterface {
 
 		$this->addHeader ( 'Content-Type', $contentType );
 
-		$this->_send ( $data?$data:null, $conversionStrategy );
+		$this->_send ( $data ? $data : null, $conversionStrategy );
 	}
 
 	/**
@@ -227,6 +235,7 @@ class Response implements \restlt\ResponseInterface {
 			$hStr = $header . ': ' . $value;
 			header ( $hStr, true, $this->status );
 		}
+
 
 		// prepare the payload if any
 		if ($data && $this->requestRouter->getRequest()->getMethod() !== Request::HEAD) {
@@ -456,5 +465,19 @@ class Response implements \restlt\ResponseInterface {
 	 */
 	public function getAnnotation() {
 		return $this->annotations;
+	}
+
+	/**
+	 * Add errors to the response added by some interaction in the resource methods
+	 * @param ResourceInterface $resource
+	 */
+	protected function setUserErrors(ResourceInterface $resource){
+		$errorStack = $resource->getErrors();
+		$errorStack->rewind();
+		while ($errorStack->valid()){
+			$error = $errorStack->pop();
+			$this->getResultObject ()->addError($error[0],isset($error[1]) ? $error[1] : null);
+			$errorStack->next();
+		}
 	}
 }

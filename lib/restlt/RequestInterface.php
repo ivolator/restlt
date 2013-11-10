@@ -44,4 +44,19 @@ interface RequestInterface {
 	 * @return string
 	 */
 	public function getContentType();
+
+	/**
+	 * @return array
+	 */
+	public function getQueryParams();
+
+	/**
+	 * @return array
+	 */
+	public function getPostParams();
+
+	/**
+	 * @return string
+	 */
+	public function getRawPost();
 }

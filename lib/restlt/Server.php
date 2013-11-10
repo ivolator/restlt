@@ -115,12 +115,9 @@ class Server {
 			$this->getRequestRouter ()->setResources ( $resources );
 			$this->getResponse ()->setRequestRouter($this->getRequestRouter())->send();
 			exit;
-		} catch ( \restlt\exceptions\ServerException $e ) {
-			$this->getResponse ()->setStatus ( $e->getCode () );
 		} catch ( \Exception $e ) {
 			$this->getResponse ()->setStatus ( Response::INTERNALSERVERERROR );
 		}
-
 		$this->getResponse ()->send ();
 		exit;
 	}

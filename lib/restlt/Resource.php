@@ -35,7 +35,7 @@ class Resource implements ResourceInterface{
 	const ON_AFTER = 'after';
 	const ON_ERROR = 'error';
 
-	protected $callbacks = array();
+	private $callbacks = array();
 
 	/**
 	 *
@@ -55,9 +55,17 @@ class Resource implements ResourceInterface{
 	 */
 	protected $annotations = null;
 
+	/**
+	 * User Errors
+	 * Use these when no exception is thrown and you need to return 200 with some error feeddback
+	 * @var \SplStack
+	 */
+	protected $errors = array();
+
 	public function __construct(RequestInterface $request, ResponseInterface $response){
 		$this->setRequest($request);
 		$this->setResponse($response);
+		$this->errors = new \SplStack();
 	}
 
 	/**
@@ -170,5 +178,30 @@ class Resource implements ResourceInterface{
 	public function setAnnotations($annotations) {
 		$this->annotations = $annotations;
 	}
+
+	/**
+	 *
+	 * @param string $errorMessage
+	 * @param integer $errorCode
+	 */
+	public function addError($errorMessage,$errorCode = null){
+		$this->errors->push(array($errorMessage,$errorCode));
+	}
+
+	/**
+	 * @return the $errors
+	 */
+	public function getErrors() {
+		return $this->errors;
+	}
+
+	/**
+	 * @param multitype: $errors
+	 */
+	public function setErrors(\SplStack $errors) {
+		$this->errors = $errors;
+	}
+
+
 
 }

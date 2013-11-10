@@ -25,6 +25,7 @@ namespace restlt\utils\routing;
 
 use restlt\exceptions\ServerException;
 use restlt\exceptions\SystemException;
+use restlt\exceptions\ApplicationException;
 
 /**
  * Simple routing mechanism
@@ -57,9 +58,11 @@ class RequestRouter implements RouterInterface{
 	 *
 	 * @param string $serverBaseUri
 	 */
-	public function __construct(\restlt\RequestInterface $request, $serverBaseUri = '') {
+	public function __construct(\restlt\RequestInterface $request, $serverBaseUri) {
 		if ($serverBaseUri) {
 			$this->serverBaseUri = $serverBaseUri;
+		} else {
+			throw new ApplicationException('Base URI must be defined!');
 		}
 		$this->request = $request;
 	}
