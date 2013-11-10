@@ -8,12 +8,19 @@ namespace restlt\examples\resources;
 class Resource1 extends \restlt\Resource implements \restlt\ResourceInterface{
 	public function __construct(\restlt\RequestInterface $request, \restlt\ResponseInterface $response) {
 		parent::__construct($request, $response);
-		$f1 = function ($r) {
+		$f1 = function ($request) {
 		};
-		$f2 = function ($r) {
+
+		$f2 = function ($request,$response,$return) {
 		};
+
+		$f3 = function ($request,$response,$e) {
+			mail('user@example.com', 'Error in resource', $e->getMessage());
+		};
+
 		$this->on ( self::ON_BEFORE, 'getMe', $f2 );
 		$this->on ( self::ON_AFTER, 'getMe', $f1 );
+		$this->on ( self::ON_ERROR, 'getMe', $f3 );
 	}
 	/**
 	 *
@@ -45,6 +52,7 @@ class Resource1 extends \restlt\Resource implements \restlt\ResourceInterface{
 				),
 				$custom
 		);
+		trigger_error('Something happened',E_USER_ERROR);
 		return $ret;
 	}
 
