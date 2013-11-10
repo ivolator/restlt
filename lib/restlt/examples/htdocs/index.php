@@ -2,7 +2,6 @@
 date_default_timezone_set('America/New_York') ;
 define('APP_ROOT' ,'/var/www/restlt');
 use restlt\Server;
-use restlt\Response;
 $al = require_once APP_ROOT . '/vendor/autoload.php';
 $al->set ( 'restlt\\', APP_ROOT . '/restlt/lib' );
 

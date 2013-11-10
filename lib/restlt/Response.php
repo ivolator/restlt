@@ -151,7 +151,7 @@ class Response implements \restlt\ResponseInterface {
 					// after method was processed
 					$this->executeCallbacks ( Resource::ON_AFTER, $route->getFunctionName (), $cbs, array (	$router->getRequest (),	$this, $ret	) );
 				} catch ( \Exception $e ) {
-					$this->executeCallbacks ( Resource::ON_ERROR, $route->getFunctionName (), $cbs, array (	$router->getRequest (),	$this,$e) );
+					$this->executeCallbacks ( Resource::ON_ERROR, $route->getFunctionName (), $cbs, array (	$router->getRequest (),	$this, $e) );
 					$this->setStatus ( Response::INTERNALSERVERERROR );
 					$this->executeCallbacks ( Resource::ON_AFTER, $route->getFunctionName (), $cbs, array (	$router->getRequest (),	$this, $ret	) );
 					$this->displayError = $e;
@@ -401,6 +401,7 @@ class Response implements \restlt\ResponseInterface {
 	 */
 	protected function executeCallbacks($event, $method, $cbs = array(), $param_arr = array()) {
 		if ($cbs && is_array ( $cbs )) {
+
 			$_cbs = array ();
 			if (isset ( $cbs [$event] )) {
 				$_cbs = $cbs [$event];

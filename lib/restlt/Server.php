@@ -25,9 +25,10 @@ namespace restlt;
 
 use restlt\utils\cache\CacheAdapterInterface;
 use restlt\utils\Cache;
-use restlt\utils\MetadataBuilder;
+use restlt\utils\meta\MetadataBuilder;
 use restlt\exceptions\ServerException;
 use restlt\utils\di\ServiceContainer;
+use restlt\utils\meta\MetadataBuilderInterface;
 
 /**
  *
@@ -74,7 +75,7 @@ class Server {
 
 	/**
 	 *
-	 * @var \restlt\utils\MetadataBuilder
+	 * @var \restlt\utils\meta\MetadataBuilder
 	 */
 	protected $metadataBuilder = null;
 
@@ -94,14 +95,14 @@ class Server {
 	 *
 	 * @param string $baseUri
 	 */
-	public function __construct($baseUri = null, $name = 'RestLite', Request $request = null, Response $response = null) {
+	public function __construct($baseUri = null, $name = 'RestLite', RequestInterface $request = null, ResponseInterface $response = null) {
 		if ($baseUri) {
 			$this->baseUri = $baseUri;
 		}
 		$this->name = $name;
+		register_shutdown_function ( array(	$this, 'shutdown') );
 		if(!$request) $this->setRequest ( new Request () );
 		if(!$response) $this->setResponse ( new Response () );
-		register_shutdown_function ( array(	$this, 'shutdown') );
 	}
 
 	/**
@@ -109,7 +110,7 @@ class Server {
 	 */
 	public function serve() {
 		try {
-			$resources = $this->getMetadataBuilder ()->getResources ();
+			$resources = $this->getMetadataBuilder ()->getResourcesMeta ();
 			$this->getRequestRouter ()->setResources ( $resources );
 			$this->getResponse ()->setRequestRouter($this->getRequestRouter())->send();
 			exit;
@@ -199,7 +200,7 @@ class Server {
 	 * @param field_type $response
 	 * @return \restlt\Server
 	 */
-	public function setResponse($response) {
+	public function setResponse(ResponseInterface $response) {
 		$this->response = $response;
 		return $this;
 	}
@@ -217,7 +218,7 @@ class Server {
 	 * @param field_type $request
 	 * @return \restlt\Server
 	 */
-	public function setRequest($request) {
+	public function setRequest(RequestInterface $request) {
 		$this->request = $request;
 		return $this;
 	}
@@ -252,7 +253,7 @@ class Server {
 
 	/**
 	 *
-	 * @return \restlt\utils\MetadataBuilder $metadataBuilder
+	 * @return \restlt\utils\meta\MetadataBuilderInterface $metadataBuilder
 	 */
 	public function getMetadataBuilder() {
 		if (! $this->metadataBuilder) {
@@ -269,9 +270,9 @@ class Server {
 
 	/**
 	 *
-	 * @param MetadataBuilder $metadataBuilder
+	 * @param \restlt\utils\meta\MetadataBuilderInterface $metadataBuilder
 	 */
-	public function setMetadataBuilder($metadataBuilder) {
+	public function setMetadataBuilder(MetadataBuilderInterface $metadataBuilder) {
 		$this->metadataBuilder = $metadataBuilder;
 		return $this;
 	}

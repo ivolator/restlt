@@ -5,21 +5,21 @@ namespace restlt\examples\resources;
 /**
  * @resourceBaseUri /resource1
  */
-class Resource1 extends \restlt\Resource implements \restlt\ResourceInterface{
+class Resource1 extends \restlt\Resource {
 	public function __construct(\restlt\RequestInterface $request, \restlt\ResponseInterface $response) {
 		parent::__construct($request, $response);
 		$f1 = function ($request) {
 		};
 
-		$f2 = function ($request,$response,$return) {
+		$f2 = function ($request, $response, $return) {
 		};
 
-		$f3 = function ($request,$response,$e) {
+		$f3 = function ($request, $response, $e) {
 			mail('user@example.com', 'Error in resource', $e->getMessage());
 		};
 
-		$this->on ( self::ON_BEFORE, 'getMe', $f2 );
-		$this->on ( self::ON_AFTER, 'getMe', $f1 );
+		$this->on ( self::ON_BEFORE, 'getMe', $f1 );
+		$this->on ( self::ON_AFTER, 'getMe', $f2 );
 		$this->on ( self::ON_ERROR, 'getMe', $f3 );
 	}
 	/**
@@ -77,7 +77,6 @@ class Resource1 extends \restlt\Resource implements \restlt\ResourceInterface{
 				),
 				$obj
 		);
-		throw new \Exception('My Error',1000);
 		return $obj;
 	}
 
