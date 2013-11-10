@@ -153,6 +153,7 @@ class Response implements \restlt\ResponseInterface {
 				} catch ( \Exception $e ) {
 					$this->executeCallbacks ( Resource::ON_ERROR, $route->getFunctionName (), $cbs, array (	$router->getRequest (),	$this,$e) );
 					$this->setStatus ( Response::INTERNALSERVERERROR );
+					$this->executeCallbacks ( Resource::ON_AFTER, $route->getFunctionName (), $cbs, array (	$router->getRequest (),	$this, $ret	) );
 					$this->displayError = $e;
 				}
 				$resourceObj->clearCallbacks ();

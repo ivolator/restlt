@@ -52,7 +52,6 @@ class Resource1 extends \restlt\Resource implements \restlt\ResourceInterface{
 				),
 				$custom
 		);
-		trigger_error('Something happened',E_USER_ERROR);
 		return $ret;
 	}
 
