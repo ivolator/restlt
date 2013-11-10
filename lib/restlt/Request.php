@@ -27,7 +27,6 @@ namespace restlt;
  * @author Vo
  *
  */
-use restlt\exceptions\ServerException;
 
 class Request implements \restlt\RequestInterface{
 
@@ -38,6 +37,14 @@ class Request implements \restlt\RequestInterface{
 	const PATCH = 'PATCH';
 	const HEAD = 'HEAD';
 
+	protected $supportedMethods = array (
+				'POST',
+				'GET',
+				'PUT',
+				'DELETE',
+				'PATCH',
+				'HEAD'
+		);
 	/**
 	 *
 	 * @var array
@@ -88,11 +95,7 @@ class Request implements \restlt\RequestInterface{
 		$this->queryParams = $_GET;
 		$_POST = null;
 		$_GET = null;
-		$this->headers = $this->buildHeadersList ( $_SERVER );
-		$method = ! empty ( $_SERVER ['X-HTTP-METHOD-OVERRIDE'] ) ? $_SERVER ['X-HTTP-METHOD-OVERRIDE'] : $_SERVER ['REQUEST_METHOD'];
-		$this->setMethod (strtoupper($method));
-		$res = parse_url ( $_SERVER ['REQUEST_URI'] );
-		$this->uri = $res ['path'] ? $res ['path'] : '/';
+		$this->headers = $this->buildHeadersList ( !empty($_SERVER) ? $_SERVER : array() );
 	}
 
 	/**
@@ -173,12 +176,20 @@ class Request implements \restlt\RequestInterface{
 	public function setHeaders($headers) {
 		$this->headers = $headers;
 	}
-	public function buildHeadersList(array $SERVER) {
+
+	/**
+	 *
+	 * @param array $SERVER
+	 * @return array
+	 */
+	public function buildHeadersList(array $SERVER = array()) {
 		$ret = array ();
-		foreach ( $SERVER as $k => $v ) {
-			if (stristr ( $k, 'http_' )) {
-				$res = str_ireplace ( 'http_', '', $k );
-				$ret [$res] = $v;
+		if($SERVER) {
+			foreach ( $SERVER as $k => $v ) {
+				if (stristr ( $k, 'http_' )) {
+					$res = str_ireplace ( 'http_', '', $k );
+					$ret [$res] = $v;
+				}
 			}
 		}
 		return $ret;
@@ -189,6 +200,10 @@ class Request implements \restlt\RequestInterface{
 	 * @return the $url
 	 */
 	public function getUri() {
+		if(!$this->uri){
+			$res = parse_url ( $_SERVER ['REQUEST_URI'] );
+			$this->uri = $res ['path'] ? $res ['path'] : '/';
+		}
 		return $this->uri;
 	}
 
@@ -197,26 +212,10 @@ class Request implements \restlt\RequestInterface{
 	 * @return the $method
 	 */
 	public function getMethod() {
-		return $this->method;
-	}
-
-	/**
-	 *
-	 * @param string $method
-	 */
-	public function setMethod($method) {
-		$supportedMethods = array (
-				'POST',
-				'GET',
-				'PUT',
-				'DELETE',
-				'PATCH',
-				'HEAD'
-		);
-		if (! in_array ( strtoupper ( $method ), $supportedMethods )) {
-			throw new ServerException ( 'Invalid Method ' . $method, Response::BADREQUEST );
+		if(!$this->method){
+			$this->method = ! empty ( $_SERVER ['X-HTTP-METHOD-OVERRIDE'] ) ? $_SERVER ['X-HTTP-METHOD-OVERRIDE'] : $_SERVER ['REQUEST_METHOD'];
 		}
-		$this->method = $method;
+		return strtoupper($this->method);
 	}
 
 	/**

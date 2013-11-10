@@ -27,6 +27,7 @@ use restlt\utils\cache\CacheAdapterInterface;
 use restlt\utils\Cache;
 use restlt\utils\MetadataBuilder;
 use restlt\exceptions\ServerException;
+use restlt\utils\di\ServiceContainer;
 
 /**
  *
@@ -85,20 +86,22 @@ class Server {
 
 	/**
 	 *
+	 * @var ServiceContainer
+	 */
+	protected $serviceContainer = null;
+
+	/**
+	 *
 	 * @param string $baseUri
 	 */
-	public function __construct($baseUri = null, $name = 'ajax') {
+	public function __construct($baseUri = null, $name = 'RestLite', Request $request = null, Response $response = null) {
 		if ($baseUri) {
 			$this->baseUri = $baseUri;
 		}
 		$this->name = $name;
-		$this->setRequest ( new Request () );
-		$this->setResponse ( new Response () );
-		$this->requestRouter = new RequestRouter ( $this->request, $this->baseUri );
-		register_shutdown_function ( array(
-				$this,
-				'shutdown'
-		) );
+		if(!$request) $this->setRequest ( new Request () );
+		if(!$response) $this->setResponse ( new Response () );
+		register_shutdown_function ( array(	$this, 'shutdown') );
 	}
 
 	/**
@@ -168,7 +171,7 @@ class Server {
 	 */
 	public function getRequestRouter() {
 		if (! $this->requestRouter) {
-			$this->requestRouter = new RequestRouter ($this->getRequest(), $this->baseUri );
+			$this->requestRouter = new RequestRouter ( $this->request, $this->baseUri );
 		}
 		return $this->requestRouter;
 	}
@@ -253,7 +256,7 @@ class Server {
 	 */
 	public function getMetadataBuilder() {
 		if (! $this->metadataBuilder) {
-			$mdb = new MetadataBuilder ( $this, $this->resourceClasses );
+			$mdb = new MetadataBuilder ( $this, $this->getResourceClasses() );
 			$mdb->setAnnotationsParser(new utils\AnnotationsParser ());
 			if ($this->getCacheAdapter ()) {
 				$cache = new Cache ( $this->getCacheAdapter () );
@@ -313,4 +316,28 @@ class Server {
 			throw new ServerException ( $msg, Response::INTERNALSERVERERROR );
 		}
 	}
+
+	/**
+	 *
+	 * @return array
+	 */
+	public function getResourceClasses() {
+		return $this->resourceClasses;
+	}
+
+	/**
+	 * @return \restlt\utils\di\ServiceContainer $serviceContainer
+	 */
+	public function getServiceContainer() {
+		return $this->serviceContainer;
+	}
+
+	/**
+	 * @param \restlt\utils\di\ServiceContainer $serviceContainer
+	 */
+	public function setServiceContainer($serviceContainer) {
+		$this->serviceContainer = $serviceContainer;
+	}
+
+
 }
