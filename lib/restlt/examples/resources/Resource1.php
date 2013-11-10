@@ -21,6 +21,7 @@ class Resource1 extends \restlt\Resource {
 		$this->on ( self::ON_AFTER, 'getMe', $f2 );
 		$this->on ( self::ON_ERROR, 'getMe', $f3 );
 	}
+
 	/**
 	 *
 	 * @method GET

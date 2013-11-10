@@ -5,16 +5,16 @@ use restlt\Server;
 $al = require_once APP_ROOT . '/vendor/autoload.php';
 $al->set ( 'restlt\\', APP_ROOT . '/restlt/lib' );
 
-$options = [
+$options = array(
 		'ttl' => 3600,
 		'namespace' => 's',
 		'readable' => true,
 		'writable' => true,
-		'servers' => [
+		'servers' => array(
 				'host' => 'localhost',
 				'port' => 11211
-		]
-];
+		)
+);
 $zendCache = \Zend\Cache\StorageFactory::adapterFactory ( 'memcached', $options );
 $memcached = new Memcached ();
 $memcached->addServer ( 'localhost', 11211 );
