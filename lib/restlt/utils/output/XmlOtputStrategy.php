@@ -25,7 +25,7 @@ namespace restlt\utils\output;
 
 use restlt\Result;
 
-class XmlTypeConverter implements TypeConversionStrategyInterface {
+class XmlOtputStrategy implements TypeConversionStrategyInterface {
 
 	/**
 	 *

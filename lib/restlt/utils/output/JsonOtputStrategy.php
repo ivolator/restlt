@@ -31,7 +31,7 @@ use restlt\exceptions\SystemException;
  * @author Vo
  *
  */
-class JsonTypeConverter implements TypeConversionStrategyInterface {
+class JsonOtputStrategy implements TypeConversionStrategyInterface {
 	public function execute(Result $data) {
 		$ret = new \stdClass ();
 		$ret->data = $data->getData ();

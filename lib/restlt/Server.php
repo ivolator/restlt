@@ -109,9 +109,12 @@ class Server {
 	/**
 	 * Main method
 	 */
-	public function serve() {
+	public function serve($enableApiInfo = true) {
 		try {
 			$resources = $this->getMetadataBuilder ()->getResourcesMeta ();
+			if ($enableApiInfo) {
+				$resources = array_merge ( $resources, $this->getApiResourceInfo () );
+			}
 			$this->getRequestRouter ()->setResources ( $resources );
 			$this->getResponse ()->setRequestRouter($this->getRequestRouter())->send();
 			exit;
@@ -315,7 +318,11 @@ class Server {
 			throw new ServerException ( $msg, Response::INTERNALSERVERERROR );
 		}
 	}
-
+	
+	public function getApiResourceInfo() {
+		$ret ['\restlt\Resource'] [] = array ('method' => 'GET', 'methodUri' => '/', 'function' => 'getAvailableApiCals' );
+		return $ret;
+	}
 	/**
 	 *
 	 * @return array
@@ -338,5 +345,13 @@ class Server {
 		$this->serviceContainer = $serviceContainer;
 	}
 
+	/**
+	 * 
+	 * @param string $outputType
+	 * @param string $strategyClassName
+	 */
+	public function addOuputStrategy($outputType, $strategyClassName ){
+		$this->getResponse()->addResponseOutputStrategies($outputType, $strategyClassName);
+	}
 
 }

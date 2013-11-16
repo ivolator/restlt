@@ -54,6 +54,12 @@ class Resource implements ResourceInterface{
 	 * @var \restlt\Route
 	 */
 	protected $annotations = null;
+	
+	/**
+	 * 
+	 * @var \restlt\Server
+	 */
+	protected $server = null;
 
 	/**
 	 * User Errors
@@ -202,6 +208,18 @@ class Resource implements ResourceInterface{
 		$this->errors = $errors;
 	}
 
-
+	/**
+	 * @method GET
+	 * @htmlTemplate 
+	 */
+	public function getAvailableApiCals(){
+		$resources = $this->getResponse()->getRequestRouter()->getResources();
+		$html = '';
+		foreach ($resources as $resourceClass => $methods){
+			$html .= $methods[0]['methodUri'] . '<br />';
+		}
+		//TODO
+		return $html;
+	}
 
 }

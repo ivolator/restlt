@@ -75,6 +75,19 @@ class AnnotationsParser {
 	}
 
 	/**
+	 * 
+	 * @param unknown_type $doccomment
+	 */
+	public function getUserComment($docComment){
+		preg_match_all('#[*]+[ ]+[^@].*\n#', $docComment, $docCommentArr);
+		$ret = array_map(function ($el){
+			return trim($el,'* ');
+		}, $docCommentArr[0]);
+		$ret = trim(implode(PHP_EOL, $ret));
+		return $ret;
+	}
+	
+	/**
 	 *
 	 * @param string $docComment
 	 * @param array $whitelist
@@ -85,8 +98,10 @@ class AnnotationsParser {
 		if (! $docComment) {
 			return array();
 		}
-		$res = preg_match_all('#@.*#', $docComment, $docCommentArr);
-		$res = preg_grep ( '#^@.*#', $docCommentArr[0] );
+		
+		$res = preg_match_all('#[ *](@.*)\n#', $docComment, $docCommentArr);
+		$res = $docCommentArr[1]?$docCommentArr[1]:array();
+		$res = preg_grep ( '#^@.*#', $res );
 		$ret = array ();
 		if ($res) {
 			foreach ( array_values ( $res ) as $value ) {

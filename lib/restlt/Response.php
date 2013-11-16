@@ -72,11 +72,13 @@ class Response implements \restlt\ResponseInterface {
 	const HTTPVERSIONNOTSUPPORTED = 505;
 	const APPLICATION_JSON = 'application/json';
 	const APPLICATION_XML = 'application/xml';
+	const TEXT_HTML = 'text/html';
 	const TEXT_PLAIN = 'text/plain';
 	protected $headers = array ();
 	protected $responseOutputStrategies = array (
-			'xml' => '\restlt\utils\output\XmlTypeConverter',
-			'json' => '\restlt\utils\output\JsonTypeConverter'
+			'xml' => '\restlt\utils\output\XmlOtputStrategy',
+			'json' => '\restlt\utils\output\JsonOtputStrategy',
+			'html' => '\restlt\utils\output\HtmlOutputStrategy',
 	);
 
 	/**
@@ -206,6 +208,11 @@ class Response implements \restlt\ResponseInterface {
 				self::APPLICATION_XML
 		) )) {
 			$contentType = 'application/' . $route->getOutputTypeOverrideExt ();
+		}elseif ($route && in_array ( 'text/' . $route->getOutputTypeOverrideExt (), array (
+				self::TEXT_HTML,
+				self::TEXT_PLAIN
+		) )) {
+			$contentType = 'text/' . $route->getOutputTypeOverrideExt ();
 		}
 
 		$this->addHeader ( 'Content-Type', $contentType );
@@ -263,15 +270,12 @@ class Response implements \restlt\ResponseInterface {
 			}
 			$class = $this->responseOutputStrategies [array_pop ( $strategies )];
 		}
-
-		if (! $class && stristr ( $contentType, 'xml' ) || stristr ( $contentType, 'html' )) {
-			$class = $this->responseOutputStrategies ['xml'];
+		
+		preg_match_all('#xml|json|html#i', $contentType, $matches);
+		if (! $class && isset($matches[0][0]) && strtolower($matches[0][0]) ) {
+			$class = $this->responseOutputStrategies [$matches[0][0]];
 		}
-
-		if (! $class && stristr ( $contentType, 'json' )) {
-			$class = $this->responseOutputStrategies ['json'];
-		}
-
+		
 		if ($class && ! class_exists ( $class, true )) {
 			throw new ApplicationException ( 'Conversion strategy not found' );
 		}
@@ -391,7 +395,7 @@ class Response implements \restlt\ResponseInterface {
 		if ($forceResponseType && in_array ( $forceResponseType, array (
 				self::APPLICATION_JSON,
 				self::APPLICATION_XML,
-				self::TEXT_PLAIN
+				self::TEXT_HTML, self::TEXT_PLAIN
 		) )) {
 			$this->forceResponseType = $forceResponseType;
 		} else {

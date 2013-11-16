@@ -59,14 +59,21 @@ class MetadataBuilder implements MetadataBuilderInterface{
 	 * @var unknown
 	 */
 	protected $cacheKeySalt = '';
+	
+	/**
+	 * 
+	 * @var \restlt\Server
+	 */
+	protected $server = NULL;
 
 	/**
 	 *
 	 * @param array $resourceFiles
 	 */
-	public function __construct($server, $resourceFiles = array()) {
+	public function __construct(\restlt\Server $server, $resourceFiles = array()) {
 		$this->resourceClasses = $resourceFiles;
 		$this->cacheKeySalt = $server->getName ();
+		$this->server = $server;
 	}
 
 	/**
@@ -93,7 +100,7 @@ class MetadataBuilder implements MetadataBuilderInterface{
 	 * @return string|multitype:multitype:
 	 */
 	public function buildMeta() {
-		$ret = [ ];
+		$ret = array();
 
 		if ($this->cache && $this->cache->test ( $this->getCacheKey () )) {
 			$ret = $this->cache->get ( $this->getCacheKey () );
@@ -102,21 +109,28 @@ class MetadataBuilder implements MetadataBuilderInterface{
 			foreach ( $this->resourceClasses as $class ) {
 				$classMeta = $this->annotationsParser->getClassMeta ( $class );
 				$methodsMeta = $this->annotationsParser->getMethodMeta ( $class );
-				if (! $methodsMeta)
+
+				if (! $methodsMeta )
 					continue;
 				$resourceBaseUri = $classMeta ['resourceBaseUri'];
 				$methodsMeta = array_map ( function (&$el) use($resourceBaseUri) {
 					$methodUri = isset ( $el ['methodUri'] ) ? trim ( $el ['methodUri'], '/' ) : '/';
-					$el ['methodUri'] = rtrim ( $resourceBaseUri, '/' ) . '/' . $methodUri;
+					$el ['methodUri'] = rtrim(rtrim ( $resourceBaseUri, '/' ) . '/' . $methodUri,'/');
 					return $el;
 				}, $methodsMeta );
+				
+				$methodsMeta = array_filter($methodsMeta,function($el){
+					return isset($el['method']);
+				});
 				$ret [$class] = $methodsMeta;
 			}
+
 			$this->cache && $this->cache->set ( $this->getCacheKey (), $ret );
 		}
+
 		return $ret;
 	}
-
+	
 	/**
 	 */
 	public function getResourcesMeta() {

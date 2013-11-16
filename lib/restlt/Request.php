@@ -28,6 +28,8 @@ namespace restlt;
  *
  */
 
+use restlt\exceptions\ServerException;
+
 class Request implements \restlt\RequestInterface{
 
 	const POST = 'POST';
@@ -153,6 +155,13 @@ class Request implements \restlt\RequestInterface{
 	 */
 	protected function buildHeadersList(array $SERVER = array()) {
 		$ret = array ();
+				
+		$accpetable = '#(' . Response::APPLICATION_JSON .')|('.Response::APPLICATION_XML.')|('.Response::TEXT_PLAIN.')|(application/.*\+json)|(application/.*\+xml)#';
+		$res = preg_match($accpetable, $_SERVER['HTTP_ACCEPT'], $match);
+		if(!$res){
+			throw new ServerException('Invalid request MIME type', Response::NOTACCEPTABLE);
+		}
+		
 		if($SERVER) {
 			foreach ( $SERVER as $k => $v ) {
 				if (stristr ( $k, 'http_' )) {
@@ -183,6 +192,9 @@ class Request implements \restlt\RequestInterface{
 	public function getMethod() {
 		if(!$this->method){
 			$this->method = ! empty ( $_SERVER ['X-HTTP-METHOD-OVERRIDE'] ) ? $_SERVER ['X-HTTP-METHOD-OVERRIDE'] : $_SERVER ['REQUEST_METHOD'];
+		}
+		if(!in_array($this->method,array(Request::POST, Request::GET, Request::PUT, Request::DELETE, Request::PATCH, Request::HEAD))){
+			throw new ServerException('Invalid Method', Response::METHODNOTALLOWED);
 		}
 		return strtoupper($this->method);
 	}

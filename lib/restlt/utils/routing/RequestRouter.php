@@ -31,7 +31,7 @@ use restlt\exceptions\ApplicationException;
  * Simple routing mechanism
  * Routes the requests to the proper resource
  *
- * @author Vo
+ * @author Ivo
  *
  */
 class RequestRouter implements RouterInterface{
@@ -44,12 +44,6 @@ class RequestRouter implements RouterInterface{
 
 	/**
 	 *
-	 * @var string
-	 */
-	protected $serverBaseUri = '/';
-
-	/**
-	 *
 	 * @var restlt\Request
 	 */
 	protected $request = '/';
@@ -58,7 +52,7 @@ class RequestRouter implements RouterInterface{
 	 *
 	 * @param string $serverBaseUri
 	 */
-	public function __construct(\restlt\RequestInterface $request, $serverBaseUri) {
+	public function __construct(\restlt\RequestInterface $request, $serverBaseUri = null) {
 		if ($serverBaseUri) {
 			$this->serverBaseUri = $serverBaseUri;
 		} else {
@@ -84,6 +78,7 @@ class RequestRouter implements RouterInterface{
 		$resourceUri = str_replace ( '//', '/', $resourceUri );
 
 		if(\restlt\Request::HEAD === strtoupper($method)) $method = \restlt\Request::GET;
+		
 		$route = $this->matchResource ( $resourceUri, $method );
 		if($ext) $route->setOutputTypeOverrideExt($ext);
 
@@ -175,6 +170,13 @@ class RequestRouter implements RouterInterface{
 		return $this;
 	}
 
+	/**
+	 * @return array $resources
+	 */
+	public function getResources() {
+		return $this->resources;
+	}
+	
 	/**
 	 * @return string $serverBaseUri
 	 */
