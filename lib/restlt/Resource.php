@@ -212,6 +212,7 @@ class Resource implements ResourceInterface{
 	 * This will display all the user documentation notes from the doc blocks of the API calls
 	 * For now this is displayed by a call to the root of the server and then adding '.html'
 	 * @method GET
+	 * @cacheControlMaxAge 86400
 	 */
 	public function getAvailableApiCals(){
 		$resources = $this->getResponse()->getRequestRouter()->getResources();

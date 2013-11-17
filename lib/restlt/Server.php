@@ -320,7 +320,7 @@ class Server {
 	}
 	
 	public function getApiResourceInfo() {
-		$ret ['\restlt\Resource'] [] = array ('method' => 'GET', 'methodUri' => '/', 'function' => 'getAvailableApiCals' );
+		$ret ['\restlt\Resource'] [] = array ('method' => 'GET', 'methodUri' => '/', 'function' => 'getAvailableApiCals','cacheControlMaxAge'=>86400 );
 		return $ret;
 	}
 	/**
