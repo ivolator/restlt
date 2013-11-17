@@ -175,10 +175,10 @@ The callback function provided for this event has the following signature
 ```
 ### On After event - * after the resource function returns *
 ```php
-    $this->on ( Resource::ON_AFTER, 'myFunctionName', array($obj,$method) );
-    ```
+$this->on ( Resource::ON_AFTER, 'myFunctionName', array($obj,$method) );
+```
     * The callback function provided for this event has the following signature *
-    ```php
+```php
     /**
      * @param \restlt\Request $request 
      * @param \restlt\Response $response
