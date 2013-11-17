@@ -64,6 +64,7 @@ class AnnotationsParser {
 			foreach ( $classRefl->getMethods () as $methodRefl ) {
 				$res = $this->parseDocComment ( $methodRefl->getDocComment () );
 				if($res){
+					$res['comment'] = $this->getUserComment($methodRefl->getDocComment ());
 					$res['function'] = $methodRefl->getName();
 					$ret[] = $res;
 				}

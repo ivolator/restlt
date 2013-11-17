@@ -210,16 +210,25 @@ class Resource implements ResourceInterface{
 
 	/**
 	 * @method GET
-	 * @htmlTemplate 
 	 */
 	public function getAvailableApiCals(){
 		$resources = $this->getResponse()->getRequestRouter()->getResources();
-		$html = '';
+		$ret = '<div style="font-size:115%; font-style: italic; font-weight:bold; color: navy">';
+		$ret .=" API Documentation" . PHP_EOL; 
+			$ret .= '<a name="top"/>';
+		$ret .= '</div>';
 		foreach ($resources as $resourceClass => $methods){
-			$html .= $methods[0]['methodUri'] . '<br />';
+			$html ='<div style="width:30%; border: solid 1px blue; background:#CCFFFF; color: blue; padding: 5px">';
+			$html .= 'Http Method : ' . $methods[0]['method'] . PHP_EOL;
+			$html .= 'URI : '.$methods[0]['methodUri'] . PHP_EOL;
+			$html .= $methods[0]['comment'] . PHP_EOL;
+			$html .='</div>'.PHP_EOL;
+			$html .= '<a  href="#top">Top</a>' . PHP_EOL;
+			$ret .= $html;
 		}
+		$ret .= '</div>';
 		//TODO
-		return $html;
+		return nl2br($ret);
 	}
 
 }
