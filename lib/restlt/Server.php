@@ -116,12 +116,13 @@ class Server {
                 $resources = array_merge ( $resources, $this->getApiResourceInfo () );
             }
             $this->getRequestRouter ()->setResources ( $resources );
-            $this->getResponse ()->setRequestRouter($this->getRequestRouter())->send();
+            $this->getResponse ()->setRequestRouter($this->getRequestRouter());
+            $ret = $this->getResponse ()->send();
         } catch ( \Exception $e ) {
             $this->getResponse ()->setStatus ( Response::INTERNALSERVERERROR );
-            $this->getResponse ()->send ();
+            $ret = $this->getResponse ()->send ();
         }
-
+        return $ret;
     }
 
     /**

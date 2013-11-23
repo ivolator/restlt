@@ -107,8 +107,8 @@ class MetadataBuilder implements MetadataBuilderInterface{
 		}
 		if (! $ret && $this->resourceClasses) {
 			foreach ( $this->resourceClasses as $class ) {
-				$classMeta = $this->annotationsParser->getClassMeta ( $class );
-				$methodsMeta = $this->annotationsParser->getMethodMeta ( $class );
+				$classMeta = $this->getAnnotationsParser()->getClassMeta ( $class );
+				$methodsMeta = $this->getAnnotationsParser()->getMethodMeta ( $class );
 
 				if (! $methodsMeta )
 					continue;

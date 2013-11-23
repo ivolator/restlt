@@ -25,3 +25,5 @@ $s->getResponse()->addResponseOutputStrategies('serialize', '\restlt\utils\outpu
 $s->registerResourceFolder ( APP_ROOT .  '/restlt/lib/restlt/examples/resources', 'restlt\examples\resources' );
 
 $s->serve ();
+exit;
+

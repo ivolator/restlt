@@ -178,7 +178,7 @@ class Response implements \restlt\ResponseInterface {
      *
      * @see \restlt\ResponseInterface::send()
      */
-    public function send() {
+    public function send($returnResult = false) {
         $data = null;
         if ($this->status === self::OK && $this->requestRouter && $this->requestRouter->getRoute ()) {
             $data = $this->getRoutedResponse ( $this->requestRouter );
@@ -217,8 +217,7 @@ class Response implements \restlt\ResponseInterface {
         }
 
         $this->addHeader ( 'Content-Type', $contentType );
-
-        $this->_send ( $data ? $data : null, $conversionStrategy );
+        return $this->_send ( $data ? $data : null, $conversionStrategy, $returnResult );
     }
 
     /**
@@ -226,12 +225,12 @@ class Response implements \restlt\ResponseInterface {
      *
      * @param string $data
      */
-    protected function _send($data = null, $conversionStrategy = null) {
+    protected function _send($data = null, $conversionStrategy, $returnresult) {
         if (headers_sent ()) {
             throw new SystemException('Headers Sent');
         }
 
-        header ( 'x-custom-rest-server: RestLite' );
+        header ( 'x-custom-rest-server: RestLt' );
         header ( 'Allow: POST, GET, PUT, DELETE, PATCH, HEAD' );
         header ( 'Connection: close' );
         if (version_compare ( PHP_VERSION, '5.4.0', '>=' )) {
@@ -244,15 +243,21 @@ class Response implements \restlt\ResponseInterface {
             header ( $hStr, true, $this->status );
         }
 
-
         // prepare the payload if any
         if ($data && $this->requestRouter->getRequest()->getMethod() !== Request::HEAD) {
             $this->getResultObject ()->setData ( $data );
-            echo $this->getResultObject ()->toString ( $conversionStrategy );
-        } else
-        if($this->displayError){
+            if($returnresult){
+            	return $this->getResultObject ()->toString ( $conversionStrategy );
+            }else{
+            	echo $this->getResultObject ()->toString ( $conversionStrategy );
+            }
+        } elseif($this->displayError){
             $this->getResultObject ()->addError($this->displayError->getMessage(),$this->displayError->getCode());
-            echo $this->getResultObject ()->toString ( $conversionStrategy );
+            if($returnresult){
+            	return $this->getResultObject ()->toString ( $conversionStrategy );
+            }else{
+             	echo  $this->getResultObject ()->toString ( $conversionStrategy );
+            }
         }
     }
 

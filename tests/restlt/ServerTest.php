@@ -6,7 +6,8 @@ class ServerTest extends RestLiteTest{
 
     protected $mockMetaDataBuilder = null;
     protected $mockServer = null;
-
+    protected $mockResponse = null;
+    protected $mockRequest = null;
     protected $mockRequesRouter = null;
 
     /**
@@ -17,37 +18,45 @@ class ServerTest extends RestLiteTest{
         $this->mockMetaDataBuilder = $this->getMockBuilder('\restlt\utils\meta\MetadataBuilder')
             ->setMethods(array('getResourcesMeta'))->disableOriginalConstructor()->getMock();
 
-        $this->mockRequesRouter = $this->getMockBuilder('\restlt\RequestRouter')->
+        $this->mockRequesRouter = $this->getMockBuilder('\restlt\RouterInterface')->
             setMethods(array('setResources'))->disableOriginalConstructor()->getMock();
 
         $this->mockServer = $this->getMockBuilder('\restlt\Server')
             ->disableOriginalConstructor()
-            ->setMethods(array('getMetadataBuilder','getRequestRouter'))->getMock();
+            ->setMethods(array('getRequest','getMetadataBuilder','getRequestRouter','getResponse'))->getMock();
 
-        $this->mockRequest = $this->getMockBuilder('restlt\Request')->disableOriginalConstructor()
-            ->setMethods(array('send'))->getMock();
-        $this->mockResponse= $this->getMockBuilder('restlt\Response')->disableOriginalConstructor()
+        $this->mockRequest = $this->getMockBuilder('restlt\Request')->disableOriginalConstructor()->getMock();
+        $this->mockResponse= $this->getMockBuilder('restlt\Response')
+        ->setMethods(array('setRequestRouter','send'))->disableOriginalConstructor()
             ->getMock();
 
         $this->mockServer->expects($this->any())->method('getRequest')
             ->will($this->returnArgument($this->mockRequest));
-        $this->mockServer->setResponse($this->mockResponse);
     }
 
     /**
      * @dataProvider testServerDataProvider
      */
     public function testServe($resources){
-        $this->mockMetaDataBuilder->expects($this->once())->method('getResourcesMeta')
+    	require_once __DIR__ . '/../fixtures/mocks/MockRequestRouter.php';
+        $ret = 'responsestring';
+        $this->mockResponse->expects($this->any())->method('setRequestRouter')->will($this->returnSelf());    
+        $this->mockResponse->expects($this->any())->method('send')->will($this->returnValue($ret));    
+        
+        $this->mockMetaDataBuilder->expects($this->any())->method('getResourcesMeta')
             ->will($this->returnValue($resources));
-        $this->mockServer->expects($this->once())->method('getMetadataBuilder')
+        $this->mockServer->expects($this->any())->method('getMetadataBuilder')
             ->will($this->returnValue($this->mockMetaDataBuilder));
         $this->mockServer->expects($this->any())->method('getRequestRouter')
-            ->will($this->returnValue($this->mockRequesRouter));
-//
-        $this->mockServer->serve(false);
-        $this->assertTrue(TRUE);
+            ->will($this->returnValue(new MockRequestRouter()));
+        $this->mockServer->expects($this->any())->method('getResponse')
+            ->will($this->returnValue($this->mockResponse));
 
+        echo $this->mockServer->serve(false);
+        $this->expectOutputString('responsestring');
+        
+        $this->mockServer->serve(true);
+        $this->assertEquals($this->mockServer->getRequestRouter()->getResources(), array_merge($resources,$this->mockServer->getApiResourceInfo()));
     }
 
     public function testServerDataProvider(){
@@ -108,7 +117,12 @@ class ServerTest extends RestLiteTest{
      * Cleans up the environment after running a test.
      */
     protected function tearDown() {
-        // TODO Auto-generated ServerTest::tearDown()
+	    $this->mockMetaDataBuilder = null;
+	    $this->mockServer = null;
+	    $this->mockResponse = null;
+	    $this->mockRequest = null;
+	    $this->mockRequesRouter = null;
+	    	
         parent::tearDown ();
     }
 }
