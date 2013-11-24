@@ -53,6 +53,24 @@ class AnnotationsParserTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $actual);
     }
 
+    public function testPaseDocComment(){
+    	
+    }
+    /**
+     * 
+     */
+    public function testGetUserComment(){
+    	$docComment = <<<COMM
+    /**
+     * We should get this
+     * 
+     * @method GET
+     * @methodUri /resource/uri
+     */    	
+COMM;
+    	$actual = $this->ap->getUserComment($docComment);
+    	$this->assertEquals('We should get this', $actual);
+    }
     /**
      * Cleans up the environment after running a test.
      */

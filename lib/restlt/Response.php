@@ -78,7 +78,7 @@ class Response implements \restlt\ResponseInterface {
     protected $headers = array ();
     protected $responseOutputStrategies = array (
             'xml' => '\restlt\utils\output\XmlOtputStrategy',
-            'json' => '\restlt\utils\output\JsonOtputStrategy',
+            'json' => '\restlt\utils\output\JsonOutputStrategy',
             'html' => '\restlt\utils\output\HtmlOutputStrategy',
     );
 

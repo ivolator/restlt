@@ -43,7 +43,7 @@ class XmlOtputStrategy implements TypeConversionStrategyInterface {
 		$domEl = $this->fromMixed ( $data );
 		$this->dom->appendChild ( $domEl );
 		$this->dom->formatOutput = true;
-		echo $this->dom->saveXML ();
+		return $this->dom->saveXML ();
 	}
 
 	/**
