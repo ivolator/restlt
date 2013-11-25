@@ -49,6 +49,7 @@ A resource can have multiple methods that respond to GET, POST, etc.
 ```php
 namespace restlt\examples\resources;
 /**
+ * 
  * @resourceBaseUri /resource1
  */
 class Resource1 extends \restlt\Resource {
@@ -70,6 +71,8 @@ class Resource1 extends \restlt\Resource {
     }
     /**
      * Note that the regex in "()" gets converted to a parameter of the method
+     * Since v 1.1.0a this user comment section will appear in a simple HTML format
+     * accesible at the root of ther server like this: http://url.com/approot.html
      * @method GET
      * @methodUri /([0-9]+)
      */
@@ -123,6 +126,11 @@ Obtain the parameter ($_REQUEST) and at the same time provide a default value. T
 ```php
         $this->getRequest()->get('page',1);
 ```
+###Public API documentation
+If you added User comments to the API resource methods, now you can access them by going to the root of the server.
+`http://myserveurl.com/serverroot.html`
+Where the `serverroot` is the base URI you have defined when initializing the \restlt\Server object.
+
 ##Handling errors
 ###Exceptions
 All exceptions thrown by the server will end up as 404 or 500 errors.
