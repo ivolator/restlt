@@ -6,13 +6,12 @@
 	stopOnError="false" stopOnFailure="false" stopOnIncomplete="false"
 	stopOnSkipped="false" testSuiteLoaderClass="PHPUnit_Runner_StandardTestSuiteLoader"
 	timeoutForSmallTests="1" timeoutForMediumTests="10"
-	timeoutForLargeTests="60" strict="false" verbose="false" 
+	timeoutForLargeTests="60" strict="false" verbose="true"  
 	bootstrap="./bootstrap.php" >
 	<testsuites>
 		<testsuite name="RestLite All">
 			<directory suffix="Test.php" phpVersion="5.3.0" phpVersionOperator=">=">./restlt</directory>
 			<directory suffix="Test.php" phpVersion="5.3.0" phpVersionOperator=">=">./restlt/utils/</directory>
-			<file phpVersion="5.3.0" phpVersionOperator=">=">/path/to/MyTest.php</file>
 		</testsuite>
 	</testsuites>
 </phpunit>

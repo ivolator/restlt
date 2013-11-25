@@ -31,207 +31,207 @@ use restlt\exceptions\ApplicationException;
  */
 class Resource implements ResourceInterface{
 
-	const ON_BEFORE = 'before';
-	const ON_AFTER = 'after';
-	const ON_ERROR = 'error';
+    const ON_BEFORE = 'before';
+    const ON_AFTER = 'after';
+    const ON_ERROR = 'error';
 
-	private $callbacks = array();
+    private $callbacks = array();
 
-	/**
-	 *
-	 * @var \restlt\Request
-	 */
-	protected $request = null;
+    /**
+     *
+     * @var \restlt\Request
+     */
+    protected $request = null;
 
-	/**
-	 *
-	 * @var Response
-	 */
-	protected $response = null;
+    /**
+     *
+     * @var Response
+     */
+    protected $response = null;
 
-	/**
-	 *
-	 * @var \restlt\Route
-	 */
-	protected $annotations = null;
-	
-	/**
-	 * 
-	 * @var \restlt\Server
-	 */
-	protected $server = null;
+    /**
+     *
+     * @var \restlt\Route
+     */
+    protected $annotations = null;
 
-	/**
-	 * User Errors
-	 * Use these when no exception is thrown and you need to return 200 with some error feeddback
-	 * @var \SplStack
-	 */
-	protected $errors = array();
+    /**
+     *
+     * @var \restlt\Server
+     */
+    protected $server = null;
 
-	public function __construct(RequestInterface $request, ResponseInterface $response){
-		$this->setRequest($request);
-		$this->setResponse($response);
-		$this->errors = new \SplStack();
-	}
+    /**
+     * User Errors
+     * Use these when no exception is thrown and you need to return 200 with some error feeddback
+     * @var \SplStack
+     */
+    protected $errors = array();
 
-	/**
-	 *
-	 * @return  \restlt\Request $request
-	 */
-	public function getRequest() {
-		return $this->request;
-	}
+    public function __construct(RequestInterface $request, ResponseInterface $response){
+        $this->setRequest($request);
+        $this->setResponse($response);
+        $this->errors = new \SplStack();
+    }
 
-	/**
-	 *
-	 * @param \restlt\Request $request
-	 */
-	public function setRequest(RequestInterface $request) {
-		$this->request = $request;
-		return $this;
-	}
+    /**
+     *
+     * @return  \restlt\Request $request
+     */
+    public function getRequest() {
+        return $this->request;
+    }
 
-	/**
-	 *
-	 * @return \restlt\Response $response
-	 */
-	public function getResponse() {
-		return $this->response;
-	}
+    /**
+     *
+     * @param \restlt\Request $request
+     */
+    public function setRequest(RequestInterface $request) {
+        $this->request = $request;
+        return $this;
+    }
 
-	/**
-	 *
-	 * @param \restlt\Response $response
-	 */
-	public function setResponse(ResponseInterface $response) {
-		$this->response = $response;
-		return $this;
-	}
+    /**
+     *
+     * @return \restlt\Response $response
+     */
+    public function getResponse() {
+        return $this->response;
+    }
 
-	/**
-	 * These callbacks are executed before the resource method is called
-	 * $cb = function(\restlt\Request $r){}
-	 *
-	 * @param Callable $callback
-	 */
-	public function onBefore($methodName, $callback) {
-		return $this->on ( self::ON_BEFORE, $methodName, $callback );
-	}
+    /**
+     *
+     * @param \restlt\Response $response
+     */
+    public function setResponse(ResponseInterface $response) {
+        $this->response = $response;
+        return $this;
+    }
 
-	/**
-	 * These callbacks are executed after the resource method is called
-	 * $cb = function(\restlt\Request $request, \restlt\Response $response, $result){}
-	 *
-	 * @param Callable $callback
-	 */
-	public function onAfter($methodName, $callback) {
-		return $this->on ( self::ON_AFTER, $methodName, $callback );
-	}
+    /**
+     * These callbacks are executed before the resource method is called
+     * $cb = function(\restlt\Request $r){}
+     *
+     * @param Callable $callback
+     */
+    public function onBefore($methodName, $callback) {
+        return $this->on ( self::ON_BEFORE, $methodName, $callback );
+    }
 
-	/**
-	 * These callbacks are executed if during the method call there was a thrown exception
-	 * $cb = function(\restlt\Request $request, \restlt\Response $response,Exception $e){}
-	 *
-	 * @param Callable $callback
-	 */
-	public function onError($methodName, $callback) {
-		return $this->on ( self::ON_ERROR, $methodName, $callback );
-	}
+    /**
+     * These callbacks are executed after the resource method is called
+     * $cb = function(\restlt\Request $request, \restlt\Response $response, $result){}
+     *
+     * @param Callable $callback
+     */
+    public function onAfter($methodName, $callback) {
+        return $this->on ( self::ON_AFTER, $methodName, $callback );
+    }
 
-	/**
-	 *
-	 * @param string $event
-	 * @param string $methodName
-	 * @param Callable $callback
-	 * @return \restlt\Resource
-	 */
-	protected function on($event, $methodName = '', $callback) {
-		if (! $callback || ($callback && ! is_callable ( $callback ))) {
-			throw new ApplicationException ( 'Event not provided' );
-		}
-		if($methodName){
-			$this->callbacks [$methodName] [$event] [] = $callback;
-		} else {
-			$this->callbacks [$event] [] = $callback;
-		}
-		return $this;
-	}
-	/**
-	 *
-	 * @return array $callbacks
-	 */
-	public function getCallbacks() {
-		return $this->callbacks;
-	}
+    /**
+     * These callbacks are executed if during the method call there was a thrown exception
+     * $cb = function(\restlt\Request $request, \restlt\Response $response,Exception $e){}
+     *
+     * @param Callable $callback
+     */
+    public function onError($methodName, $callback) {
+        return $this->on ( self::ON_ERROR, $methodName, $callback );
+    }
 
-	/**
-	 *
-	 * @param string $type
-	 */
-	public function clearCallbacks() {
-		unset ( $this->callbacks );
-	}
-	/**
-	 * @return the $annotations
-	 */
-	public function getAnnotations() {
-		return $this->annotations;
-	}
+    /**
+     *
+     * @param string $event
+     * @param string $methodName
+     * @param Callable $callback
+     * @return \restlt\Resource
+     */
+    protected function on($event, $methodName = '', $callback) {
+        if (! $callback || ($callback && ! is_callable ( $callback ))) {
+            throw new ApplicationException ( 'Event not provided' );
+        }
+        if($methodName){
+            $this->callbacks [$methodName] [$event] [] = $callback;
+        } else {
+            $this->callbacks [$event] [] = $callback;
+        }
+        return $this;
+    }
+    /**
+     *
+     * @return array $callbacks
+     */
+    public function getCallbacks() {
+        return $this->callbacks;
+    }
 
-	/**
-	 * @param \restlt\Route $annotations
-	 */
-	public function setAnnotations($annotations) {
-		$this->annotations = $annotations;
-	}
+    /**
+     *
+     * @param string $type
+     */
+    public function clearCallbacks() {
+        unset ( $this->callbacks );
+    }
+    /**
+     * @return the $annotations
+     */
+    public function getAnnotations() {
+        return $this->annotations;
+    }
 
-	/**
-	 *
-	 * @param string $errorMessage
-	 * @param integer $errorCode
-	 */
-	public function addError($errorMessage,$errorCode = null){
-		$this->errors->push(array($errorMessage,$errorCode));
-	}
+    /**
+     * @param \restlt\Route $annotations
+     */
+    public function setAnnotations($annotations) {
+        $this->annotations = $annotations;
+    }
 
-	/**
-	 * @return the $errors
-	 */
-	public function getErrors() {
-		return $this->errors;
-	}
+    /**
+     *
+     * @param string $errorMessage
+     * @param integer $errorCode
+     */
+    public function addError($errorMessage,$errorCode = null){
+        $this->errors->push(array($errorMessage,$errorCode));
+    }
 
-	/**
-	 * @param array $errors
-	 */
-	public function setErrors(\SplStack $errors) {
-		$this->errors = $errors;
-	}
+    /**
+     * @return the $errors
+     */
+    public function getErrors() {
+        return $this->errors;
+    }
 
-	/**
-	 * This will display all the user documentation notes from the doc blocks of the API calls
-	 * For now this is displayed by a call to the root of the server and then adding '.html'
-	 * @method GET
-	 * @cacheControlMaxAge 86400
-	 */
-	public function getAvailableApiCals(){
-		$resources = $this->getResponse()->getRequestRouter()->getResources();
-		$ret = '<div style="font-size:115%; font-style: italic; font-weight:bold; color: navy">';
-		$ret .=" API Documentation" . PHP_EOL; 
-			$ret .= '<a name="top"/>';
-		$ret .= '</div>';
-		foreach ($resources as $resourceClass => $methods){
-			$html ='<div style="width:30%; border: solid 1px blue; background:#CCFFFF; color: blue; padding: 5px">';
-			$html .= 'Http Method : ' . $methods[0]['method'] . PHP_EOL;
-			$html .= 'URI : '.$methods[0]['methodUri'] . PHP_EOL;
-			$html .= $methods[0]['comment'] . PHP_EOL;
-			$html .='</div>'.PHP_EOL;
-			$html .= '<a  href="#top">Top</a>' . PHP_EOL;
-			$ret .= $html;
-		}
-		$ret .= '</div>';
-		//TODO
-		return nl2br($ret);
-	}
+    /**
+     * @param array $errors
+     */
+    public function setErrors(\SplStack $errors) {
+        $this->errors = $errors;
+    }
+
+    /**
+     * This will display all the user documentation notes from the doc blocks of the API calls
+     * For now this is displayed by a call to the root of the server and then adding '.html'
+     * @method GET
+     * @cacheControlMaxAge 86400
+     */
+    public function getAvailableApiCals(){
+        $resources = $this->getResponse()->getRequestRouter()->getResources();
+        $ret = '<div style="font-size:115%; font-style: italic; font-weight:bold; color: navy">';
+        $ret .=" API Documentation" . PHP_EOL;
+            $ret .= '<a name="top"/>';
+        $ret .= '</div>';
+        foreach ($resources as $resourceClass => $methods){
+            $html ='<div style="width:30%; border: solid 1px blue; background:#CCFFFF; color: blue; padding: 5px">';
+            $html .= 'Http Method : ' . $methods[0]['method'] . PHP_EOL;
+            $html .= 'URI : '.$methods[0]['methodUri'] . PHP_EOL;
+            $html .= isset($methods[0]['comment'])?$methods[0]['comment'] . PHP_EOL:'';
+            $html .='</div>'.PHP_EOL;
+            $html .= '<a  href="#top">Top</a>' . PHP_EOL;
+            $ret .= $html;
+        }
+        $ret .= '</div>';
+        //TODO
+        return nl2br($ret);
+    }
 
 }

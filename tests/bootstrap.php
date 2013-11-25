@@ -1,4 +1,4 @@
 <?php
-$al = require '../../vendor/autoload.php';
-set_include_path(get_include_path().':' . realpath('../lib'));
+$al = require __DIR__ . '/../../../autoload.php';
+set_include_path(get_include_path().':' . __DIR__ . '/../lib:' . __DIR__.'/fixtures');
 $al->setUseIncludePath(true);
