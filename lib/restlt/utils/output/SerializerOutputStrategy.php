@@ -21,13 +21,14 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-namespace models\output;
+namespace restlt\utils\output;
 
 /**
  * Serialized PHP object strategy
  * @author vo
  *
  */
+
 class SerializerOutputStrategy implements TypeConversionStrategyInterface {
 	
 	public function execute(\restlt\Result $data) {
