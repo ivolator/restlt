@@ -70,7 +70,6 @@ class RequestRouter implements RouterInterface{
 		$route = null;
 		$method = $this->request->getMethod ();
 		$uri = $this->request->getUri ();
-
 		$ext = pathinfo($uri,PATHINFO_EXTENSION);
 		$uri = preg_replace('#\.'.$ext.'$#', '', $uri);
 
