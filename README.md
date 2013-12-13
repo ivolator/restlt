@@ -10,7 +10,8 @@ $s = new Server ( '/' );
 //Tell the server where to find the resources
 $s->registerResourceFolder ( SOME_APPLICATION_ROOT .  '/resources', 'name\space\resources' );
 $s->registerResourceClass('example\name\space\Resource');
-$s->serve ();
+echo $s->serve ();
+exit;
 ``` 
 In your base server directory add an .htaccess file with the follwing content
 ```
