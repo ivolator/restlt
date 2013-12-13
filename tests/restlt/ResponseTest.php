@@ -63,6 +63,8 @@ class ResponseTest extends RestLiteTest {
 		$route2->setOutputTypeOverrideExt('json');
 		$route3 = new Route ();
 		$route3->setOutputTypeOverrideExt('html');
+		$route4 = new Route ();
+		$route4->setOutputTypeOverrideExt('sphp');
 		
 
 		$expectedJsonConversionstrategy = new JsonOutputStrategy ();
@@ -72,11 +74,11 @@ class ResponseTest extends RestLiteTest {
 		$data1->setData ( array ('test' => 1 ) );
 		return array (
 			array ($route1, Response::APPLICATION_JSON, $expectedJsonConversionstrategy, $data1,'POST' ), 
-//			array($route2,Response::APPLICATION_XML,$expectedXmlConversionStrategy, $data,'GET'),
+			array($route2,Response::APPLICATION_XML,$expectedXmlConversionStrategy, $data,'GET'),
 			array($route3,Response::TEXT_HTML,$expectedHtmlConversionStrategy, $data1,'PUT'),
+			array($route4,Response::APPLICATION_XML,$expectedXmlConversionStrategy, $data,'PATCH'),
 			array(null, Response::APPLICATION_JSON,$expectedHtmlConversionStrategy, null,'HEAD'),
-			)
-		;
+		);
 	}
 	/**
 	 * Cleans up the environment after running a test.

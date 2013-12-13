@@ -77,7 +77,12 @@ class Response implements \restlt\ResponseInterface {
 	const TEXT_HTML = 'text/html';
 	const TEXT_PLAIN = 'text/plain';
 	protected $headers = array ();
-	protected $responseOutputStrategies = array ('xml' => '\restlt\utils\output\XmlOtputStrategy', 'json' => '\restlt\utils\output\JsonOutputStrategy', 'html' => '\restlt\utils\output\HtmlOutputStrategy' );
+	protected $responseOutputStrategies = array (
+			'xml' => '\restlt\utils\output\XmlOtputStrategy',
+			'json' => '\restlt\utils\output\JsonOutputStrategy',
+			'sphp' => '\restlt\utils\output\SerializerOutputStrategy',
+			'html' => '\restlt\utils\output\HtmlOutputStrategy' 
+	);
 	
 	/**
 	 * HTTP status code
@@ -146,7 +151,7 @@ class Response implements \restlt\ResponseInterface {
 					$ret = call_user_func_array ( array ($resourceObj, $route->getFunctionName () ), $params );
 					// after method was processed
 					$this->executeCallbacks ( Resource::ON_AFTER, $route->getFunctionName (), $cbs, array ($router->getRequest (), $this, $ret ) );
-				} catch ( \Exception $e ) {
+				} catch (\Exception $e ) {
 					$this->executeCallbacks ( Resource::ON_ERROR, $route->getFunctionName (), $cbs, array ($router->getRequest (), $this, $e ) );
 					$this->setStatus ( Response::INTERNALSERVERERROR );
 					$this->executeCallbacks ( Resource::ON_AFTER, $route->getFunctionName (), $cbs, array ($router->getRequest (), $this, $ret ) );
@@ -187,7 +192,7 @@ class Response implements \restlt\ResponseInterface {
 		$route = null;
 		try {
 			$route = $this->getRequestRouter ()->getRoute ();
-		} catch (\restlt\exceptions\ServerException $e ) {
+		} catch ( \restlt\exceptions\ServerException $e ) {
 			$this->setStatus ( $e->getCode () );
 		}
 		

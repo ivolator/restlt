@@ -1,5 +1,5 @@
 ##A "thin" REST-full server implementation in PHP 
-RestLite is a flexible small library that will allow you to build RESTfull service.
+RestLt is a flexible small library that will allow you to build RESTfull service.
 Most of the sub-components are extensible or replaceable. This would let you modify the server's behavior.
 The current version is still in alpha. Any feedback is appreciated!
 
@@ -22,7 +22,7 @@ In your base server directory add an .htaccess file with the follwing content
     RewriteRule ^(.*)$ index.php?_url=/$1 [QSA,L]
 </IfModule>
 ```
-Now you have bootstraped RestLite.
+Now you have bootstraped RestLt.
 
 ###Creating a resource
  
@@ -229,7 +229,7 @@ $f = function (\restlt\Request $request, \restlt\Response $response,\Exception $
         $this->on (\restlt\Resource::ON_BEFORE, NULL, $f1 );
 ```
 ## Adding some cache
-Since the addition of a great amound of resources could cost us in performance, RestLite uses some caching to aleviate this issue.
+Since the addition of a great amound of resources could cost us in performance, RestLt uses some caching to aleviate this issue.
 In it's most basic implementation the server supports natively Memcached extention. However there are ways to add third party caching systems that are already supporting multitude of backend cache adapters.
 The cache is stores the metadata used to resolve the resource routes.
 ### Using built in Memcached implementation
@@ -241,7 +241,7 @@ The cache is stores the metadata used to resolve the resource routes.
     $s->serve ();
 ```
 ### Using Zend Cache component - [Zend Cache] http://framework.zend.com/manual/2.0/en/modules/zend.cache.storage.adapter.html)
-If you are already using ZF2 caching component there is an easy way to add it to RestLite.
+If you are already using ZF2 caching component there is an easy way to add it to RestLt.
 Here assuming that you know how to use `Zend\Cache\StorageFactory::adapterFactory` you need to obtain a
 StorageAdapter. 
 ```php
@@ -299,7 +299,7 @@ Here is an example how to you could use that feature.
  }
 ```
 ## In need for custom output?
-Out of the box RestLite comes with json and xml output strategies. 
+Out of the box RestLt comes with json and xml output strategies. 
 Let's say you need to provide some home grown obfuscated or even encrypted reponse. 
 For whatever the reason is, you might want to do that one day.
 It could be that you want to communicate with the client via some specific protocol and want to wrap the data in it. 
@@ -318,7 +318,7 @@ class SerializeOutputStrategy implements \restlt\utils\output\TypeConversionStra
 }
 ```
 
-That's it. We have implemented a serializer sutput strategy for our RestLite server.
+That's it. We have implemented a serializer sutput strategy for our RestLt server.
 Next on the list to make this work is to tell the server about it.
 ```php
 $s->getResponse()->addResponseOutputStrategies('sphp', '\my\name\space\SerializeOutputStrategy');

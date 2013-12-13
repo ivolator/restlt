@@ -21,42 +21,16 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-namespace restlt\utils\output;
+namespace models\output;
 
-use restlt\exceptions\ApplicationException;
 /**
- * 
+ * Serialized PHP object strategy
  * @author vo
  *
  */
-class HtmlOutputStrategy implements TypeConversionStrategyInterface{
-	
-	/**
-	 * @todo - not sure if i'll go this way
-	 * @var \restlt\utils\output\template\TemplateEngineInterface
-	 */
-	protected $templateEngine = null;
+class SerializerOutputStrategy implements TypeConversionStrategyInterface {
 	
 	public function execute(\restlt\Result $data) {
-		$html = $data->getData();
-		if(!is_string($html)){
-			$html = print_r($data,true);
-		}
-		return $html;
+		return serialize ( $data );
 	}
-	/**
-	 * @return \restlt\utils\output\template\TemplateEngineInterface $templateEngine
-	 */
-	public function getTemplateEngine() {
-		return $this->templateEngine;
-	}
-
-	/**
-	 * @param TemplateEngineInterface $templateEngine
-	 */
-	public function setTemplateEngine(\restlt\utils\output\template\TemplateEngineInterface $templateEngine) {
-		$this->templateEngine = $templateEngine;
-	}
-
-	
 }
