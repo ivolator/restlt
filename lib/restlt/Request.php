@@ -30,65 +30,58 @@ namespace restlt;
 
 use restlt\exceptions\ServerException;
 
-class Request implements \restlt\RequestInterface{
-
+class Request implements \restlt\RequestInterface {
+	
 	const POST = 'POST';
 	const GET = 'GET';
 	const PUT = 'PUT';
 	const DELETE = 'DELETE';
 	const PATCH = 'PATCH';
 	const HEAD = 'HEAD';
-
-	protected $supportedMethods = array (
-				'POST',
-				'GET',
-				'PUT',
-				'DELETE',
-				'PATCH',
-				'HEAD'
-		);
+	
+	protected $supportedMethods = array ('POST', 'GET', 'PUT', 'DELETE', 'PATCH', 'HEAD' );
 	/**
 	 *
 	 * @var array
 	 */
 	protected $queryParams = array ();
-
+	
 	/**
 	 *
 	 * @var array
 	 */
 	protected $postParams = array ();
-
+	
 	/**
 	 *
 	 * @var string
 	 */
 	protected $rawPost = null;
-
+	
 	/**
 	 *
 	 * @var string
 	 */
 	protected $uri;
-
+	
 	/**
 	 *
 	 * @var string
 	 */
 	protected $method = null;
-
+	
 	/**
 	 *
 	 * @var array
 	 */
 	protected $headers = array ();
-
+	
 	/**
 	 *
 	 * @var string XML | JSON | TEXT
 	 */
 	protected $contentType = null;
-
+	
 	/**
 	 */
 	public function __construct() {
@@ -97,15 +90,15 @@ class Request implements \restlt\RequestInterface{
 		$this->queryParams = $_GET;
 		$_POST = null;
 		$_GET = null;
-		$this->headers = $this->buildHeadersList ( !empty($_SERVER) ? $_SERVER : array() );
+		$this->headers = $this->buildHeadersList ( ! empty ( $_SERVER ) ? $_SERVER : array () );
 	}
-
+	
 	/**
 	 *
 	 * @param string $paramName
-	 *        	- the POST or GET parameter name
+	 * - the POST or GET parameter name
 	 * @param string $returnDefault
-	 *        	- return this if there is nothing in $paramName
+	 * - return this if there is nothing in $paramName
 	 * @return Ambigous <>|string
 	 */
 	public function get($paramName, $returnDefault = null) {
@@ -114,7 +107,7 @@ class Request implements \restlt\RequestInterface{
 			return $params [$paramName];
 		return $returnDefault;
 	}
-
+	
 	/**
 	 *
 	 * @return the $queryStringParams
@@ -122,7 +115,7 @@ class Request implements \restlt\RequestInterface{
 	public function getQueryParams() {
 		return $this->queryParams;
 	}
-
+	
 	/**
 	 *
 	 * @return the $postParams
@@ -130,8 +123,7 @@ class Request implements \restlt\RequestInterface{
 	public function getPostParams() {
 		return $this->postParams;
 	}
-
-
+	
 	/**
 	 *
 	 * @return the $rawPost
@@ -139,7 +131,7 @@ class Request implements \restlt\RequestInterface{
 	public function getRawPost() {
 		return $this->rawPost;
 	}
-
+	
 	/**
 	 *
 	 * @return the $headers
@@ -147,7 +139,7 @@ class Request implements \restlt\RequestInterface{
 	public function getHeaders() {
 		return $this->headers;
 	}
-
+	
 	/**
 	 *
 	 * @param array $SERVER
@@ -155,14 +147,16 @@ class Request implements \restlt\RequestInterface{
 	 */
 	protected function buildHeadersList(array $SERVER = array()) {
 		$ret = array ();
-				
-		$accpetable = '#(' . Response::APPLICATION_JSON .')|('.Response::APPLICATION_XML.')|('.Response::TEXT_PLAIN.')|(application/.*\+json)|(application/.*\+xml)#';
-		$res = preg_match($accpetable, $_SERVER['HTTP_ACCEPT'], $match);
-		if(!$res){
-			throw new ServerException('Invalid request MIME type', Response::NOTACCEPTABLE);
+		
+		$accpetable = '#(' . Response::APPLICATION_JSON . ')|(' . Response::APPLICATION_XML . ')|(' . Response::TEXT_PLAIN . ')|(application/.*\+json)|(application/.*\+xml)#';
+		if (isset ( $_SERVER ['HTTP_ACCEPT'] )) {
+			$res = preg_match ( $accpetable, $_SERVER ['HTTP_ACCEPT'], $match );
+			if (! $res) {
+				throw new ServerException ( 'Invalid request MIME type', Response::NOTACCEPTABLE );
+			}
 		}
 		
-		if($SERVER) {
+		if ($SERVER) {
 			foreach ( $SERVER as $k => $v ) {
 				if (stristr ( $k, 'http_' )) {
 					$res = str_ireplace ( 'http_', '', $k );
@@ -172,33 +166,33 @@ class Request implements \restlt\RequestInterface{
 		}
 		return $ret;
 	}
-
+	
 	/**
 	 *
 	 * @return the $url
 	 */
 	public function getUri() {
-		if(!$this->uri){
+		if (! $this->uri) {
 			$res = parse_url ( $_SERVER ['REQUEST_URI'] );
 			$this->uri = $res ['path'] ? $res ['path'] : '/';
 		}
 		return $this->uri;
 	}
-
+	
 	/**
 	 *
 	 * @return the $method
 	 */
 	public function getMethod() {
-		if(!$this->method){
+		if (! $this->method) {
 			$this->method = ! empty ( $_SERVER ['X-HTTP-METHOD-OVERRIDE'] ) ? $_SERVER ['X-HTTP-METHOD-OVERRIDE'] : $_SERVER ['REQUEST_METHOD'];
 		}
-		if(!in_array($this->method,array(Request::POST, Request::GET, Request::PUT, Request::DELETE, Request::PATCH, Request::HEAD))){
-			throw new ServerException('Invalid Method', Response::METHODNOTALLOWED);
+		if (! in_array ( $this->method, array (Request::POST, Request::GET, Request::PUT, Request::DELETE, Request::PATCH, Request::HEAD ) )) {
+			throw new ServerException ( 'Invalid Method', Response::METHODNOTALLOWED );
 		}
-		return strtoupper($this->method);
+		return strtoupper ( $this->method );
 	}
-
+	
 	/**
 	 *
 	 * @return the $contentType

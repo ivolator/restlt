@@ -1,4 +1,5 @@
 <?php
+use restlt\Request;
 use restlt\utils\output\HtmlOutputStrategy;
 use restlt\utils\output\XmlOtputStrategy;
 use restlt\utils\output\JsonOutputStrategy;
@@ -13,6 +14,20 @@ class ResponseTest extends RestLiteTest {
 	
 	protected function setUp() {
 		parent::setUp ();
+		$this->mockRequest = $this->getMockBuilder ( '\restlt\Request' )->setMethods ( array ('getMethod','getContentType' ) )->disableOriginalConstructor ()->getMock ();
+	}
+	public function testGet(){
+		$_POST = array('one'=>1,'two'=>2);
+		$_GET = array('three' => 3,'null' => null);
+		$request = new Request();
+		$actual = $request->get('one');
+		$this->assertEquals(1, $actual);
+		$actual = $request->get('two');
+		$this->assertEquals(2, $actual);
+		$actual = $request->get('three');
+		$this->assertEquals(3, $actual);
+		$actual = $request->get('null',4);
+		$this->assertEquals(4, $actual);
 	}
 	
 	/**
@@ -20,7 +35,6 @@ class ResponseTest extends RestLiteTest {
 	 */
 	public function testSend($route, $contentType, $expectedConversionStrategy, $data = null, $method) {
 		
-		$this->mockRequest = $this->getMockBuilder ( '\restlt\Request' )->setMethods ( array ('getMethod','getContentType' ) )->disableOriginalConstructor ()->getMock ();
 		$this->mockRequest->expects ( $this->once () )->method ( 'getContentType' )->will ( $this->returnValue ( $contentType ) );
 		$this->mockRequest->expects ( $this->any())->method ( 'getMethod' )->will ( $this->returnValue ( $method ) );
 		

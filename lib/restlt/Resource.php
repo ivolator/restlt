@@ -218,12 +218,14 @@ class Resource implements ResourceInterface{
         $resources = $this->getResponse()->getRequestRouter()->getResources();
         $ret = '<div style="font-size:115%; font-style: italic; font-weight:bold; color: navy">';
         $ret .=" API Documentation" . PHP_EOL;
-            $ret .= '<a name="top"/>';
+        $ret .= '<a name="top"/>';
         $ret .= '</div>';
+        $ret .= '<div>';
         foreach ($resources as $resourceClass => $methods){
-            $html ='<div style="width:30%; border: solid 1px blue; background:#CCFFFF; color: blue; padding: 5px">';
-            $html .= 'Http Method : ' . $methods[0]['method'] . PHP_EOL;
-            $html .= 'URI : '.$methods[0]['methodUri'] . PHP_EOL;
+            $html ='<div style="width:30%; border: solid 1px blue;  padding: 5px">';
+            $html .= '<strong>URI</strong> : '.$methods[0]['methodUri'] . PHP_EOL;
+            $html .= '<strong>Http Method</strong> : ' . $methods[0]['method'] . PHP_EOL;
+            $html .= '<strong>Description</strong> : ' . PHP_EOL;
             $html .= isset($methods[0]['comment'])?$methods[0]['comment'] . PHP_EOL:'';
             $html .='</div>'.PHP_EOL;
             $html .= '<a  href="#top">Top</a>' . PHP_EOL;
