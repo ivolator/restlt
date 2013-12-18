@@ -68,6 +68,7 @@ class RequestRouter implements RouterInterface{
 	 */
 	public function getRoute() {
 		$route = null;
+
 		$method = $this->getRequest()->getMethod ();
 		$uri = $this->getRequest()->getUri ();
 		$ext = pathinfo($uri,PATHINFO_EXTENSION);

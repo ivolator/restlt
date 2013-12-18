@@ -23,8 +23,6 @@
  */
 namespace restlt\utils\meta;
 
-use restlt\exceptions\SystemException;
-
 /**
  * Annotations parser helper
  *
@@ -32,7 +30,7 @@ use restlt\exceptions\SystemException;
  *
  */
 class AnnotationsParser {
-
+	
 	/**
 	 * Retruns uri meta for given class
 	 *
@@ -43,13 +41,13 @@ class AnnotationsParser {
 	public function getClassMeta($className) {
 		try {
 			$classRefl = new \ReflectionClass ( $className );
-			$classDocComment = $this->parseDocComment ( $classRefl->getDocComment ());
-		} catch (\ReflectionException $e ) {
-			throw new SystemException ( $e->getMessage (), $e->getCode (), $e );
+			$classDocComment = $this->parseDocComment ( $classRefl->getDocComment () );
+		} catch ( \ReflectionException $e ) {
+			throw new \restlt\exceptions\SystemException ( $e->getMessage (), $e->getCode (), $e );
 		}
 		return $classDocComment;
 	}
-
+	
 	/**
 	 *
 	 * @param string $className - FQCN
@@ -58,33 +56,33 @@ class AnnotationsParser {
 	 * @throw SystemException
 	 */
 	public function getMethodMeta($className) {
-		$ret = array();
+		$ret = array ();
 		try {
 			$classRefl = new \ReflectionClass ( $className );
 			foreach ( $classRefl->getMethods () as $methodRefl ) {
 				$res = $this->parseDocComment ( $methodRefl->getDocComment () );
-				if($res){
-					$res['comment'] = $this->getUserComment($methodRefl->getDocComment ());
-					$res['function'] = $methodRefl->getName();
-					$ret[] = $res;
+				if ($res) {
+					$res ['comment'] = $this->getUserComment ( $methodRefl->getDocComment () );
+					$res ['function'] = $methodRefl->getName ();
+					$ret [] = $res;
 				}
 			}
-		} catch (\ReflectionException $e ) {
-			throw new SystemException ( $e->getMessage (), $e->getCode (), $e );
+		} catch ( \ReflectionException $e ) {
+			throw new \restlt\exceptions\SystemException ( $e->getMessage (), $e->getCode (), $e );
 		}
 		return $ret;
 	}
-
+	
 	/**
 	 * 
 	 * @param unknown_type $doccomment
 	 */
-	public function getUserComment($docComment){
-		preg_match_all('#[*]+[ ]+[^@].*\n#', $docComment, $docCommentArr);
-		$ret = array_map(function ($el){
-			return trim($el,'* ');
-		}, $docCommentArr[0]);
-		$ret = trim(implode(PHP_EOL, $ret));
+	public function getUserComment($docComment) {
+		preg_match_all ( '#[*]+[ ]+[^@].*\n#', $docComment, $docCommentArr );
+		$ret = array_map ( function ($el) {
+			return trim ( $el, '* ' );
+		}, $docCommentArr [0] );
+		$ret = trim ( implode ( PHP_EOL, $ret ) );
 		return $ret;
 	}
 	
@@ -97,17 +95,17 @@ class AnnotationsParser {
 	 */
 	protected function parseDocComment($docComment) {
 		if (! $docComment) {
-			return array();
+			return array ();
 		}
 		
-		$res = preg_match_all('#[ *](@.*)\n#', $docComment, $docCommentArr);
-		$res = $docCommentArr[1]?$docCommentArr[1]:array();
+		$res = preg_match_all ( '#[ *](@.*)\n#', $docComment, $docCommentArr );
+		$res = $docCommentArr [1] ? $docCommentArr [1] : array ();
 		$res = preg_grep ( '#^@.*#', $res );
 		$ret = array ();
 		if ($res) {
 			foreach ( array_values ( $res ) as $value ) {
 				$line = explode ( ' ', $value );
-				$docName = trim(preg_replace ( '#^@#', '', array_shift ( $line ) ));
+				$docName = trim ( preg_replace ( '#^@#', '', array_shift ( $line ) ) );
 				$ret [$docName] = trim ( implode ( ' ', $line ) );
 			}
 		}
