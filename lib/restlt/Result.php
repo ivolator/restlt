@@ -82,8 +82,7 @@ class Result implements ResultInterface {
 	 */
 	public function toString(TypeConversionStrategyInterface $conversionStrategy = null) {
 
-		$tc = new TypeConverter();
-		$tc->setConversionStrategy($conversionStrategy);
+		$tc = new TypeConverter($conversionStrategy);
 
 		return $tc->convert($this);
 	}

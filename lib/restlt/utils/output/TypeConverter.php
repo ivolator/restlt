@@ -30,9 +30,13 @@ use restlt\Result;
  * @author Vo
  *
  */
-class TypeConverter {
+class TypeConverter implements TypeConverterInterface{
 	protected $conversionStrategy = null;
 
+	public function __construct(TypeConversionStrategyInterface $conversionStrategy){
+		$this->setConversionStrategy($conversionStrategy);
+	}
+	
 	/**
 	 *
 	 * @param Result $data

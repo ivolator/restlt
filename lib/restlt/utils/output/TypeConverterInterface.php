@@ -2,7 +2,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2013 Ivo Mandalski
+ * Copyright (c) 2013 ivolator
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -21,45 +21,19 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-use restlt\Result;
-use restlt\utils\output\SerializerOutputStrategy;
 
+namespace restlt\utils\output;
 /**
- * test case.
+ * 
+ * @author Ivo Mandalski
+ *
  */
-class SerializerOutputStrategyTest extends PHPUnit_Framework_TestCase {
-	
-	/**
-	 * Prepares the environment before running a test.
-	 */
-	protected function setUp() {
-		parent::setUp ();
-	}
-	
+use restlt\Result;
+
+interface TypeConverterInterface {
 	/**
 	 * 
+	 * @param Result $data
 	 */
-	public function testExecute(){
-		$serializer = new SerializerOutputStrategy();
-		$data = new stdClass();
-		$data->prop1 = 1;
-		$data->prop2 = array(1,2,3);
-		$result = new Result();
-		$result->setData($data);
-		$expected = serialize($result);
-		$actual = $serializer->execute($result);
-		$this->assertEquals($expected, $actual);		
-	}
-	
-	/**
-	 * Cleans up the environment after running a test.
-	 */
-	protected function tearDown() {
-		// TODO Auto-generated SerializerOutputStrategyTest::tearDown()
-		
-
-		parent::tearDown ();
-	}
-
+	public function convert(Result $data);
 }
-
