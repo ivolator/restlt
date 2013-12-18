@@ -169,7 +169,7 @@ class Resource implements ResourceInterface{
      * @param string $type
      */
     public function clearCallbacks() {
-        unset ( $this->callbacks );
+         $this->callbacks = array();
     }
     /**
      * @return the $annotations
