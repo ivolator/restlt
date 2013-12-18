@@ -51,7 +51,7 @@ class ResponseTest extends RestLiteTest {
 		$this->assertEmpty ( $this->mockResponse->getForceResponseType () );
 		$this->mockResponse->expects ( $this->any () )->method ( 'getRoutedResponse' )->will ( $this->returnValue ( $data ? $data->getData() : null ) );
 		$this->mockResponse->setStatus ( Response::OK );
-		
+
 		$expected = $this->mockResponse->send ( );
 		$this->assertEquals($expected, $expectedConversionStrategy && $data?$expectedConversionStrategy->execute($data):null);
 	}
@@ -74,9 +74,9 @@ class ResponseTest extends RestLiteTest {
 		$data1->setData ( array ('test' => 1 ) );
 		return array (
 			array ($route1, Response::APPLICATION_JSON, $expectedJsonConversionstrategy, $data1,'POST' ), 
-			array($route2,Response::APPLICATION_XML,$expectedXmlConversionStrategy, $data,'GET'),
+			array($route2,Response::APPLICATION_XML,$expectedXmlConversionStrategy, $data1,'GET'),
 			array($route3,Response::TEXT_HTML,$expectedHtmlConversionStrategy, $data1,'PUT'),
-			array($route4,Response::APPLICATION_XML,$expectedXmlConversionStrategy, $data,'PATCH'),
+			array($route4,Response::APPLICATION_XML,$expectedXmlConversionStrategy, $data1,'PATCH'),
 			array(null, Response::APPLICATION_JSON,$expectedHtmlConversionStrategy, null,'HEAD'),
 		);
 	}
