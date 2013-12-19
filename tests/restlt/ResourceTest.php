@@ -34,11 +34,6 @@ class ResourceTest extends PHPUnit_Framework_TestCase {
 	 */
 	protected function setUp() {
 		parent::setUp ();
-//		$this->mockRequest = $this->getMockBuilder('\restlt\Request')->disableOriginalConstructor()
-//		->setMethods(array(''))->getMock();
-		
-//		$this->mockResponse = $this->getMockBuilder('restlt\Response')->disableOriginalConstructor()
-//		->setMethods(array(''))->getMock();
 		
 		$this->mockResource = $this->getMockBuilder('\restlt\Resource')->disableOriginalConstructor()
 		->setMethods(array('getRequest','getResponse'))->getMock();
