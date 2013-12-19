@@ -54,8 +54,15 @@ class ResourceTest extends PHPUnit_Framework_TestCase {
 		$cbs = $this->mockResource->getCallbacks();
 		$this->assertEquals($expected, $cbs['methdOne'][Resource::ON_BEFORE][0]);
 		
-		$this->mockResource->clearCallbacks();
-		$this->assertEmpty($this->mockResource->getCallbacks());
+		return $this->mockResource;
+	}
+	
+	/**
+	 * @depends testOn
+	 */
+	public function testClearCallbacks($mockResource){
+		$mockResource->clearCallbacks();
+		$this->assertEmpty($mockResource->getCallbacks());
 	}
 	
 	/**
