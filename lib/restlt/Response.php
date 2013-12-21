@@ -115,7 +115,12 @@ class Response implements \restlt\ResponseInterface {
 	 * @var \Exception
 	 */
 	protected $displayError = false;
-	
+    
+    /**
+     * @var \restlt\log\Logger
+     */
+    protected $logger = null;
+    	
 	/**
 	 *
 	 * @param string $name
@@ -139,6 +144,7 @@ class Response implements \restlt\ResponseInterface {
 		if ($route && $route->getClassName () && $route->getFunctionName ()) {
 			$class = $route->getClassName ();
 			$resourceObj = new $class ( $router->getRequest (), $this );
+			$resourceObj->setLogger($this->logger);
 			$params = $route->getParams () ? $route->getParams () : array ();
 			if (is_callable ( array ($resourceObj, $route->getFunctionName () ) )) {
 				try {
@@ -472,4 +478,20 @@ class Response implements \restlt\ResponseInterface {
 			$errorStack->next ();
 		}
 	}
+
+	/**
+	 * @return \restlt\log\Logger $logger
+	 */
+	public function getLogger() {
+		return $this->logger;
+	}
+
+	/**
+	 * @param \restlt\log\Logger $logger
+	 */
+	public function setLogger(\restlt\log\Logger $logger) {
+		$this->logger = $logger;
+		return $this; 
+	}
+	
 }

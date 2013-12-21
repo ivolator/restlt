@@ -23,6 +23,8 @@
 */
 namespace restlt;
 
+use restlt\log\NullLogger;
+use restlt\log\Logger;
 use restlt\utils\cache\CacheAdapterInterface;
 use restlt\utils\Cache;
 use restlt\utils\meta\MetadataBuilder;
@@ -91,6 +93,12 @@ class Server {
      * @var ServiceContainer
      */
     protected $serviceContainer = null;
+    
+    /**
+     * 
+     * @var \restlt\log\Logger
+     */
+    protected $logger  = null;
 
     /**
      *
@@ -111,17 +119,23 @@ class Server {
      */
     public function serve($enableApiInfo = true) {
         try {
+        	$this->getLogger()->log('RestLt: REQUEST' . PHP_EOL . $this->getRequest());
             $resources = $this->getMetadataBuilder ()->getResourcesMeta ();
             if ($enableApiInfo) {
                 $resources = array_merge ( $resources, $this->getApiResourceInfo () );
             }
             $this->getRequestRouter ()->setResources ( $resources );
-            $this->getResponse ()->setRequestRouter($this->getRequestRouter());
+            $this->getResponse ()->setLogger($this->getLogger())
+            	->setRequestRouter($this->getRequestRouter());
             $ret = $this->getResponse ()->send();
         } catch ( \Exception $e ) {
             $this->getResponse ()->setStatus ( Response::INTERNALSERVERERROR );
             $ret = $this->getResponse ()->send ();
+	        $this->getLogger()->log('RestLt: Exception Message' . PHP_EOL . $e->getMessage());
+	        $this->getLogger()->log('RestLt: Exception Code' . PHP_EOL . $e->getCode());
+	        $this->getLogger()->log('RestLt: Exception Trace' . PHP_EOL . $e->getTraceAsString());
         }
+        $this->getLogger()->log('RestLt: RESPONSE' . PHP_EOL . $ret);
         return $ret;
     }
 
@@ -353,5 +367,24 @@ class Server {
     public function addOuputStrategy($outputType, $strategyClassName ){
         $this->getResponse()->addResponseOutputStrategies($outputType, $strategyClassName);
     }
+    
+	/**
+	 * @return \restlt\log\LoggerInterface $logger
+	 */
+	public function getLogger() {
+		if(!$this->logger){
+			$this->logger = new Logger(new NullLogger(), 'critical');
+		}
+		return $this->logger;
+	}
+
+	/**
+	 * @param LoggerInterface $logger
+	 */
+	public function setLogger(Logger $logger, $logLevel = null) {
+			$this->logger = $logger;
+			return $this;
+	}
+
 
 }

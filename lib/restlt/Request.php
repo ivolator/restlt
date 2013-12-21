@@ -206,4 +206,16 @@ class Request implements \restlt\RequestInterface {
 		}
 		return $this->contentType;
 	}
+	
+	public function __toString() { 
+		$get = print_r($this->queryParams,true);
+		$post = print_r($this->postParams,true) ;
+		$rawPost = print_r($this->rawPost ,true);
+		$headers = print_r($this->headers , true);
+		$ret = 'Headers : ' . PHP_EOL . $headers . PHP_EOL;
+		$ret .= 'GET     : ' . PHP_EOL . $get . PHP_EOL;
+		$ret .= 'POST    : ' . PHP_EOL . $post . PHP_EOL;
+		$ret .= 'Raw     : ' . PHP_EOL . $rawPost . PHP_EOL;
+		return $ret;
+	}
 }

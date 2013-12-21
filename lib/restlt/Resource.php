@@ -67,6 +67,11 @@ class Resource implements ResourceInterface{
      * @var \SplStack
      */
     protected $errors = array();
+    
+    /**
+     * @var \restlt\log\Logger
+     */
+    protected $logger = null;
 
     public function __construct(RequestInterface $request, ResponseInterface $response){
         $this->setRequest($request);
@@ -235,5 +240,18 @@ class Resource implements ResourceInterface{
         //TODO
         return nl2br($ret);
     }
+    
+	/**
+	 * @return \restlt\log\Logger $logger
+	 */
+	public function getLogger() {
+		return $this->logger;
+	}
 
+	/**
+	 * @param \restlt\log\Logger $logger
+	 */
+	public function setLogger(\restlt\log\Logger $logger) {
+		$this->logger = $logger;
+	}
 }
