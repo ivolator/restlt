@@ -356,7 +356,17 @@ the same goes if you decide to extend the json converter.
 ### Resource method doc block
     @method -> specifies what HTTP method this resource method respnds to. POST, GET, PUT, PATCH, DELETE are allowed
     @methodBaseUri -> URI relative to the resource base uri value specified in the @resourceBaseUri
-    @cacheControlMaxAge -> this value directly affects the 'Cache-Control max-age' HTTP header value and has nothing to do with the local caching feature    
+    @cacheControlMaxAge -> this value directly affects the 'Cache-Control max-age' HTTP header value and has nothing to do with the local caching feature  
+## Logging 
+As of version 1.2.0-alpha there is a way to add a logger.
+Added was [PSR-3](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md) compatible logger. However a native logger implementation is not and probably will not be added.
+You will need to inject your logger which chould implement Psr\Log\LoggerInterface .
+
+```
+$server->setLogger($yourcustomLogger);
+```
+An adapter for the Zend Logger will be added when this version is released.
+
 ## Misc. usage tricks    
 ### Forcing the server to respond always with spcified reponse type regardles of the request `Content-type`
 The default behavior is specified by the Accept header. If the 'Accept' is plain/text or anything that does not refer to SML of JSON the
