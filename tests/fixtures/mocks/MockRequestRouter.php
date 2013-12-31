@@ -1,17 +1,17 @@
 <?php
-use restlt\utils\routing\RouterInterface;
+use restlt\routing\RouterInterface;
 class MockRequestRouter implements RouterInterface {
 	protected $request = null;
 	protected $resources = null;
 	
 	/* (non-PHPdoc)
-	 * @see restlt\utils\routing.RouterInterface::getRoute()
+	 * @see restlt\routing.RouterInterface::getRoute()
 	 */
 	public function getRoute() {
 	}
 	
 	/* (non-PHPdoc)
-	 * @see restlt\utils\routing.RouterInterface::getRequest()
+	 * @see restlt\routing.RouterInterface::getRequest()
 	 */
 	public function getRequest() {
 		return $this->request;

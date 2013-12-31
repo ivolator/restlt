@@ -24,14 +24,14 @@
 namespace restlt;
 
 use restlt\log\NullLogger;
-use restlt\log\Logger;
-use restlt\utils\cache\CacheAdapterInterface;
-use restlt\utils\Cache;
-use restlt\utils\meta\MetadataBuilder;
+use restlt\log\Log;
+use restlt\cache\CacheAdapterInterface;
+use restlt\Cache;
+use restlt\meta\MetadataBuilder;
 use restlt\exceptions\ServerException;
-use restlt\utils\di\ServiceContainer;
-use restlt\utils\meta\MetadataBuilderInterface;
-use restlt\utils\meta\AnnotationsParser;
+use restlt\di\ServiceContainer;
+use restlt\meta\MetadataBuilderInterface;
+use restlt\meta\AnnotationsParser;
 
 /**
  *
@@ -72,13 +72,13 @@ class Server {
 
     /**
      *
-     * @var \restlt\utils\CacheAdaperInterface
+     * @var \restlt\CacheAdaperInterface
      */
     protected $cacheAdapter;
 
     /**
      *
-     * @var \restlt\utils\meta\MetadataBuilder
+     * @var \restlt\cache\MetadataBuilder
      */
     protected $metadataBuilder = null;
 
@@ -96,9 +96,9 @@ class Server {
     
     /**
      * 
-     * @var \restlt\log\Logger
+     * @var \restlt\log\Log
      */
-    protected $logger  = null;
+    protected $log  = null;
 
     /**
      *
@@ -119,23 +119,23 @@ class Server {
      */
     public function serve($enableApiInfo = true) {
         try {
-        	$this->getLogger()->log('RestLt: REQUEST' . PHP_EOL . $this->getRequest());
+        	$this->getLog()->log('RestLt: REQUEST' . PHP_EOL . $this->getRequest());
             $resources = $this->getMetadataBuilder ()->getResourcesMeta ();
             if ($enableApiInfo) {
                 $resources = array_merge ( $resources, $this->getApiResourceInfo () );
             }
             $this->getRequestRouter ()->setResources ( $resources );
-            $this->getResponse ()->setLogger($this->getLogger())
+            $this->getResponse ()->setLog($this->getLog())
             	->setRequestRouter($this->getRequestRouter());
             $ret = $this->getResponse ()->send();
         } catch ( \Exception $e ) {
             $this->getResponse ()->setStatus ( Response::INTERNALSERVERERROR );
             $ret = $this->getResponse ()->send ();
-	        $this->getLogger()->log('RestLt: Exception Message' . PHP_EOL . $e->getMessage());
-	        $this->getLogger()->log('RestLt: Exception Code' . PHP_EOL . $e->getCode());
-	        $this->getLogger()->log('RestLt: Exception Trace' . PHP_EOL . $e->getTraceAsString());
+	        $this->getLog()->log('RestLt: Exception Message' . PHP_EOL . $e->getMessage());
+	        $this->getLog()->log('RestLt: Exception Code' . PHP_EOL . $e->getCode());
+	        $this->getLog()->log('RestLt: Exception Trace' . PHP_EOL . $e->getTraceAsString());
         }
-        $this->getLogger()->log('RestLt: RESPONSE' . PHP_EOL . $ret);
+        $this->getLog()->log('RestLt: RESPONSE' . PHP_EOL . $ret);
         return $ret;
     }
 
@@ -187,7 +187,7 @@ class Server {
      */
     public function getRequestRouter() {
         if (! $this->requestRouter) {
-            $this->requestRouter = new \restlt\utils\routing\RequestRouter( $this->request, $this->baseUri );
+            $this->requestRouter = new \restlt\routing\RequestRouter( $this->request, $this->baseUri );
         }
         return $this->requestRouter;
     }
@@ -197,7 +197,7 @@ class Server {
      * @param field_type $requestRouter
      * @return \restlt\Server
      */
-    public function setRequestRouter(\restlt\utils\routing\RouterInterface $requestRouter) {
+    public function setRequestRouter(\restlt\routing\RouterInterface $requestRouter) {
         $this->requestRouter = $requestRouter;
         return $this;
     }
@@ -268,7 +268,7 @@ class Server {
 
     /**
      *
-     * @return \restlt\utils\meta\MetadataBuilderInterface $metadataBuilder
+     * @return \restlt\cache\MetadataBuilderInterface $metadataBuilder
      */
     public function getMetadataBuilder() {
         if (! $this->metadataBuilder) {
@@ -285,7 +285,7 @@ class Server {
 
     /**
      *
-     * @param \restlt\utils\meta\MetadataBuilderInterface $metadataBuilder
+     * @param \restlt\meta\MetadataBuilderInterface $metadataBuilder
      */
     public function setMetadataBuilder(MetadataBuilderInterface $metadataBuilder) {
         $this->metadataBuilder = $metadataBuilder;
@@ -346,14 +346,14 @@ class Server {
     }
 
     /**
-     * @return \restlt\utils\di\ServiceContainer $serviceContainer
+     * @return \restlt\di\ServiceContainer $serviceContainer
      */
     public function getServiceContainer() {
         return $this->serviceContainer;
     }
 
     /**
-     * @param \restlt\utils\di\ServiceContainer $serviceContainer
+     * @param \restlt\di\ServiceContainer $serviceContainer
      */
     public function setServiceContainer($serviceContainer) {
         $this->serviceContainer = $serviceContainer;
@@ -371,18 +371,18 @@ class Server {
 	/**
 	 * @return \restlt\log\LoggerInterface $logger
 	 */
-	public function getLogger() {
-		if(!$this->logger){
-			$this->logger = new Logger(new NullLogger(), 'critical');
+	public function getLog() {
+		if(!$this->log){
+			$this->log = new Log(new NullLogger(), 'critical');
 		}
-		return $this->logger;
+		return $this->log;
 	}
 
 	/**
 	 * @param LoggerInterface $logger
 	 */
-	public function setLogger(Logger $logger, $logLevel = null) {
-			$this->logger = $logger;
+	public function setLog(Log $logger, $logLevel = null) {
+			$this->log = $logger;
 			return $this;
 	}
 

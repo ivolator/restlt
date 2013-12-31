@@ -23,7 +23,7 @@
  */
 namespace restlt;
 
-use restlt\utils\routing\Route;
+use restlt\routing\Route;
 use restlt\exceptions\ApplicationException;
 use restlt\exceptions\SystemException;
 
@@ -78,10 +78,10 @@ class Response implements \restlt\ResponseInterface {
 	const TEXT_PLAIN = 'text/plain';
 	protected $headers = array ();
 	protected $responseOutputStrategies = array (
-			'xml' => '\restlt\utils\output\XmlOtputStrategy',
-			'json' => '\restlt\utils\output\JsonOutputStrategy',
-			'sphp' => '\restlt\utils\output\SerializerOutputStrategy',
-			'html' => '\restlt\utils\output\HtmlOutputStrategy' 
+			'xml' => '\restlt\output\XmlOtputStrategy',
+			'json' => '\restlt\output\JsonOutputStrategy',
+			'sphp' => '\restlt\output\SerializerOutputStrategy',
+			'html' => '\restlt\output\HtmlOutputStrategy' 
 	);
 	
 	/**
@@ -106,7 +106,7 @@ class Response implements \restlt\ResponseInterface {
 	
 	/**
 	 *
-	 * @var \restlt\utils\routing\RouterInterface
+	 * @var \restlt\routing\RouterInterface
 	 */
 	protected $requestRouter = null;
 	
@@ -117,9 +117,9 @@ class Response implements \restlt\ResponseInterface {
 	protected $displayError = false;
     
     /**
-     * @var \restlt\log\Logger
+     * @var \restlt\log\Log
      */
-    protected $logger = null;
+    protected $log = null;
     	
 	/**
 	 *
@@ -136,7 +136,7 @@ class Response implements \restlt\ResponseInterface {
 	 * @param Request $request
 	 * @param Result $returnValue
 	 */
-	protected function getRoutedResponse(\restlt\utils\routing\RouterInterface $router) {
+	protected function getRoutedResponse(\restlt\routing\RouterInterface $router) {
 		$ret = null;
 		
 		$route = $router->getRoute ();
@@ -144,7 +144,7 @@ class Response implements \restlt\ResponseInterface {
 		if ($route && $route->getClassName () && $route->getFunctionName ()) {
 			$class = $route->getClassName ();
 			$resourceObj = new $class ( $router->getRequest (), $this );
-			$resourceObj->setLogger($this->logger);
+			$resourceObj->setLog($this->log);
 			$params = $route->getParams () ? $route->getParams () : array ();
 			if (is_callable ( array ($resourceObj, $route->getFunctionName () ) )) {
 				try {
@@ -452,7 +452,7 @@ class Response implements \restlt\ResponseInterface {
 	 *
 	 * @param \restlt\RequestRouter $requestRouter
 	 */
-	public function setRequestRouter(\restlt\utils\routing\RouterInterface $requestRouter) {
+	public function setRequestRouter(\restlt\routing\RouterInterface $requestRouter) {
 		$this->requestRouter = $requestRouter;
 		return $this;
 	}
@@ -480,17 +480,17 @@ class Response implements \restlt\ResponseInterface {
 	}
 
 	/**
-	 * @return \restlt\log\Logger $logger
+	 * @return \restlt\log\Log $logger
 	 */
-	public function getLogger() {
-		return $this->logger;
+	public function getLog() {
+		return $this->log;
 	}
 
 	/**
-	 * @param \restlt\log\Logger $logger
+	 * @param \restlt\log\Log $logger
 	 */
-	public function setLogger(\restlt\log\Logger $logger) {
-		$this->logger = $logger;
+	public function setLog(\restlt\log\Log $logger) {
+		$this->log = $logger;
 		return $this; 
 	}
 	

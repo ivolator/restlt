@@ -1,10 +1,10 @@
 <?php
 use restlt\Request;
-use restlt\utils\output\HtmlOutputStrategy;
-use restlt\utils\output\XmlOtputStrategy;
-use restlt\utils\output\JsonOutputStrategy;
+use restlt\output\HtmlOutputStrategy;
+use restlt\output\XmlOtputStrategy;
+use restlt\output\JsonOutputStrategy;
 use restlt\Response;
-use restlt\utils\routing\Route;
+use restlt\routing\Route;
 use restlt\Result;
 
 class ResponseTest extends RestLiteTest {
@@ -38,7 +38,7 @@ class ResponseTest extends RestLiteTest {
 		$this->mockRequest->expects ( $this->once () )->method ( 'getContentType' )->will ( $this->returnValue ( $contentType ) );
 		$this->mockRequest->expects ( $this->any())->method ( 'getMethod' )->will ( $this->returnValue ( $method ) );
 		
-		$this->mockRequestRouter = $this->getMockBuilder ( '\restlt\utils\routing\RequestRouter' )->disableOriginalConstructor ()
+		$this->mockRequestRouter = $this->getMockBuilder ( '\restlt\routing\RequestRouter' )->disableOriginalConstructor ()
 		->setMethods ( array ('getRoute', 'getRequest' ) )->getMock ();
 		$this->mockRequestRouter->expects ( $this->atLeastOnce() )->method ( 'getRequest' )->will ( $this->returnValue ( $this->mockRequest )  );
 		$this->mockRequestRouter->expects ( $this->exactly ( 2 ) )->method ( 'getRoute' )->will (  $this->returnValue ( $route )  );

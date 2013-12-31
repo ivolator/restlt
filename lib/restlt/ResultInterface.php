@@ -23,7 +23,7 @@
 */
 namespace restlt;
 
-use restlt\utils\output\TypeConversionStrategyInterface;
+use restlt\output\TypeConversionStrategyInterface;
 /**
  *
  * @author Vo

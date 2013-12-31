@@ -69,9 +69,9 @@ class Resource implements ResourceInterface{
     protected $errors = array();
     
     /**
-     * @var \restlt\log\Logger
+     * @var \restlt\log\Log
      */
-    protected $logger = null;
+    protected $log = null;
 
     public function __construct(RequestInterface $request, ResponseInterface $response){
         $this->setRequest($request);
@@ -223,7 +223,7 @@ class Resource implements ResourceInterface{
         $resources = $this->getResponse()->getRequestRouter()->getResources();
         $ret = '<div style="font-size:115%; font-style: italic; font-weight:bold; color: navy">';
         $ret .=" API Documentation" . PHP_EOL;
-        $ret .= '<a name="top"/>';
+        $ret .= '<a name="top"></a>';
         $ret .= '</div>';
         $ret .= '<div>';
         foreach ($resources as $resourceClass => $methods){
@@ -242,16 +242,16 @@ class Resource implements ResourceInterface{
     }
     
 	/**
-	 * @return \restlt\log\Logger $logger
+	 * @return \restlt\log\Log $logger
 	 */
-	public function getLogger() {
-		return $this->logger;
+	public function getLog() {
+		return $this->log;
 	}
 
 	/**
-	 * @param \restlt\log\Logger $logger
+	 * @param \restlt\log\Log $logger
 	 */
-	public function setLogger(\restlt\log\Logger $logger) {
-		$this->logger = $logger;
+	public function setLog(\restlt\log\Log $logger) {
+		$this->log = $logger;
 	}
 }
