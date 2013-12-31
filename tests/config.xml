@@ -11,9 +11,9 @@
 	<testsuites>
 		<testsuite name="RestLite All">
 			<directory suffix="Test.php" phpVersion="5.3.0" phpVersionOperator=">=">./restlt</directory>
-			<directory suffix="Test.php" phpVersion="5.3.0" phpVersionOperator=">=">./restlt/utils/</directory>
-			<directory suffix="Test.php" phpVersion="5.3.0" phpVersionOperator=">=">./restlt/utils/meta/</directory>
-			<directory suffix="Test.php" phpVersion="5.3.0" phpVersionOperator=">=">./restlt/utils/output/</directory>
+			<directory suffix="Test.php" phpVersion="5.3.0" phpVersionOperator=">=">./restlt/meta/</directory>
+			<directory suffix="Test.php" phpVersion="5.3.0" phpVersionOperator=">=">./restlt/output/</directory>
+			<directory suffix="Test.php" phpVersion="5.3.0" phpVersionOperator=">=">./restlt/routing/</directory>
 		</testsuite>
 	</testsuites>
 </phpunit>
