@@ -3,6 +3,10 @@ RestLt is a flexible small library that will allow you to build RESTfull service
 Most of the sub-components are extensible or replaceable. This would let you modify the server's behavior.
 The current version is still in alpha. Any feedback is appreciated!
 
+
+
+[![Build Status](https://travis-ci.org/ivolator/restlt.png)](https://travis-ci.org/ivolator/restlt)
+
 ###Basic usage (server end point setup)
 ```php
 //Get instance of the server by passing the server base url
