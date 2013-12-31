@@ -6,7 +6,6 @@ namespace restlt\log;
  *
  */
 use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
 
 /**
  * 

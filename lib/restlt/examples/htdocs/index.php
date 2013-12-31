@@ -19,9 +19,9 @@ $options = array(
 $memcached = new \Memcached ();
 $memcached->addServer ( 'localhost', 11211 );
 $s = new Server ( '/app' );
-$s->setCacheAdapter ( new \restlt\utils\cache\RestltMemcachedAdapter( $memcached ) );
-//$s->setCacheAdapter ( new \restlt\utils\cache\ZFCacheAdapter ( $zendCache ) );
-$s->getResponse()->addResponseOutputStrategies('serialize', '\restlt\utils\output\SerializeOutputStrategy');
+$s->setCacheAdapter ( new \restlt\cache\RestltMemcachedAdapter( $memcached ) );
+//$s->setCacheAdapter ( new \restlt\cache\ZFCacheAdapter ( $zendCache ) );
+$s->getResponse()->addResponseOutputStrategies('sphp', '\restlt\output\SerializeOutputStrategy');
 $s->registerResourceFolder ( APP_ROOT .  '/vendor/restlt/restlt/lib/restlt/examples/resources', 'restlt\examples\resources' );
 
 echo $s->serve ();

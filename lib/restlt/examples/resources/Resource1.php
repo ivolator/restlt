@@ -29,6 +29,7 @@ class Resource1 extends \restlt\Resource {
 	 * @custom SSSSS
 	 */
 	public function getMe($id = '') {
+		$this->getLog()->log('Started GET request');
 		$obj = new \stdClass ();
 		$custom = $this->annotations->get('custom');
 		$this->addError('Wrong Value 1','1001');
