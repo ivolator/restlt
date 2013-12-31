@@ -23,6 +23,8 @@
 */
 namespace restlt;
 
+use Psr\Log\LoggerInterface;
+
 use restlt\log\NullLogger;
 use restlt\log\Log;
 use restlt\cache\CacheAdapterInterface;
@@ -120,13 +122,17 @@ class Server {
     public function serve($enableApiInfo = true) {
         try {
         	$this->getLog()->log('RestLt: REQUEST' . PHP_EOL . $this->getRequest());
+
             $resources = $this->getMetadataBuilder ()->getResourcesMeta ();
             if ($enableApiInfo) {
                 $resources = array_merge ( $resources, $this->getApiResourceInfo () );
             }
+
             $this->getRequestRouter ()->setResources ( $resources );
-            $this->getResponse ()->setLog($this->getLog())
-            	->setRequestRouter($this->getRequestRouter());
+            
+            $this->getResponse ()->setRequestRouter($this->getRequestRouter());
+            $this->getResponse()->setLog($this->getLog());
+            
             $ret = $this->getResponse ()->send();
         } catch ( \Exception $e ) {
             $this->getResponse ()->setStatus ( Response::INTERNALSERVERERROR );
@@ -369,7 +375,7 @@ class Server {
     }
     
 	/**
-	 * @return \restlt\log\LoggerInterface $logger
+	 * @return \restlt\log\LogInterface $logger
 	 */
 	public function getLog() {
 		if(!$this->log){
@@ -381,8 +387,8 @@ class Server {
 	/**
 	 * @param LoggerInterface $logger
 	 */
-	public function setLog(Log $logger, $logLevel = null) {
-			$this->log = $logger;
+	public function setLoggerImplementation(LoggerInterface $logger, $logLevel = null) {
+			$this->log = new Log($logger, $logLevel);
 			return $this;
 	}
 
