@@ -5,4 +5,7 @@ php:
   - "5.3"
 install:
    composer require --dev "psr/log":"1.0.*@dev"
-script: phpunit -c tests/config.xml
+script: 
+    - mkdir vendor/restlt
+    - mv restlt vendor/restlt/
+    - phpunit -c tests/config.xml
