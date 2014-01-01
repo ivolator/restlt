@@ -231,22 +231,23 @@ $f = function (\restlt\Request $request, \restlt\Response $response,\Exception $
 ## Adding some cache
 Since the addition of a great amound of resources could cost us in performance, RestLt uses some caching to aleviate this issue.
 In it's most basic implementation the server supports natively Memcached extention. However there are ways to add third party caching systems that are already supporting multitude of backend cache adapters.
-The cache is stores the metadata used to resolve the resource routes.
+In order to use any of the two third party implementations supported by RestLt you shuld install them via [Composer](getcomposer.org).
+When installing RestLt via [Composer](getcomposer.org) you should have seen suggestions for either one of those.
 ### Using built in Memcached implementation
 ```php
     $memcached = new Memcached ();
     $memcached->addServer ( 'localhost', 11211 );
     $s = new Server ( '/' );
-    $s->setCacheAdapter ( new \restlt\utils\cache\RestltMemcachedAdapter( $memcached ) );
+    $s->setCacheAdapter ( new \restlt\cache\RestltMemcachedAdapter( $memcached ) );
     $s->serve ();
 ```
-### Using Zend Cache component - [Zend Cache] http://framework.zend.com/manual/2.0/en/modules/zend.cache.storage.adapter.html)
+### Using Zend Cache component - [Zend Cache] (http://framework.zend.com/manual/2.0/en/modules/zend.cache.storage.adapter.html)
 If you are already using ZF2 caching component there is an easy way to add it to RestLt.
 Here assuming that you know how to use `Zend\Cache\StorageFactory::adapterFactory` you need to obtain a
 StorageAdapter. 
 ```php
     $zendCache = Zend\Cache\StorageFactory::adapterFactory('apc',$options);
-    $s->setCacheAdapter ( new \restlt\utils\cache\ZFCacheAdapter ( $zendCache ) );
+    $s->setCacheAdapter ( new \restlt\cache\ZFCacheAdapter ( $zendCache ) );
 ```
 
 ### Using Doctrine's cache implementation - [Doctrine Cache](http://docs.doctrine-project.org/en/latest/reference/caching.html)
@@ -256,10 +257,11 @@ StorageAdapter.
     $memcache->connect('memcache_host', 11211);
     $doctrineCacheProvider = new \Doctrine\Common\Cache\MemcacheCache();
     $doctrineCacheProvider->setMemcache($memcache);
-    $s->setCacheAdapter ( new \restlt\utils\cache\DoctrineCacheAdapter($doctrineCacheProvider) );
+    $s->setCacheAdapter ( new \restlt\cache\DoctrineCacheAdapter($doctrineCacheProvider) );
 ```
 ### Addig your favorite cache implementation
-In order for us to be able to use a third party Cache library we need to create a class that implements `restlt\utils\cache\CacheAdapterInterface`
+If you don't use any of the formerly mentioned cache implementations by Zend or Doctrine you can add your own.
+In order for us to be able to use a third party Cache library we need to create a class that implements `restlt\cache\CacheAdapterInterface`
 ```php
 class OtherframeworkCacheAdapter implements CacheAdapterInterface {
         public function __construct($cacheInstance = null) {
@@ -280,7 +282,7 @@ class OtherframeworkCacheAdapter implements CacheAdapterInterface {
 ```
 Now you have to tell the server to use it in your bootsrap routine.
 ```php
-$s->setCacheAdapter ( new \restlt\utils\cache\OtherfameworkCacheAdapter($otherframeworkInstance) );
+$s->setCacheAdapter ( new \restlt\cache\OtherfameworkCacheAdapter($otherframeworkInstance) );
 ```
 
 ##Adding your own annotations to the Resource methods or the Resource classes
@@ -305,12 +307,12 @@ For whatever the reason is, you might want to do that one day.
 It could be that you want to communicate with the client via some specific protocol and want to wrap the data in it. 
 Or may be want to change the current ones. Here is how.
 ###Adding a custom response of your own.
-First we need to create a class that implements the `\restlt\utils\output\TypeConversionStrategyInterface`. Let's start.
+First we need to create a class that implements the `\restlt\output\TypeConversionStrategyInterface`. Let's start.
 ```php
 namespace my\name\space;
-class SerializeOutputStrategy implements \restlt\utils\output\TypeConversionStrategyInterface {
+class SerializeOutputStrategy implements \restlt\output\TypeConversionStrategyInterface {
     /**
-     * @see \restlt\utils\output\TypeConversionStrategyInterface::execute()
+     * @see \restlt\output\TypeConversionStrategyInterface::execute()
      */
     public function execute(\restlt\Result $data) {
         return serialize($data);
@@ -330,7 +332,7 @@ Now all of your request ( GET, POST, PUT, PATCH ...) with URLs such like:
  
 etc. will respond with serialized data accoring to your new output strategy.
 
-###Extending the currently available `\restlt\utils\output\XmlTypeConverter` and `\restlt\utils\output\JsonTypeConverter`.
+###Extending the currently available `\restlt\output\XmlTypeConverter` and `\restlt\output\JsonTypeConverter`.
 To modify the behaviour of the current JSON or XMl converters, you will need to extend them. There is not much to remember here. Extending the class is nothing different than what you do with any other class you do extend.
 However you need to register your new class with the server and associate it with the XML or JSON types.
 ```php
@@ -360,10 +362,10 @@ the same goes if you decide to extend the json converter.
 ## Logging 
 As of version 1.2.0-alpha there is a way to add a logger.
 Added was [PSR-3](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md) compatible logger. However a native logger implementation is not and probably will not be added.
-You will need to inject your logger which chould implement Psr\Log\LoggerInterface .
+You will need to inject your logger which should implement Psr\Log\LoggerInterface .
 
 ```
-$server->setLogger($yourcustomLogger);
+$server->setLog($yourcustomLogger);
 ```
 An adapter for the Zend Logger will be added when this version is released.
 
