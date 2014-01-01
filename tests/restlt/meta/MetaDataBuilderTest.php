@@ -20,6 +20,7 @@ class MetaDataBuilderTest extends RestLiteTest {
 	 * @dataProvider buildMetaDataProvider
 	 */
 	public function testBuildMeta($resources) {
+
 		$mockMetaBuilder = $this->getMockBuilder ( 'restlt\meta\MetadataBuilder' )->setMethods ( array ('getResourcesMeta' ) )->disableOriginalConstructor ()->getMock ();
 		$mockMetaBuilder->setResourceClasses ( $resources );
 		$mockMetaBuilder->setAnnotationsParser ( new AnnotationsParser () );
