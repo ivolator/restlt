@@ -4,5 +4,5 @@ php:
   - "5.4"
   - "5.3"
 install:
-   composer require psr/log: 1.0.0b
+   composer require restlt/restlt:1.0.0b
 script: phpunit -c tests/config.xml
