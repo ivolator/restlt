@@ -6,6 +6,7 @@ php:
 install:
    composer require --dev "psr/log":"1.0.*@dev"
 script: 
+    - mkdir vendor
     - mkdir vendor/restlt
     - mv restlt vendor/restlt/
     - phpunit -c tests/config.xml
