@@ -33,12 +33,39 @@
 
 <p>RestLt is a flexible small library that will allow you to build RESTfull service.
 Most of the sub-components are extensible or replaceable. This would let you modify the server's behavior.
-The current version is still in alpha. Any feedback is appreciated!</p>
+Any feedback is appreciated!</p>
 
 <p><a href="https://travis-ci.org/ivolator/restlt"><img src="https://travis-ci.org/ivolator/restlt.png" alt="Build Status"></a></p>
 
+<h2>
+<a name="installing" class="anchor" href="#installing"><span class="octicon octicon-link"></span></a>Installing</h2>
+
 <h3>
-<a name="basic-usage-server-end-point-setup" class="anchor" href="#basic-usage-server-end-point-setup"><span class="octicon octicon-link"></span></a>Basic usage (server end point setup)</h3>
+<a name="using-composer" class="anchor" href="#using-composer"><span class="octicon octicon-link"></span></a>Using Composer</h3>
+
+<p>In require section of your composer.json file add the information for RestLt as follows:</p>
+
+<pre><code>{ 
+        "require" :
+        { 
+                "restlt/restlt":"1.0.0b"
+        }
+}
+</code></pre>
+
+<p>Run <code>composer.phar --dev update</code></p>
+
+<h3>
+<a name="clone-with-git" class="anchor" href="#clone-with-git"><span class="octicon octicon-link"></span></a>Clone with GIT</h3>
+
+<p>Use this URL to clone the repo
+<code>https://github.com/ivolator/restlt.git</code></p>
+
+<h2>
+<a name="basics" class="anchor" href="#basics"><span class="octicon octicon-link"></span></a>Basics</h2>
+
+<h3>
+<a name="server-end-point-setup" class="anchor" href="#server-end-point-setup"><span class="octicon octicon-link"></span></a>Server end point setup</h3>
 
 <div class="highlight highlight-php"><pre><span class="c1">//Get instance of the server by passing the server base url</span>
 <span class="nv">$s</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Server</span> <span class="p">(</span> <span class="s1">'/'</span> <span class="p">);</span>
@@ -66,7 +93,7 @@ The current version is still in alpha. Any feedback is appreciated!</p>
 
 <p>A resource in Rest Lite is a class that extends the \restlt\Resource class.
  Each resource can contain methods that respond to multiple GETs, POSTs, PUTs, DELETEs and PATCHs.
- It is important to mention that when you are registering resources with the server you are either registering a resource folder and prviding a namespace or a single resource by providing the FQNS to resource class. Providing a FQNS (fully qualified name space) is necessary.</p>
+ It is important to mention that when you are registering resources with the server you are either registering a resource folder and providing a namespace or a single resource by providing the FQNS to resource class. Providing a FQNS (fully qualified name space) is necessary.</p>
 
 <p>To configure the URI for the resource, you need to setup couple of things.
  All the metadata is configurable via the PHP doc blocks. Examples are shown later.</p>
