@@ -1,13 +1,29 @@
 ##A "thin" REST-full server implementation in PHP 
 RestLt is a flexible small library that will allow you to build RESTfull service.
 Most of the sub-components are extensible or replaceable. This would let you modify the server's behavior.
-The current version is still in alpha. Any feedback is appreciated!
-
+Any feedback is appreciated!
 
 
 [![Build Status](https://travis-ci.org/ivolator/restlt.png)](https://travis-ci.org/ivolator/restlt)
+##Installing
+###Using Composer
+In require section of your composer.json file add the information for RestLt as follows:
+```
+{ 
+        "require" :
+        { 
+                "restlt/restlt":"1.0.0b"
+        }
+}
+```
+Run `composer.phar --dev update`
 
-###Basic usage (server end point setup)
+###Clone with GIT
+Use this URL to clone the repo
+`https://github.com/ivolator/restlt.git`
+
+##Basics 
+###Server end point setup
 ```php
 //Get instance of the server by passing the server base url
 $s = new Server ( '/' );
@@ -32,7 +48,7 @@ Now you have bootstraped RestLt.
  
  A resource in Rest Lite is a class that extends the \restlt\Resource class.
  Each resource can contain methods that respond to multiple GETs, POSTs, PUTs, DELETEs and PATCHs.
- It is important to mention that when you are registering resources with the server you are either registering a resource folder and prviding a namespace or a single resource by providing the FQNS to resource class. Providing a FQNS (fully qualified name space) is necessary.
+ It is important to mention that when you are registering resources with the server you are either registering a resource folder and providing a namespace or a single resource by providing the FQNS to resource class. Providing a FQNS (fully qualified name space) is necessary.
  
  To configure the URI for the resource, you need to setup couple of things.
  All the metadata is configurable via the PHP doc blocks. Examples are shown later.
