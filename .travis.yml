@@ -6,7 +6,5 @@ php:
 install:
    composer require --dev "psr/log":"1.0.*@dev"
 script: 
-    - mkdir /home/travis/build/ivolator/vendor
-    - mkdir /home/travis/build/ivolator/vendor/restlt
-    - mv /home/travis/build/ivolator/restlt /home/travis/build/ivolator/vendor/restlt/
-    - phpunit -c /home/travis/build/ivolator/vendor/restlt/restlt/tests/config.xml
+   - cd tests
+   - phpunit -c config.xml
