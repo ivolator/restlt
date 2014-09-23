@@ -368,7 +368,7 @@ the same goes if you decide to extend the json converter.
 |Annotation          |   Where    |  Required | Values |
 |--------------------|:----------:|----------:|--------|
 |  @resourceBaseUri  | CLASS      | YES       | string |
-|  @baseUri          | METHDO     | NO        | string/regex or empty |
+|  @methodUri          | METHDO     | NO        | string/regex or empty |
 | @cacheControlMaxAge| METHOD     | NO        | integer| 
 | @method            | METHOD     | YES       | GET, POST, PUT, PATCH, DELETE |
  
@@ -377,7 +377,7 @@ the same goes if you decide to extend the json converter.
     @resourceBaseUri -> specifies the resource base URI relative to the Server base URI
 ### Resource method doc block
     @method -> specifies what HTTP method this resource method respnds to. POST, GET, PUT, PATCH, DELETE are allowed
-    @methodBaseUri -> URI relative to the resource base uri value specified in the @resourceBaseUri
+    @methodUri -> URI relative to the resource base uri value specified in the @resourceBaseUri
     @cacheControlMaxAge -> this value directly affects the 'Cache-Control max-age' HTTP header value and has nothing to do with the local caching feature  
 ## Logging 
 As of version 1.2.0-alpha there is a way to add a logger.
