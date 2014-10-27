@@ -30,8 +30,8 @@ namespace restlt\output;
  */
 
 class SerializerOutputStrategy implements TypeConversionStrategyInterface {
-	
-	public function execute(\restlt\Result $data) {
+
+	public function execute(\restlt\ResultInterface $data) {
 		return serialize ( $data );
 	}
 }

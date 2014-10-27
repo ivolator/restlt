@@ -44,7 +44,7 @@ class RestltMemcachedAdapter implements CacheAdapterInterface {
 	 *
 	 * @var integer
 	 */
-	protected $exparation = 0;
+	protected $expiration = 0;
 
 	/*
 	 * (non-PHPdoc) @see \restlt\cache\CacheAdapterInterface::__construct()
@@ -68,6 +68,7 @@ class RestltMemcachedAdapter implements CacheAdapterInterface {
 		if ($res) {
 			$ret = true;
 		}
+	    error_log(' TEST result code ' . $this->mc->getResultCode ()  . PHP_EOL, 3, '/tmp/xhprof.log');
 		return $ret;
 	}
 
@@ -75,10 +76,11 @@ class RestltMemcachedAdapter implements CacheAdapterInterface {
 	 * (non-PHPdoc) @see \restlt\cache\CacheAdapterInterface::set()
 	 */
 	public function set($key, $item) {
-		$this->mc->set ( $key, $item, $this->exparation );
-		if ($this->mc->getResultCode () === \Memcached::RES_NOTFOUND) {
+		$this->mc->set ( $key, $item, $this->expiration );
+		if ($this->mc->getResultCode () == \Memcached::RES_NOTFOUND) {
 			$ret = false;
 		}
+	    error_log(' SET result code' . $this->mc->getResultCode ()  . PHP_EOL, 3, '/tmp/xhprof.log');
 		return true;
 	}
 

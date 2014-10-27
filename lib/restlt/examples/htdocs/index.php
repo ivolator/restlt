@@ -1,7 +1,6 @@
 <?php
 date_default_timezone_set ( 'America/New_York' );
 define ( 'APP_ROOT', '/var/www/restlt' );
-
 $al = require_once APP_ROOT . '/vendor/autoload.php';
 /**
  * $options = array(

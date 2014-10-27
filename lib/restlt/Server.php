@@ -24,14 +24,12 @@
 namespace restlt;
 
 use Psr\Log\LoggerInterface;
-
 use restlt\log\NullLogger;
 use restlt\log\Log;
 use restlt\cache\CacheAdapterInterface;
 use restlt\Cache;
 use restlt\meta\MetadataBuilder;
 use restlt\exceptions\ServerException;
-use restlt\di\ServiceContainer;
 use restlt\meta\MetadataBuilderInterface;
 use restlt\meta\AnnotationsParser;
 
@@ -92,21 +90,20 @@ class Server {
 
     /**
      *
-     * @var ServiceContainer
-     */
-    protected $serviceContainer = null;
-    
-    /**
-     * 
      * @var \restlt\log\Log
      */
     protected $log  = null;
 
     /**
+     * @var boolean
+     */
+    protected $autoDocs = true;
+
+    /**
      *
      * @param string $baseUri
      */
-    public function __construct($baseUri = null, $name = 'RestLite', RequestInterface $request = null, ResponseInterface $response = null) {
+    public function __construct($baseUri = null, $name = 'RestLt', RequestInterface $request = null, ResponseInterface $response = null) {
         if ($baseUri) {
             $this->baseUri = $baseUri;
         }
@@ -119,20 +116,20 @@ class Server {
     /**
      * Main method
      */
-    public function serve($enableApiInfo = true) {
+    public function serve() {
         try {
+
+            if(true === $this->autoDocs){
+                $this->registerResourceClass('\restlt\InfoResource');
+            }
+
         	$this->getLog()->log('RestLt: REQUEST' . PHP_EOL . $this->getRequest());
 
             $resources = $this->getMetadataBuilder ()->getResourcesMeta ();
-            if ($enableApiInfo) {
-                $resources = array_merge ( $resources, $this->getApiResourceInfo () );
-            }
 
             $this->getRequestRouter ()->setResources ( $resources );
-            
             $this->getResponse ()->setRequestRouter($this->getRequestRouter());
             $this->getResponse()->setLog($this->getLog());
-            
             $ret = $this->getResponse ()->send();
         } catch ( \Exception $e ) {
             $this->getResponse ()->setStatus ( Response::INTERNALSERVERERROR );
@@ -150,11 +147,17 @@ class Server {
      *
      * @param string $className
      *            - FQCN
+     * @param string - full path to file
      * @return \restlt\Server
      */
-    public function registerResourceClass($className) {
+    public function registerResourceClass($className, $fileName = null) {
         if (class_exists ( $className, true )) {
-            $this->resourceClasses [$className] = $className;
+            if(!empty($fileName)){
+                $this->resourceClasses [$fileName] = $className;
+            } else {
+                $className = ltrim($className,'\\');
+                $this->resourceClasses [$className] = $className;
+            }
         } else {
             throw new \restlt\exceptions\FileNotFoundException ( 'Could not register class' . $className . '. File not found!' );
         }
@@ -339,30 +342,12 @@ class Server {
         }
     }
 
-    public function getApiResourceInfo() {
-        $ret ['\restlt\Resource'] [] = array ('method' => 'GET', 'methodUri' => '/', 'function' => 'getAvailableApiCals','cacheControlMaxAge'=>86400 );
-        return $ret;
-    }
     /**
      *
      * @return array
      */
     public function getResourceClasses() {
         return $this->resourceClasses;
-    }
-
-    /**
-     * @return \restlt\di\ServiceContainer $serviceContainer
-     */
-    public function getServiceContainer() {
-        return $this->serviceContainer;
-    }
-
-    /**
-     * @param \restlt\di\ServiceContainer $serviceContainer
-     */
-    public function setServiceContainer($serviceContainer) {
-        $this->serviceContainer = $serviceContainer;
     }
 
     /**
@@ -373,7 +358,7 @@ class Server {
     public function addOuputStrategy($outputType, $strategyClassName ){
         $this->getResponse()->addResponseOutputStrategies($outputType, $strategyClassName);
     }
-    
+
 	/**
 	 * @return \restlt\log\LogInterface $logger
 	 */
@@ -391,6 +376,17 @@ class Server {
 			$this->log = new Log($logger, $logLevel);
 			return $this;
 	}
+
+	/**
+	 *
+	 * @param boolean $autoDocs
+	 * @return \restlt\Server
+	 */
+	public function setAutoDocs( $autoDocs) {
+		$this->autoDocs = (boolean) $autoDocs;
+		return $this;
+	}
+
 
 
 }

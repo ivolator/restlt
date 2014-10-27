@@ -25,5 +25,5 @@ namespace restlt\output;
 use restlt\Result;
 
 interface TypeConversionStrategyInterface {
-	function execute(Result $data);
+	function execute(\restlt\ResultInterface $data);
 }

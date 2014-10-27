@@ -78,7 +78,7 @@ class RequestRouter implements RouterInterface{
 		$resourceUri = str_replace ( '//', '/', $resourceUri );
 
 		if(\restlt\Request::HEAD === strtoupper($method)) $method = \restlt\Request::GET;
-		
+
 		$route = $this->matchResource ( $resourceUri, $method );
 		if($ext) $route->setOutputTypeOverrideExt($ext);
 
@@ -176,7 +176,7 @@ class RequestRouter implements RouterInterface{
 	public function getResources() {
 		return $this->resources;
 	}
-	
+
 	/**
 	 * @return string $serverBaseUri
 	 */

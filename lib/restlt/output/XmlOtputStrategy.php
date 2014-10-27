@@ -38,7 +38,7 @@ class XmlOtputStrategy implements TypeConversionStrategyInterface {
 	 *
 	 * @see \restlt\output\TypeConversionStrategyInterface::execute()
 	 */
-	public function execute(Result $data) {
+	public function execute(\restlt\ResultInterface $data) {
 		$this->dom = new \DOMDocument ( '1.0', 'UTF-8' );
 		$domEl = $this->fromMixed ( $data );
 		$this->dom->appendChild ( $domEl );

@@ -34,7 +34,7 @@ class MetadataBuilder implements MetadataBuilderInterface{
 	 *
 	 * @var string
 	 */
-	const META_CACHE_KEY = 'rstltkey';
+	const META_CACHE_KEY = 'metakey';
 
 	/**
 	 *
@@ -59,9 +59,9 @@ class MetadataBuilder implements MetadataBuilderInterface{
 	 * @var unknown
 	 */
 	protected $cacheKeySalt = '';
-	
+
 	/**
-	 * 
+	 *
 	 * @var \restlt\Server
 	 */
 	protected $server = NULL;
@@ -105,11 +105,11 @@ class MetadataBuilder implements MetadataBuilderInterface{
 		if ($this->cache && $this->cache->test ( $this->getCacheKey () )) {
 			$ret = $this->cache->get ( $this->getCacheKey () );
 		}
+
 		if (! $ret && $this->resourceClasses) {
 			foreach ( $this->resourceClasses as $class ) {
 				$classMeta = $this->getAnnotationsParser()->getClassMeta ( $class );
 				$methodsMeta = $this->getAnnotationsParser()->getMethodMeta ( $class );
-
 				if (! $methodsMeta )
 					continue;
 				$resourceBaseUri = $classMeta ['resourceBaseUri'];
@@ -118,7 +118,7 @@ class MetadataBuilder implements MetadataBuilderInterface{
 					$el ['methodUri'] = rtrim(rtrim ( $resourceBaseUri, ' /' ) . '/' . $methodUri,'/ ');
 					return $el;
 				}, $methodsMeta );
-				
+
 				$methodsMeta = array_filter($methodsMeta,function($el){
 					return isset($el['method']);
 				});
@@ -130,7 +130,7 @@ class MetadataBuilder implements MetadataBuilderInterface{
 
 		return $ret;
 	}
-	
+
 	/**
 	 */
 	public function getResourcesMeta() {

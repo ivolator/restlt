@@ -25,19 +25,19 @@ namespace restlt\output;
 
 use restlt\exceptions\ApplicationException;
 /**
- * 
+ *
  * @author vo
  *
  */
 class HtmlOutputStrategy implements TypeConversionStrategyInterface{
-	
+
 	/**
 	 * @todo - not sure if i'll go this way
 	 * @var \restlt\output\template\TemplateEngineInterface
 	 */
 	protected $templateEngine = null;
-	
-	public function execute(\restlt\Result $data) {
+
+	public function execute(\restlt\ResultInterface $data) {
 		$html = $data->getData();
 		if(!is_string($html)){
 			$html = print_r($data,true);
@@ -58,5 +58,5 @@ class HtmlOutputStrategy implements TypeConversionStrategyInterface{
 		$this->templateEngine = $templateEngine;
 	}
 
-	
+
 }

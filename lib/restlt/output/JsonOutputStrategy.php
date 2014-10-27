@@ -32,7 +32,7 @@ use restlt\exceptions\SystemException;
  *
  */
 class JsonOutputStrategy implements TypeConversionStrategyInterface {
-	public function execute(Result $data) {
+	public function execute(\restlt\ResultInterface $data) {
 		$ret = new \stdClass ();
 		$ret->data = $data->getData ();
 		$ret->errors = $data->getErrors ();

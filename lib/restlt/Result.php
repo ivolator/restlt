@@ -32,6 +32,13 @@ use restlt\output\TypeConversionStrategyInterface;
  */
 class Result implements ResultInterface {
 
+
+    /**
+     *
+     * @var integer
+     */
+	public $httpStatus;
+
 	/**
 	 *
 	 * @var mixed
@@ -59,7 +66,7 @@ class Result implements ResultInterface {
 	}
 
 	public function addError($errorMessage, $errorCode) {
-		$this->errors['error'][] = array('message'=>$errorMessage,'code'=>$errorCode);
+		$this->errors/* ['error'] */[] = array('message'=>$errorMessage,'code'=>$errorCode);
 	}
 
 	/**
@@ -86,4 +93,14 @@ class Result implements ResultInterface {
 
 		return $tc->convert($this);
 	}
+
+	public function getHttpStatus() {
+		return $this->httpStatus;
+	}
+
+	public function setHttpStatus( $httpStatus) {
+		$this->httpStatus = $httpStatus;
+		return $this;
+	}
+
 }
