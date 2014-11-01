@@ -36,6 +36,7 @@ use restlt\exceptions\ApplicationException;
  */
 class RequestRouter implements RouterInterface{
 
+    protected static $routes = [];
 	/**
 	 *
 	 * @var array
@@ -70,16 +71,24 @@ class RequestRouter implements RouterInterface{
 		$route = null;
 
 		$method = $this->getRequest()->getMethod ();
-		$uri = $this->getRequest()->getUri ();
-		$ext = pathinfo($uri,PATHINFO_EXTENSION);
-		$uri = preg_replace('#\.'.$ext.'$#', '', $uri);
+		$requestUri = $this->getRequest()->getUri ();
 
-		$resourceUri = str_replace ( $this->serverBaseUri, '/', $uri );
+		if(isset(static::$routes[$this->getRequest()->getUri ()])){
+		    return static::$routes[$this->getRequest()->getUri ()];
+		}
+
+		$ext = pathinfo($requestUri,PATHINFO_EXTENSION);
+		$requestUri = preg_replace('#\.'.$ext.'$#', '', $requestUri);
+
+		$resourceUri = str_replace ( $this->serverBaseUri, '/', $requestUri );
 		$resourceUri = str_replace ( '//', '/', $resourceUri );
 
 		if(\restlt\Request::HEAD === strtoupper($method)) $method = \restlt\Request::GET;
 
 		$route = $this->matchResource ( $resourceUri, $method );
+		if($route){
+		    static::$routes[$this->getRequest()->getUri ()] = $route;
+		}
 		if($ext) $route->setOutputTypeOverrideExt($ext);
 
 		return $route;
@@ -105,7 +114,6 @@ class RequestRouter implements RouterInterface{
 			if ($el ['methodUri'] === $uri && $methodMatch) {
 				$ret = true;
 			}
-
 			if (! $ret && $methodMatch) {
 				$regex = '#^' .$methodUri. '$#i';
 				$pregres = preg_match ( $regex, $uri, $matches );
@@ -122,12 +130,8 @@ class RequestRouter implements RouterInterface{
 			return $ret;
 		};
 
-		$it = new \ArrayIterator ( $this->resources );
-		$it->rewind ();
 		$filtered = array();
-		while ( $it->valid () ) {
-			$resMeta = $it->current ();
-			$className = $it->key ();
+		foreach ( $this->resources as $className=>$resMeta ) {
 			$res = null;
 			$res = array_filter ( $resMeta, $filterMatchingMethods );
 			if($res){
@@ -137,13 +141,13 @@ class RequestRouter implements RouterInterface{
 			if(count($filtered) > 1){
 				throw ServerException::duplicateRouteFound();
 			}
-			$it->next ();
 		}
 
 		$cnt = count ( $filtered );
 		if ($cnt == 0) {
 			throw ServerException::notFound ();
 		}
+
 		$methodMeta = array_shift ( $filtered[$class] );
 		$route = new Route;
 		$route->setClassName($class);

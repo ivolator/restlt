@@ -267,6 +267,7 @@ class Response implements \restlt\ResponseInterface
         try {
             if ($this->status === self::OK && $this->getRequestRouter() && $this->getRequestRouter()->getRoute()) {
                 $data = $this->getRoutedResponse($this->getRequestRouter());
+                $route = $this->getRequestRouter()->getRoute();
             }
 
             if ($this->getRequestRouter()) {
@@ -277,9 +278,6 @@ class Response implements \restlt\ResponseInterface
 
             if ($this->forceResponseType) {
                 $conversionStrategy = $this->getConversionStrategy($this->forceResponseType);
-            }
-            if ($this->getRequestRouter()) {
-                $route = $this->getRequestRouter()->getRoute();
             }
         } catch (\restlt\exceptions\ServerException $e) {
             $this->setStatus($e->getCode());

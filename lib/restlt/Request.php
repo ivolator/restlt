@@ -31,57 +31,57 @@ namespace restlt;
 use restlt\exceptions\ServerException;
 
 class Request implements \restlt\RequestInterface {
-	
+
 	const POST = 'POST';
 	const GET = 'GET';
 	const PUT = 'PUT';
 	const DELETE = 'DELETE';
 	const PATCH = 'PATCH';
 	const HEAD = 'HEAD';
-	
+
 	protected $supportedMethods = array ('POST', 'GET', 'PUT', 'DELETE', 'PATCH', 'HEAD' );
 	/**
 	 *
 	 * @var array
 	 */
 	protected $queryParams = array ();
-	
+
 	/**
 	 *
 	 * @var array
 	 */
 	protected $postParams = array ();
-	
+
 	/**
 	 *
 	 * @var string
 	 */
 	protected $rawPost = null;
-	
+
 	/**
 	 *
 	 * @var string
 	 */
 	protected $uri;
-	
+
 	/**
 	 *
 	 * @var string
 	 */
 	protected $method = null;
-	
+
 	/**
 	 *
 	 * @var array
 	 */
 	protected $headers = array ();
-	
+
 	/**
 	 *
 	 * @var string XML | JSON | TEXT
 	 */
 	protected $contentType = null;
-	
+
 	/**
 	 */
 	public function __construct() {
@@ -92,7 +92,7 @@ class Request implements \restlt\RequestInterface {
 		$_GET = null;
 		$this->headers = $this->buildHeadersList ( ! empty ( $_SERVER ) ? $_SERVER : array () );
 	}
-	
+
 	/**
 	 *
 	 * @param string $paramName
@@ -107,7 +107,7 @@ class Request implements \restlt\RequestInterface {
 			return $params [$paramName];
 		return $returnDefault;
 	}
-	
+
 	/**
 	 *
 	 * @return the $queryStringParams
@@ -115,7 +115,7 @@ class Request implements \restlt\RequestInterface {
 	public function getQueryParams() {
 		return $this->queryParams;
 	}
-	
+
 	/**
 	 *
 	 * @return the $postParams
@@ -123,7 +123,7 @@ class Request implements \restlt\RequestInterface {
 	public function getPostParams() {
 		return $this->postParams;
 	}
-	
+
 	/**
 	 *
 	 * @return the $rawPost
@@ -131,7 +131,7 @@ class Request implements \restlt\RequestInterface {
 	public function getRawPost() {
 		return $this->rawPost;
 	}
-	
+
 	/**
 	 *
 	 * @return the $headers
@@ -139,7 +139,7 @@ class Request implements \restlt\RequestInterface {
 	public function getHeaders() {
 		return $this->headers;
 	}
-	
+
 	/**
 	 *
 	 * @param array $SERVER
@@ -147,7 +147,7 @@ class Request implements \restlt\RequestInterface {
 	 */
 	protected function buildHeadersList(array $SERVER = array()) {
 		$ret = array ();
-		
+
 		$accpetable = '#(' . Response::APPLICATION_JSON . ')|(' . Response::APPLICATION_XML . ')|(' . Response::TEXT_PLAIN . ')|(application/.*\+json)|(application/.*\+xml)#';
 		if (isset ( $_SERVER ['HTTP_ACCEPT'] )) {
 			$res = preg_match ( $accpetable, $_SERVER ['HTTP_ACCEPT'], $match );
@@ -155,7 +155,7 @@ class Request implements \restlt\RequestInterface {
 				throw new ServerException ( 'Invalid request MIME type', Response::NOTACCEPTABLE );
 			}
 		}
-		
+
 		if ($SERVER) {
 			foreach ( $SERVER as $k => $v ) {
 				if (stristr ( $k, 'http_' )) {
@@ -166,7 +166,7 @@ class Request implements \restlt\RequestInterface {
 		}
 		return $ret;
 	}
-	
+
 	/**
 	 *
 	 * @return the $url
@@ -175,10 +175,11 @@ class Request implements \restlt\RequestInterface {
 		if (! $this->uri) {
 			$res = parse_url ( $_SERVER ['REQUEST_URI'] );
 			$this->uri = $res ['path'] ? $res ['path'] : '/';
+			$this->uri = str_replace('//', '/', $this->uri);
 		}
 		return $this->uri;
 	}
-	
+
 	/**
 	 *
 	 * @return the $method
@@ -192,7 +193,7 @@ class Request implements \restlt\RequestInterface {
 		}
 		return strtoupper ( $this->method );
 	}
-	
+
 	/**
 	 *
 	 * @return the $contentType
@@ -206,8 +207,8 @@ class Request implements \restlt\RequestInterface {
 		}
 		return $this->contentType;
 	}
-	
-	public function __toString() { 
+
+	public function __toString() {
 		$get = print_r($this->queryParams,true);
 		$post = print_r($this->postParams,true) ;
 		$rawPost = print_r($this->rawPost ,true);
