@@ -1,6 +1,6 @@
 <?php
 /**
-* The MIT License (MIT)
+ * The MIT License (MIT)
 *
 * Copyright (c) 2013 Ivo Mandalski
 *
@@ -23,14 +23,10 @@
 */
 namespace restlt;
 
-use Psr\Log\LoggerInterface;
-use restlt\log\NullLogger;
-use restlt\log\Log;
 use restlt\cache\CacheAdapterInterface;
 use restlt\Cache;
 use restlt\meta\MetadataBuilder;
 use restlt\exceptions\ServerException;
-use restlt\meta\MetadataBuilderInterface;
 use restlt\meta\AnnotationsParser;
 
 /**
@@ -38,7 +34,9 @@ use restlt\meta\AnnotationsParser;
  * @author Vo
  *
  */
-class Server {
+class Server
+{
+
     /**
      * The path after the domain that will precede all resource URIS
      *
@@ -92,9 +90,10 @@ class Server {
      *
      * @var \restlt\log\Log
      */
-    protected $log  = null;
+    protected $log = null;
 
     /**
+     *
      * @var boolean
      */
     protected $autoDocs = true;
@@ -103,42 +102,41 @@ class Server {
      *
      * @param string $baseUri
      */
-    public function __construct($baseUri = null, $name = 'RestLt', RequestInterface $request = null, ResponseInterface $response = null) {
+    public function __construct($baseUri = null, $name = 'RestLt', RequestInterface $request = null, ResponseInterface $response = null)
+    {
         if ($baseUri) {
             $this->baseUri = $baseUri;
         }
         $this->name = $name;
-        register_shutdown_function ( array(    $this, 'shutdown') );
-        if(!$request) $this->setRequest ( new Request () );
-        if(!$response) $this->setResponse ( new Response () );
+        register_shutdown_function(array(
+            $this,
+            'shutdown'
+        ));
+        if (! $request)
+            $this->setRequest(new Request());
+        if (! $response)
+            $this->setResponse(new Response());
     }
 
     /**
      * Main method
      */
-    public function serve() {
+    public function serve()
+    {
         try {
 
-            if(true === $this->autoDocs){
+            if (true === $this->autoDocs) {
                 $this->registerResourceClass('\restlt\InfoResource');
             }
-
-        	$this->getLog()->log('RestLt: REQUEST' . PHP_EOL . $this->getRequest());
-
-            $resources = $this->getMetadataBuilder ()->getResourcesMeta ();
-
-            $this->getRequestRouter ()->setResources ( $resources );
-            $this->getResponse ()->setRequestRouter($this->getRequestRouter());
-            $this->getResponse()->setLog($this->getLog());
-            $ret = $this->getResponse ()->send();
-        } catch ( \Exception $e ) {
-            $this->getResponse ()->setStatus ( Response::INTERNALSERVERERROR );
-            $ret = $this->getResponse ()->send ();
-	        $this->getLog()->log('RestLt: Exception Message' . PHP_EOL . $e->getMessage());
-	        $this->getLog()->log('RestLt: Exception Code' . PHP_EOL . $e->getCode());
-	        $this->getLog()->log('RestLt: Exception Trace' . PHP_EOL . $e->getTraceAsString());
+            $resources = $this->getResourceMeta();
+            $this->getResponse()->setServerBaseUri($this->baseUri);
+            $this->getResponse()->setResources($resources);
+            $this->getResponse()->setRequest($this->getRequest());
+            $ret = $this->getResponse()->send();
+        } catch (\Exception $e) {
+            $this->getResponse()->setStatus(Response::INTERNALSERVERERROR);
+            $ret = $this->getResponse()->send();
         }
-        $this->getLog()->log('RestLt: RESPONSE' . PHP_EOL . $ret);
         return $ret;
     }
 
@@ -147,19 +145,21 @@ class Server {
      *
      * @param string $className
      *            - FQCN
-     * @param string - full path to file
+     * @param
+     *            string - full path to file
      * @return \restlt\Server
      */
-    public function registerResourceClass($className, $fileName = null) {
-        if (class_exists ( $className, true )) {
-            if(!empty($fileName)){
-                $this->resourceClasses [$fileName] = $className;
+    public function registerResourceClass($className, $fileName = null)
+    {
+        if (class_exists($className, true)) {
+            if (! empty($fileName)) {
+                $this->resourceClasses[$fileName] = $className;
             } else {
-                $className = ltrim($className,'\\');
-                $this->resourceClasses [$className] = $className;
+                $className = ltrim($className, '\\');
+                $this->resourceClasses[$className] = $className;
             }
         } else {
-            throw new \restlt\exceptions\FileNotFoundException ( 'Could not register class' . $className . '. File not found!' );
+            throw new \restlt\exceptions\FileNotFoundException('Could not register class' . $className . '. File not found!');
         }
         return $this;
     }
@@ -176,16 +176,17 @@ class Server {
      *            - the FQCN for the resources
      * @return \restlt\Server
      */
-    public function registerResourceFolder($folderPath, $namespace = '\\') {
-        if (is_readable ( $folderPath ) && is_dir ( $folderPath )) {
-            foreach ( glob ( $folderPath . '/*.php' ) as $value ) {
-                $pathinfo = pathinfo ( $value );
-                $namespace = trim ( $namespace, '\\' );
-                $fqnc = $namespace . '\\' . $pathinfo ['filename'];
-                $this->resourceClasses [$fqnc] = $fqnc;
+    public function registerResourceFolder($folderPath, $namespace = '\\')
+    {
+        if (is_readable($folderPath) && is_dir($folderPath)) {
+            foreach (glob($folderPath . '/*.php') as $value) {
+                $pathinfo = pathinfo($value);
+                $namespace = trim($namespace, '\\');
+                $fqnc = $namespace . '\\' . $pathinfo['filename'];
+                $this->resourceClasses[$fqnc] = $fqnc;
             }
         } else {
-            throw new \restlt\exceptions\FileNotFoundException ( 'Folder not found' );
+            throw new \restlt\exceptions\FileNotFoundException('Folder not found');
         }
         return $this;
     }
@@ -194,9 +195,10 @@ class Server {
      *
      * @return \restlt\RouterInterface $requestRouter
      */
-    public function getRequestRouter() {
+    public function getRequestRouter()
+    {
         if (! $this->requestRouter) {
-            $this->requestRouter = new \restlt\routing\RequestRouter( $this->request, $this->baseUri );
+            $this->requestRouter = new \restlt\routing\RequestRouter($this->request, $this->baseUri);
         }
         return $this->requestRouter;
     }
@@ -206,7 +208,8 @@ class Server {
      * @param field_type $requestRouter
      * @return \restlt\Server
      */
-    public function setRequestRouter(\restlt\routing\RouterInterface $requestRouter) {
+    public function setRequestRouter(\restlt\routing\RouterInterface $requestRouter)
+    {
         $this->requestRouter = $requestRouter;
         return $this;
     }
@@ -215,7 +218,8 @@ class Server {
      *
      * @return \restlt\Response $response
      */
-    public function getResponse() {
+    public function getResponse()
+    {
         return $this->response;
     }
 
@@ -224,7 +228,8 @@ class Server {
      * @param field_type $response
      * @return \restlt\Server
      */
-    public function setResponse(ResponseInterface $response) {
+    public function setResponse(ResponseInterface $response)
+    {
         $this->response = $response;
         return $this;
     }
@@ -233,7 +238,8 @@ class Server {
      *
      * @return the $request
      */
-    public function getRequest() {
+    public function getRequest()
+    {
         return $this->request;
     }
 
@@ -242,7 +248,8 @@ class Server {
      * @param field_type $request
      * @return \restlt\Server
      */
-    public function setRequest(RequestInterface $request) {
+    public function setRequest(RequestInterface $request)
+    {
         $this->request = $request;
         return $this;
     }
@@ -251,7 +258,8 @@ class Server {
      *
      * @return the $baseUri
      */
-    public function getBaseUri() {
+    public function getBaseUri()
+    {
         return $this->baseUri;
     }
 
@@ -260,7 +268,8 @@ class Server {
      * @param string $name
      * @return \restlt\Server
      */
-    public function setName($name) {
+    public function setName($name)
+    {
         $this->name = $name;
         return $this;
     }
@@ -270,7 +279,8 @@ class Server {
      * @param field_type $baseUri
      * @return \restlt\Server
      */
-    public function setBaseUri($baseUri) {
+    public function setBaseUri($baseUri)
+    {
         $this->baseUri = $baseUri;
         return $this;
     }
@@ -279,33 +289,48 @@ class Server {
      *
      * @return \restlt\cache\MetadataBuilderInterface $metadataBuilder
      */
-    public function getMetadataBuilder() {
-        if (! $this->metadataBuilder) {
-            $mdb = new MetadataBuilder ( $this, $this->getResourceClasses() );
-            $mdb->setAnnotationsParser(new AnnotationsParser());
-            if ($this->getCacheAdapter ()) {
-                $cache = new Cache ( $this->getCacheAdapter () );
-                $mdb->setCache ( $cache );
-            }
-            $this->metadataBuilder = $mdb;
-        }
-        return $this->metadataBuilder;
-    }
+    public function getResourceMeta()
+    {
+        $ret = array();
 
-    /**
-     *
-     * @param \restlt\meta\MetadataBuilderInterface $metadataBuilder
-     */
-    public function setMetadataBuilder(MetadataBuilderInterface $metadataBuilder) {
-        $this->metadataBuilder = $metadataBuilder;
-        return $this;
+        $cacheKey = 'restltmeta';
+        if ($this->cacheAdapter && $this->cacheAdapter->test($cacheKey)) {
+            $ret = $this->cacheAdapter->get($cacheKey);
+        }
+        $annotationParser = AnnotationsParser::getInstance();
+        if (! $ret && $this->resourceClasses) {
+            foreach ($this->resourceClasses as $class) {
+                $classMeta = $annotationParser->getClassMeta($class);
+                $methodsMeta = $annotationParser->getMethodMeta($class);
+                if (! $methodsMeta)
+                    continue;
+                $resourceBaseUri = $classMeta['resourceBaseUri'];
+                $methodsMeta = array_map(function (&$el) use($resourceBaseUri)
+                {
+                    $methodUri = isset($el['methodUri']) ? trim($el['methodUri'], '/') : '/';
+                    $el['methodUri'] = rtrim(rtrim($resourceBaseUri, ' /') . '/' . $methodUri, '/ ');
+                    return $el;
+                }, $methodsMeta);
+
+                $methodsMeta = array_filter($methodsMeta, function ($el)
+                {
+                    return isset($el['method']);
+                });
+                $ret[$class] = $methodsMeta;
+            }
+
+            $this->cacheAdapter && $this->cacheAdapter->set($cacheKey, $ret);
+        }
+
+        return $ret;
     }
 
     /**
      *
      * @return CacheAdaperInterface $cacheAdapter
      */
-    public function getCacheAdapter() {
+    public function getCacheAdapter()
+    {
         return $this->cacheAdapter;
     }
 
@@ -313,7 +338,8 @@ class Server {
      *
      * @param CacheAdaperInterface $cacheAdapter
      */
-    public function setCacheAdapter(CacheAdapterInterface $cacheAdapter) {
+    public function setCacheAdapter(CacheAdapterInterface $cacheAdapter)
+    {
         $this->cacheAdapter = $cacheAdapter;
     }
 
@@ -321,24 +347,26 @@ class Server {
      *
      * @return string $name
      */
-    public function getName() {
+    public function getName()
+    {
         return $this->name;
     }
 
-    public function shutdown() {
-        $error = error_get_last ();
-        if (in_array ( $error ['type'], array(
-                E_ERROR,
-                E_USER_ERROR,
-                E_WARNING,
-                E_USER_WARNING,
-                E_CORE_ERROR,
-                E_CORE_WARNING,
-                E_DEPRECATED,
-                E_STRICT
-        ) )) {
-            $msg = 'An error with message ' . $error ['message'] . ' occured at line ' . $error ['line'] . ' in ' . $error ['file'];
-            throw new ServerException ( $msg, Response::INTERNALSERVERERROR );
+    public function shutdown()
+    {
+        $error = error_get_last();
+        if (in_array($error['type'], array(
+            E_ERROR,
+            E_USER_ERROR,
+            E_WARNING,
+            E_USER_WARNING,
+            E_CORE_ERROR,
+            E_CORE_WARNING,
+            E_DEPRECATED,
+            E_STRICT
+        ))) {
+            $msg = 'An error with message ' . $error['message'] . ' occured at line ' . $error['line'] . ' in ' . $error['file'];
+            throw new ServerException($msg, Response::INTERNALSERVERERROR);
         }
     }
 
@@ -346,47 +374,19 @@ class Server {
      *
      * @return array
      */
-    public function getResourceClasses() {
+    public function getResourceClasses()
+    {
         return $this->resourceClasses;
     }
 
     /**
      *
-     * @param string $outputType
-     * @param string $strategyClassName
+     * @param boolean $autoDocs
+     * @return \restlt\Server
      */
-    public function addOuputStrategy($outputType, $strategyClassName ){
-        $this->getResponse()->addResponseOutputStrategies($outputType, $strategyClassName);
+    public function setAutoDocs($autoDocs)
+    {
+        $this->autoDocs = (boolean) $autoDocs;
+        return $this;
     }
-
-	/**
-	 * @return \restlt\log\LogInterface $logger
-	 */
-	public function getLog() {
-		if(!$this->log){
-			$this->log = new Log(new NullLogger(), 'critical');
-		}
-		return $this->log;
-	}
-
-	/**
-	 * @param LoggerInterface $logger
-	 */
-	public function setLoggerImplementation(LoggerInterface $logger, $logLevel = null) {
-			$this->log = new Log($logger, $logLevel);
-			return $this;
-	}
-
-	/**
-	 *
-	 * @param boolean $autoDocs
-	 * @return \restlt\Server
-	 */
-	public function setAutoDocs( $autoDocs) {
-		$this->autoDocs = (boolean) $autoDocs;
-		return $this;
-	}
-
-
-
 }

@@ -28,6 +28,10 @@ use restlt\exceptions\ApplicationException;
 use restlt\exceptions\ServerException;
 
 /**
+ * Un-factored code for php ninjas
+ * For those that do not appreciate uncoupled code, I have merged some of
+ * the methods from the router used in the general code.
+ * This becomes Response / Router
  *
  * @author Vo
  *
@@ -134,7 +138,7 @@ class Response implements \restlt\ResponseInterface
      * HTTP status code
      *
      * @var integer
-     */
+    */
     protected $status = 200;
 
     /**
@@ -178,78 +182,17 @@ class Response implements \restlt\ResponseInterface
         $this->headers[$name] = $value;
     }
 
-    /**
-     *
-     * @param RequestRouter $route
-     * @param Request $request
-     * @param Result $returnValue
-     */
-    protected function getRoutedResponse(\restlt\routing\RouterInterface $router)
+    protected static $routes = [];
+
+    protected $request = null;
+
+    protected $resources = null;
+
+    protected $serverBaseUri = null;
+
+    public function setResources(array $resources)
     {
-        $ret = null;
-
-        $route = $router->getRoute();
-
-        if ($route && $route->getClassName() && $route->getFunctionName()) {
-            $class = $route->getClassName();
-            $resourceObj = new $class($router->getRequest(), $this);
-            if($this->log){
-                $resourceObj->setLog($this->log);
-            }
-            $params = $route->getParams() ? $route->getParams() : array();
-            if (is_callable(array(
-                $resourceObj,
-                $route->getFunctionName()
-            ))) {
-                try {
-                    $cbs = $resourceObj->getCallbacks();
-                    $resourceObj->setAnnotations($route);
-                    // before the method was processed
-                    $this->executeCallbacks(Resource::ON_BEFORE, $route->getFunctionName(), $cbs, array(
-                        $router->getRequest()
-                    ));
-                    register_shutdown_function(array(
-                        $this,
-                        'shutdown'
-                    ));
-                    // routed call
-                    $ret = call_user_func_array(array(
-                        $resourceObj,
-                        $route->getFunctionName()
-                    ), $params);
-                    // after method was processed
-                    $this->executeCallbacks(Resource::ON_AFTER, $route->getFunctionName(), $cbs, array(
-                        $router->getRequest(),
-                        $this,
-                        $ret
-                    ));
-                } catch (\Exception $e) {
-                    $this->executeCallbacks(Resource::ON_ERROR, $route->getFunctionName(), $cbs, array(
-                        $router->getRequest(),
-                        $this,
-                        $e
-                    ));
-                    $this->setStatus(Response::INTERNALSERVERERROR);
-                    $this->executeCallbacks(Resource::ON_AFTER, $route->getFunctionName(), $cbs, array(
-                        $router->getRequest(),
-                        $this,
-                        $ret
-                    ));
-                    $this->displayError = $e;
-                }
-                $resourceObj->clearCallbacks();
-                $this->setUserErrors($resourceObj);
-            }
-        } else {
-            $this->status = $this->status && Response::OK === $this->status ? self::NOTFOUND : $this->status;
-        }
-
-        if ($route && $route->getCacheControlMaxAge()) {
-            $this->addHeader('Cache-Control', 'private, max-age=' . $route->getCacheControlMaxAge());
-        } else {
-            $this->addHeader("Cache-Control", "no-cache, must-revalidate");
-        }
-        return $ret;
+        $this->resources = $resources;
     }
 
     /**
@@ -264,17 +207,18 @@ class Response implements \restlt\ResponseInterface
         $conversionStrategy = null;
         $route = null;
 
+        $method = $this->getRequest()->getMethod();
+        $uri = $this->getRequest()->getUri();
+        $ext = pathinfo($uri, PATHINFO_EXTENSION);
+        $uri = preg_replace('#\.' . $ext . '$#', '', $uri);
+        $resourceUri = str_replace($this->serverBaseUri, '/', $uri);
+        $resourceUri = str_replace('//', '/', $resourceUri);
         try {
-            if ($this->status === self::OK && $this->getRequestRouter() && $this->getRequestRouter()->getRoute()) {
-                $data = $this->getRoutedResponse($this->getRequestRouter());
-                $route = $this->getRequestRouter()->getRoute();
+            if ($this->status === self::OK && $route = $this->getRoute($resourceUri, $method, $ext)) {
+                $data = $this->getRoutedResponse($route);
             }
 
-            if ($this->getRequestRouter()) {
-                $contentType = $this->getRequestRouter()
-                    ->getRequest()
-                    ->getContentType();
-            }
+            $contentType = $this->getRequest()->getContentType();
 
             if ($this->forceResponseType) {
                 $conversionStrategy = $this->getConversionStrategy($this->forceResponseType);
@@ -305,6 +249,162 @@ class Response implements \restlt\ResponseInterface
             $this->addHeader('Content-Type', $contentType);
         }
         return $this->_send($data ? $data : null, $conversionStrategy);
+    }
+
+    /**
+     * Un-factored RequestRouter.
+     * Be a ninja, don't care!
+     *
+     * @param unknown $resourceUri
+     * @param unknown $requestMethod
+     * @param unknown $ext
+     * @throws SystemException
+     * @return boolean \restlt\routing\Route
+     */
+    protected function getRoute($resourceUri, $requestMethod, $ext)
+    {
+        if (isset(static::$routes[$this->getRequest()->getUri()])) {
+            return static::$routes[$this->getRequest()->getUri()];
+        }
+
+        $filterMatchingMethods = function (&$el) use($resourceUri, $requestMethod)
+        {
+            $ret = false;
+            $matches = false;
+            if (empty($el['method']))
+                return false;
+            $methodMatch = strtolower($requestMethod) === strtolower($el['method']);
+            $methodUri = rtrim($el['methodUri'], '/');
+            $resourceUri = rtrim($resourceUri, '/');
+            // try matching without regex first
+            if ($el['methodUri'] === $resourceUri && $methodMatch) {
+                $ret = true;
+            }
+            if (! $ret && $methodMatch) {
+                $regex = '#^' . $methodUri . '$#';
+                $pregres = preg_match($regex, $resourceUri, $matches);
+                if (PREG_NO_ERROR !== preg_last_error()) {
+                    throw new SystemException('Regex error when matching the method URIs');
+                }
+                if ($matches) {
+                    $ret = true;
+                }
+                // all regex surounded by '()' will end up as params to the methods
+                array_shift($matches);
+                $el['params'] = $matches;
+            }
+            return $ret;
+        };
+
+        $filtered = array();
+        foreach ($this->resources as $className => $resMeta) {
+            $res = null;
+            $res = array_filter($resMeta, $filterMatchingMethods);
+            if ($res) {
+                $filtered[$className] = $res;
+                $class = $className;
+            }
+            if (count($filtered) > 1) {
+                throw ServerException::duplicateRouteFound();
+            }
+        }
+
+        $cnt = count($filtered);
+        if ($cnt == 0) {
+            throw ServerException::notFound();
+        }
+
+        $methodMeta = array_shift($filtered[$class]);
+        $route = new Route();
+        $route->setClassName($class);
+        $route->setFunctionName($methodMeta['function']);
+        $route->setUserAnnotations($methodMeta);
+        $route->setOutputTypeOverrideExt($ext);
+        if (! empty($methodMeta['params'])){
+            $route->setParams($methodMeta['params']);
+        }
+        if (! empty($methodMeta['cacheControlMaxAge'])){
+            $route->setCacheControlMaxAge($methodMeta['cacheControlMaxAge']);
+        }
+
+        if($route){
+            static::$routes[$this->getRequest()->getUri ()] = $route;
+        }
+        return $route;
+    }
+
+    /**
+     * Un-factored code.
+     * Be a ninja, don't care!
+     *
+     * @param RequestRouter $route
+     * @param Request $request
+     * @param Result $returnValue
+     */
+    protected function getRoutedResponse(\restlt\routing\Route $route)
+    {
+        $ret = null;
+
+        if ($route && $route->getClassName() && $route->getFunctionName()) {
+            $class = $route->getClassName();
+            $resourceObj = new $class($this->request, $this);
+            if ($this->log) {
+                $resourceObj->setLog($this->log);
+            }
+            $params = $route->getParams() ? $route->getParams() : array();
+            if (is_callable(array(
+                $resourceObj,
+                $route->getFunctionName()
+            ))) {
+                try {
+                    $cbs = $resourceObj->getCallbacks();
+                    $resourceObj->setAnnotations($route);
+                    // before the method was processed
+                    $this->executeCallbacks(Resource::ON_BEFORE, $route->getFunctionName(), $cbs, array(
+                        $this->request
+                    ));
+                    register_shutdown_function(array(
+                        $this,
+                        'shutdown'
+                    ));
+                    // routed call
+                    $ret = call_user_func_array(array(
+                        $resourceObj,
+                        $route->getFunctionName()
+                    ), $params);
+                    // after method was processed
+                    $this->executeCallbacks(Resource::ON_AFTER, $route->getFunctionName(), $cbs, array(
+                        $this->request,
+                        $this,
+                        $ret
+                    ));
+                } catch (\Exception $e) {
+                    $this->executeCallbacks(Resource::ON_ERROR, $route->getFunctionName(), $cbs, array(
+                        $this->request,
+                        $this,
+                        $e
+                    ));
+                    $this->setStatus(Response::INTERNALSERVERERROR);
+                    $this->executeCallbacks(Resource::ON_AFTER, $route->getFunctionName(), $cbs, array(
+                        $this->request,
+                        $this,
+                        $ret
+                    ));
+                    $this->displayError = $e;
+                }
+                $resourceObj->clearCallbacks();
+                $this->setUserErrors($resourceObj);
+            }
+        } else {
+            $this->status = $this->status && Response::OK === $this->status ? self::NOTFOUND : $this->status;
+        }
+
+        if ($route && $route->getCacheControlMaxAge()) {
+            $this->addHeader('Cache-Control', 'private, max-age=' . $route->getCacheControlMaxAge());
+        } else {
+            $this->addHeader("Cache-Control", "no-cache, must-revalidate");
+        }
+        return $ret;
     }
 
     /**
@@ -352,9 +452,7 @@ class Response implements \restlt\ResponseInterface
         }
         // prepare the payload if any
         $this->getResultObject()->setHttpStatus($this->status);
-        if ($data && $this->getRequestRouter() && $this->getRequestRouter()
-            ->getRequest()
-            ->getMethod() !== Request::HEAD) {
+        if ($data && $this->request->getMethod() !== Request::HEAD) {
             $this->getResultObject()->setData($data);
             return $this->getResultObject()->toString($conversionStrategy);
         } elseif ($this->displayError) {
@@ -362,8 +460,37 @@ class Response implements \restlt\ResponseInterface
             return $this->getResultObject()->toString($conversionStrategy);
         }
 
-        $this->getResultObject()->addError('Unknown server error' , self::INTERNALSERVERERROR);
+        $this->getResultObject()->addError('Unknown server error', self::INTERNALSERVERERROR);
         return $this->getResultObject()->toString($conversionStrategy);
+    }
+
+    /**
+     *
+     * @return the unknown_type
+     */
+    public function getRequest()
+    {
+        return $this->request;
+    }
+
+    /**
+     *
+     * @param unknown_type $request
+     */
+    public function setRequest($request)
+    {
+        $this->request = $request;
+    }
+
+    public function getServerBaseUri()
+    {
+        return $this->serverBaseUri;
+    }
+
+    public function setServerBaseUri($serverBaseUri)
+    {
+        $this->serverBaseUri = $serverBaseUri;
+        return $this;
     }
 
     /**
@@ -546,11 +673,11 @@ class Response implements \restlt\ResponseInterface
                 $_cbs = array_merge($_cbs, $cbs[$method][$event]);
             }
             if ($_cbs)
-                foreach ($_cbs as $cb) {
-                    if (is_callable($cb)) {
-                        $ret = call_user_func_array($cb, $param_arr);
-                    }
+            foreach ($_cbs as $cb) {
+                if (is_callable($cb)) {
+                    $ret = call_user_func_array($cb, $param_arr);
                 }
+            }
         }
     }
 

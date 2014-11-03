@@ -29,86 +29,106 @@ namespace restlt\meta;
  * @author Vo
  *
  */
-class AnnotationsParser {
-	
-	/**
-	 * Retruns uri meta for given class
-	 *
-	 * @param string $className - FQN for the class
-	 * @return array
-	 * @throw SystemException
-	 */
-	public function getClassMeta($className) {
-		try {
-			$classRefl = new \ReflectionClass ( $className );
-			$classDocComment = $this->parseDocComment ( $classRefl->getDocComment () );
-		} catch ( \ReflectionException $e ) {
-			throw new \restlt\exceptions\SystemException ( $e->getMessage (), $e->getCode (), $e );
-		}
-		return $classDocComment;
-	}
-	
-	/**
-	 *
-	 * @param string $className - FQCN
-	 * @param string $method
-	 * @return array
-	 * @throw SystemException
-	 */
-	public function getMethodMeta($className) {
-		$ret = array ();
-		try {
-			$classRefl = new \ReflectionClass ( $className );
-			foreach ( $classRefl->getMethods () as $methodRefl ) {
-				$res = $this->parseDocComment ( $methodRefl->getDocComment () );
-				if ($res) {
-					$res ['comment'] = $this->getUserComment ( $methodRefl->getDocComment () );
-					$res ['function'] = $methodRefl->getName ();
-					$ret [] = $res;
-				}
-			}
-		} catch ( \ReflectionException $e ) {
-			throw new \restlt\exceptions\SystemException ( $e->getMessage (), $e->getCode (), $e );
-		}
-		return $ret;
-	}
-	
-	/**
-	 * 
-	 * @param unknown_type $doccomment
-	 */
-	public function getUserComment($docComment) {
-		preg_match_all ( '#[*]+[ ]+[^@].*\n#', $docComment, $docCommentArr );
-		$ret = array_map ( function ($el) {
-			return trim ( $el, '* ' );
-		}, $docCommentArr [0] );
-		$ret = trim ( implode ( PHP_EOL, $ret ) );
-		return $ret;
-	}
-	
-	/**
-	 *
-	 * @param string $docComment
-	 * @param array $whitelist
-	 * @return array
-	 * @throws \InvalidArgumentException
-	 */
-	protected function parseDocComment($docComment) {
-		if (! $docComment) {
-			return array ();
-		}
-		
-		$res = preg_match_all ( '#[ *](@.*)\n#', $docComment, $docCommentArr );
-		$res = $docCommentArr [1] ? $docCommentArr [1] : array ();
-		$res = preg_grep ( '#^@.*#', $res );
-		$ret = array ();
-		if ($res) {
-			foreach ( array_values ( $res ) as $value ) {
-				$line = explode ( ' ', $value );
-				$docName = trim ( preg_replace ( '#^@#', '', array_shift ( $line ) ) );
-				$ret [$docName] = trim ( implode ( ' ', $line ) );
-			}
-		}
-		return $ret;
-	}
+class AnnotationsParser
+{
+
+    protected static $instance = null;
+
+    protected function __construct()
+    {}
+
+    public static function getInstance()
+    {
+        if (null === static::$instance) {
+            static::$instance = new self();
+        }
+
+        return static::$instance;
+    }
+
+    /**
+     * Retruns uri meta for given class
+     *
+     * @param string $className
+     *            - FQN for the class
+     * @return array @throw SystemException
+     */
+    public function getClassMeta($className)
+    {
+        try {
+            $classRefl = new \ReflectionClass($className);
+            $classDocComment = $this->parseDocComment($classRefl->getDocComment());
+        } catch (\ReflectionException $e) {
+            throw new \restlt\exceptions\SystemException($e->getMessage(), $e->getCode(), $e);
+        }
+        return $classDocComment;
+    }
+
+    /**
+     *
+     * @param string $className
+     *            - FQCN
+     * @param string $method
+     * @return array @throw SystemException
+     */
+    public function getMethodMeta($className)
+    {
+        $ret = array();
+        try {
+            $classRefl = new \ReflectionClass($className);
+            foreach ($classRefl->getMethods() as $methodRefl) {
+                $res = $this->parseDocComment($methodRefl->getDocComment());
+                if ($res) {
+                    $res['comment'] = $this->getUserComment($methodRefl->getDocComment());
+                    $res['function'] = $methodRefl->getName();
+                    $ret[] = $res;
+                }
+            }
+        } catch (\ReflectionException $e) {
+            throw new \restlt\exceptions\SystemException($e->getMessage(), $e->getCode(), $e);
+        }
+        return $ret;
+    }
+
+    /**
+     *
+     * @param unknown_type $doccomment
+     */
+    public function getUserComment($docComment)
+    {
+        preg_match_all('#[*]+[ ]+[^@].*\n#', $docComment, $docCommentArr);
+        $ret = array_map(function ($el)
+        {
+            return trim($el, '* ');
+        }, $docCommentArr[0]);
+        $ret = trim(implode(PHP_EOL, $ret));
+        return $ret;
+    }
+
+    /**
+     *
+     * @param string $docComment
+     * @param array $whitelist
+     * @return array
+     * @throws \InvalidArgumentException
+     */
+    protected function parseDocComment($docComment)
+    {
+        if (! $docComment) {
+            return array();
+        }
+
+        $res = preg_match_all('#[ *](@.*)\n#', $docComment, $docCommentArr);
+        $res = $docCommentArr[1] ? $docCommentArr[1] : array();
+        $res = preg_grep('#^@.*#', $res);
+        $ret = array();
+        if ($res) {
+            foreach (array_values($res) as $value) {
+                $line = explode(' ', $value);
+                $docName = trim(preg_replace('#^@#', '', array_shift($line)));
+                $ret[$docName] = trim(implode(' ', $line));
+            }
+        }
+        return $ret;
+    }
 }
