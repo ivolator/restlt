@@ -282,7 +282,7 @@ class Server {
     public function getMetadataBuilder() {
         if (! $this->metadataBuilder) {
             $mdb = new MetadataBuilder ( $this, $this->getResourceClasses() );
-            $mdb->setAnnotationsParser(new AnnotationsParser());
+            $mdb->setAnnotationsParser( AnnotationsParser::getInstance());
             if ($this->getCacheAdapter ()) {
                 $cache = new Cache ( $this->getCacheAdapter () );
                 $mdb->setCache ( $cache );
