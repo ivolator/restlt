@@ -2,7 +2,7 @@
 class RequestRouterTest extends RestLiteTest
 {
 	protected $mockRequest = null;
-	
+
 	protected function setUp() {
 		parent::setUp ();
 	}
@@ -12,54 +12,54 @@ class RequestRouterTest extends RestLiteTest
 	 * @param $resource
 	 */
 	public function testGetRoute($resources){
-		
+
 		$mockRequest = $this->getMockBuilder('\restlt\routing\RequestRouter')
 		->setMethods(array('getUri','getMethod'))->disableOriginalConstructor()->getmock();
 
 		$mockRequest->expects($this->once())->method('getMethod')->will($this->returnValue('GET'));
-		$mockRequest->expects($this->once())->method('getUri')->will($this->returnValue('/example/resource1'));
-		
+		$mockRequest->expects($this->any())->method('getUri')->will($this->returnValue('/example/resource1'));
+
 		$mockRouter = $this->getMockBuilder('\restlt\routing\RequestRouter')->disableOriginalConstructor()
 		->setMethods(array('getRequest'))->getMock();
-		
-		$mockRouter->expects($this->exactly(2))->method('getRequest')
+
+		$mockRouter->expects($this->once())->method('getRequest')
 		->will($this->returnValue($mockRequest));
-		
+
 		$mockRouter->setServerBaseUri('/baseuri');
-		
+
 		$mockRouter->setResources($resources);
 		$mockRouter->getRoute();
-		
+
 	}
 	/**
 	 * @dataProvider getRouteExceptionDataProvider
 	 * @expectedException \restlt\exceptions\ServerException
 	 */
 	public function testGetRouteThrowsException($resources,$method,$uri){
-		
+
 		$mockRequest = $this->getMockBuilder('\restlt\routing\RequestRouter')
 		->setMethods(array('getUri','getMethod'))->disableOriginalConstructor()->getmock();
 
 		$mockRequest->expects($this->once())->method('getMethod')->will($this->returnValue($method));
 		$mockRequest->expects($this->once())->method('getUri')->will($this->returnValue($uri));
-		
+
 		$mockRouter = $this->getMockBuilder('\restlt\routing\RequestRouter')->disableOriginalConstructor()
 		->setMethods(array('getRequest'))->getMock();
-		
-		$mockRouter->expects($this->exactly(2))->method('getRequest')
+
+		$mockRouter->expects($this->once())->method('getRequest')
 		->will($this->returnValue($mockRequest));
-		
+
 		$mockRouter->setServerBaseUri('/baseuri');
-		
+
 		$mockRouter->setResources($resources);
 		$mockRouter->getRoute();
-		
+
 	}
 
 	public function getRouteExceptionDataProvider(){
 		//test incorrect uri match
 		$resources1 = array(
-			'\example\Resource1' => 
+			'\example\Resource1' =>
 			array(
 				array(
 					'method' => 'GET',
@@ -70,7 +70,7 @@ class RequestRouterTest extends RestLiteTest
 		);
 		//test incorrect method match
 		$resources2 = array(
-			'\example\Resource1' => 
+			'\example\Resource1' =>
 			array(
 				array(
 					'method' => 'POST',
@@ -81,7 +81,7 @@ class RequestRouterTest extends RestLiteTest
 		);
 		//test dupe
 		$resources3 = array(
-			'\example\Resource1' => 
+			'\example\Resource1' =>
 			array(
 				array(
 					'method' => 'POST',
@@ -89,7 +89,7 @@ class RequestRouterTest extends RestLiteTest
 					'function' => 'getResource1PostMethod2'
 				),
 			),
-			'\example\Resource2' => 
+			'\example\Resource2' =>
 			array(
 				array(
 					'method' => 'POST',
@@ -104,11 +104,11 @@ class RequestRouterTest extends RestLiteTest
 			array($resources3,'POST','/example/resource1')
 		);
 	}
-	
+
 
 	public function getRouteDataProvider(){
 		$resources = array(
-			'\example\Resource1' => 
+			'\example\Resource1' =>
 			array(
 				array(
 					'method' => 'GET',
@@ -126,7 +126,7 @@ class RequestRouterTest extends RestLiteTest
 			array($resources)
 		);
 	}
-	
+
 	/**
 	 * Cleans up the environment after running a test.
 	 */

@@ -34,8 +34,8 @@ class AnnotationsParser
 
     protected static $instance = null;
 
-    protected function __construct()
-    {}
+//     protected function __construct()
+//     {}
 
     public static function getInstance()
     {

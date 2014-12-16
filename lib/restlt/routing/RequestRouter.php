@@ -70,24 +70,26 @@ class RequestRouter implements RouterInterface{
 	public function getRoute() {
 		$route = null;
 
-		$method = $this->getRequest()->getMethod ();
-		$requestUri = $this->getRequest()->getUri ();
+		$request = $this->getRequest();
 
-		if(isset(static::$routes[$this->getRequest()->getUri ()])){
-		    return static::$routes[$this->getRequest()->getUri ()];
+		$method = $request->getMethod ();
+		$requestUri = $request->getUri ();
+
+		if(isset(static::$routes[$requestUri])){
+		    return static::$routes[$requestUri];
 		}
 
 		$ext = pathinfo($requestUri,PATHINFO_EXTENSION);
-		$requestUri = preg_replace('#\.'.$ext.'$#', '', $requestUri);
+		$requestUriStripped = preg_replace('#\.'.$ext.'$#', '', $requestUri);
 
-		$resourceUri = str_replace ( $this->serverBaseUri, '/', $requestUri );
+		$resourceUri = str_replace ( $this->serverBaseUri, '/', $requestUriStripped );
 		$resourceUri = str_replace ( '//', '/', $resourceUri );
 
 		if(\restlt\Request::HEAD === strtoupper($method)) $method = \restlt\Request::GET;
 
 		$route = $this->matchResource ( $resourceUri, $method );
 		if($route){
-		    static::$routes[$this->getRequest()->getUri ()] = $route;
+		    static::$routes[$requestUri] = $route;
 		}
 		if($ext) $route->setOutputTypeOverrideExt($ext);
 
