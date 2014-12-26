@@ -193,7 +193,7 @@ class Response implements \restlt\ResponseInterface
         if ($route && $route->getClassName() && $route->getFunctionName()) {
             $class = $route->getClassName();
             $resourceObj = new $class($router->getRequest(), $this);
-            if($this->log){
+            if ($this->log) {
                 $resourceObj->setLog($this->log);
             }
             $params = $route->getParams() ? $route->getParams() : array();
@@ -283,7 +283,6 @@ class Response implements \restlt\ResponseInterface
             $this->setStatus($e->getCode());
             $this->displayError = $e;
         }
-
         if ($route && $route->getOutputTypeOverrideExt()) {
             $conversionStrategy = $this->getConversionStrategy($route->getOutputTypeOverrideExt());
         } elseif ($this->forceResponseType) {
@@ -304,7 +303,8 @@ class Response implements \restlt\ResponseInterface
         if ($contentType) {
             $this->addHeader('Content-Type', $contentType);
         }
-        return $this->_send($data ? $data : null, $conversionStrategy);
+        $ret = $this->_send($data ? $data : null, $conversionStrategy);
+        return $ret;
     }
 
     /**
@@ -350,6 +350,7 @@ class Response implements \restlt\ResponseInterface
                 header($hStr, true, $this->status);
             }
         }
+
         // prepare the payload if any
         $this->getResultObject()->setHttpStatus($this->status);
         if ($data && $this->getRequestRouter() && $this->getRequestRouter()
@@ -362,7 +363,7 @@ class Response implements \restlt\ResponseInterface
             return $this->getResultObject()->toString($conversionStrategy);
         }
 
-        $this->getResultObject()->addError('Unknown server error' , self::INTERNALSERVERERROR);
+        $this->getResultObject()->addError('Unknown server error', self::INTERNALSERVERERROR);
         return $this->getResultObject()->toString($conversionStrategy);
     }
 

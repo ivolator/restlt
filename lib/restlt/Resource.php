@@ -1,5 +1,6 @@
 <?php
 namespace restlt;
+
 /**
  * The MIT License (MIT)
  *
@@ -11,10 +12,10 @@ namespace restlt;
  * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
  * the Software, and to permit persons to whom the Software is furnished to do so,
  * subject to the following conditions:
-
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
  * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
@@ -29,10 +30,13 @@ use restlt\exceptions\ApplicationException;
  * @author Vo
  *
  */
-class Resource implements ResourceInterface{
+class Resource implements ResourceInterface
+{
 
     const ON_BEFORE = 'before';
+
     const ON_AFTER = 'after';
+
     const ON_ERROR = 'error';
 
     private $callbacks = array();
@@ -64,16 +68,19 @@ class Resource implements ResourceInterface{
     /**
      * User Errors
      * Use these when no exception is thrown and you need to return 200 with some error feeddback
+     *
      * @var \SplStack
      */
     protected $errors = array();
 
     /**
+     *
      * @var \restlt\log\Log
      */
     protected $log = null;
 
-    public function __construct(RequestInterface $request, ResponseInterface $response){
+    public function __construct(RequestInterface $request, ResponseInterface $response)
+    {
         $this->setRequest($request);
         $this->setResponse($response);
         $this->errors = new \SplStack();
@@ -81,9 +88,10 @@ class Resource implements ResourceInterface{
 
     /**
      *
-     * @return  \restlt\Request $request
+     * @return \restlt\Request $request
      */
-    public function getRequest() {
+    public function getRequest()
+    {
         return $this->request;
     }
 
@@ -91,7 +99,8 @@ class Resource implements ResourceInterface{
      *
      * @param \restlt\Request $request
      */
-    public function setRequest(RequestInterface $request) {
+    public function setRequest(RequestInterface $request)
+    {
         $this->request = $request;
         return $this;
     }
@@ -100,7 +109,8 @@ class Resource implements ResourceInterface{
      *
      * @return \restlt\Response $response
      */
-    public function getResponse() {
+    public function getResponse()
+    {
         return $this->response;
     }
 
@@ -108,7 +118,8 @@ class Resource implements ResourceInterface{
      *
      * @param \restlt\Response $response
      */
-    public function setResponse(ResponseInterface $response) {
+    public function setResponse(ResponseInterface $response)
+    {
         $this->response = $response;
         return $this;
     }
@@ -119,8 +130,9 @@ class Resource implements ResourceInterface{
      *
      * @param Callable $callback
      */
-    public function onBefore($methodName, $callback) {
-        return $this->on ( self::ON_BEFORE, $methodName, $callback );
+    public function onBefore($methodName, $callback)
+    {
+        return $this->on(self::ON_BEFORE, $methodName, $callback);
     }
 
     /**
@@ -129,8 +141,9 @@ class Resource implements ResourceInterface{
      *
      * @param Callable $callback
      */
-    public function onAfter($methodName, $callback) {
-        return $this->on ( self::ON_AFTER, $methodName, $callback );
+    public function onAfter($methodName, $callback)
+    {
+        return $this->on(self::ON_AFTER, $methodName, $callback);
     }
 
     /**
@@ -139,8 +152,9 @@ class Resource implements ResourceInterface{
      *
      * @param Callable $callback
      */
-    public function onError($methodName, $callback) {
-        return $this->on ( self::ON_ERROR, $methodName, $callback );
+    public function onError($methodName, $callback)
+    {
+        return $this->on(self::ON_ERROR, $methodName, $callback);
     }
 
     /**
@@ -150,22 +164,25 @@ class Resource implements ResourceInterface{
      * @param Callable $callback
      * @return \restlt\Resource
      */
-    protected function on($event, $methodName = '', $callback) {
-        if (! $callback || ($callback && ! is_callable ( $callback ))) {
-            throw new ApplicationException ( 'Event not provided' );
+    protected function on($event, $methodName = '', $callback)
+    {
+        if (! $callback || ($callback && ! is_callable($callback))) {
+            throw new ApplicationException('Event not provided');
         }
-        if($methodName){
-            $this->callbacks [$methodName] [$event] [] = $callback;
+        if ($methodName) {
+            $this->callbacks[$methodName][$event][] = $callback;
         } else {
-            $this->callbacks [$event] [] = $callback;
+            $this->callbacks[$event][] = $callback;
         }
         return $this;
     }
+
     /**
      *
      * @return array $callbacks
      */
-    public function getCallbacks() {
+    public function getCallbacks()
+    {
         return $this->callbacks;
     }
 
@@ -173,20 +190,26 @@ class Resource implements ResourceInterface{
      *
      * @param string $type
      */
-    public function clearCallbacks() {
-         $this->callbacks = array();
+    public function clearCallbacks()
+    {
+        $this->callbacks = array();
     }
+
     /**
+     *
      * @return the $annotations
      */
-    public function getAnnotations() {
+    public function getAnnotations()
+    {
         return $this->annotations;
     }
 
     /**
+     *
      * @param \restlt\Route $annotations
      */
-    public function setAnnotations($annotations) {
+    public function setAnnotations($annotations)
+    {
         $this->annotations = $annotations;
     }
 
@@ -195,35 +218,77 @@ class Resource implements ResourceInterface{
      * @param string $errorMessage
      * @param integer $errorCode
      */
-    public function addError($errorMessage,$errorCode = null){
-        $this->errors->push(array($errorMessage,$errorCode));
+    public function addError($errorMessage, $errorCode = null)
+    {
+        $this->errors->push(array(
+            $errorMessage,
+            $errorCode
+        ));
     }
 
     /**
+     *
      * @return the $errors
      */
-    public function getErrors() {
+    public function getErrors()
+    {
         return $this->errors;
     }
 
     /**
+     *
      * @param array $errors
      */
-    public function setErrors(\SplStack $errors) {
+    public function setErrors(\SplStack $errors)
+    {
         $this->errors = $errors;
     }
 
-	/**
-	 * @return \restlt\log\Log $logger
-	 */
-	public function getLog() {
-		return $this->log;
-	}
+    /**
+     *
+     * @return \restlt\log\Log $logger
+     */
+    public function getLog()
+    {
+        return $this->log;
+    }
 
-	/**
-	 * @param \restlt\log\Log $logger
-	 */
-	public function setLog(\restlt\log\Log $logger) {
-		$this->log = $logger;
-	}
+    /**
+     *
+     * @param \restlt\log\Log $logger
+     */
+    public function setLog(\restlt\log\Log $logger)
+    {
+        $this->log = $logger;
+    }
+
+    /**
+     * This method will display all the user
+     * documentation notes from the doc <br />blocks of the API calls
+     */
+    public function getApiInfo()
+    {
+        $resources = $this->getResponse()
+            ->getRequestRouter()
+            ->getResources();
+
+        $ret = '<div style="font-size:115%; font-style: italic; font-weight:bold; color: navy">';
+        $ret .= " API Documentation" . PHP_EOL;
+        $ret .= '<a name="top"></a>';
+        $ret .= '</div>';
+        $ret .= '<div>';
+        foreach ($resources as $resourceClass => $methods) {
+            $html = '<div style="width:30%; border: solid 1px blue;  padding: 5px">';
+            $html .= '<strong>URI</strong> : ' . $methods[0]['methodUri'] . PHP_EOL;
+            $html .= '<strong>Http Method</strong> : ' . $methods[0]['method'] . PHP_EOL;
+            $html .= '<strong>Description</strong> : ' . PHP_EOL;
+            $html .= isset($methods[0]['comment']) ? $methods[0]['comment'] . PHP_EOL : '';
+            $html .= '</div>' . PHP_EOL;
+            $html .= '<a  href="#top">Top</a>' . PHP_EOL;
+            $ret .= $html;
+        }
+        $ret .= '</div>';
+        // TODO
+        return nl2br($ret);
+    }
 }

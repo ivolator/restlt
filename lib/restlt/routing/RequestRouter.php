@@ -34,183 +34,211 @@ use restlt\exceptions\ApplicationException;
  * @author Ivo
  *
  */
-class RequestRouter implements RouterInterface{
+class RequestRouter implements RouterInterface
+{
 
     protected static $routes = [];
-	/**
-	 *
-	 * @var array
-	 */
-	protected $resources = array ();
 
-	/**
-	 *
-	 * @var restlt\Request
-	 */
-	protected $request = '/';
+    /**
+     *
+     * @var array
+     */
+    protected $resources = array();
 
-	/**
-	 *
-	 * @param string $serverBaseUri
-	 */
-	public function __construct(\restlt\RequestInterface $request, $serverBaseUri = null) {
-		if ($serverBaseUri) {
-			$this->serverBaseUri = $serverBaseUri;
-		} else {
-			throw new ApplicationException('Base URI must be defined!');
-		}
-		$this->request = $request;
-	}
+    /**
+     *
+     * @var \restlt\Request
+     */
+    protected $request = '/';
 
-	/**
-	 *
-	 * @param \restlt\Request $request
-	 * @return \restlt\Route
-	 */
-	public function getRoute() {
-		$route = null;
+    /**
+     *
+     * @param string $serverBaseUri
+     */
+    public function __construct(\restlt\RequestInterface $request, $serverBaseUri = null)
+    {
+        if ($serverBaseUri) {
+            $this->serverBaseUri = $serverBaseUri;
+        } else {
+            throw new ApplicationException('Base URI must be defined!');
+        }
+        $this->request = $request;
+    }
 
-		$request = $this->getRequest();
+    /**
+     *
+     * @param \restlt\Request $request
+     * @return \restlt\Route
+     */
+    public function getRoute()
+    {
+        $route = null;
 
-		$method = $request->getMethod ();
-		$requestUri = $request->getUri ();
+        $request = $this->getRequest();
 
-		if(isset(static::$routes[$requestUri])){
-		    return static::$routes[$requestUri];
-		}
+        $method = $request->getMethod();
+        $requestUri = $request->getUri();
 
-		$ext = pathinfo($requestUri,PATHINFO_EXTENSION);
-		$requestUriStripped = preg_replace('#\.'.$ext.'$#', '', $requestUri);
+        if (isset(static::$routes[$requestUri])) {
+            return static::$routes[$requestUri];
+        }
 
-		$resourceUri = str_replace ( $this->serverBaseUri, '/', $requestUriStripped );
-		$resourceUri = str_replace ( '//', '/', $resourceUri );
+        $ext = pathinfo($requestUri, PATHINFO_EXTENSION);
+        $requestUriStripped = preg_replace('#\.' . $ext . '$#', '', $requestUri);
 
-		if(\restlt\Request::HEAD === strtoupper($method)) $method = \restlt\Request::GET;
+        $resourceUri = str_replace($this->serverBaseUri, '/', $requestUriStripped);
+        $resourceUri = str_replace('//', '/', $resourceUri);
 
-		$route = $this->matchResource ( $resourceUri, $method );
-		if($route){
-		    static::$routes[$requestUri] = $route;
-		}
-		if($ext) $route->setOutputTypeOverrideExt($ext);
+        if (\restlt\Request::HEAD === strtoupper($method))
+            $method = \restlt\Request::GET;
 
-		return $route;
-	}
+        $route = $this->matchResource($resourceUri, $method);
+        if ($route) {
+            static::$routes[$requestUri] = $route;
+        }
+        if ($ext)
+            $route->setOutputTypeOverrideExt($ext);
 
-	/**
-	 *
-	 * @param string $uri
-	 * @param string $method (POST | GET | PUT | DELETE | PATCH)
-	 * @return Route
-	 * @throws ServerException
-	 */
-	protected function matchResource($uri, $requestMethod) {
-		$filterMatchingMethods = function (&$el) use($uri, $requestMethod) {
-			$ret = false;
-			$matches = false;
-			if(empty($el ['method'])) return false;
-			$methodMatch = strtolower ( $requestMethod ) === strtolower ( $el ['method'] );
-			$methodUri = rtrim($el ['methodUri'],'/');
-			$uri = rtrim($uri,'/');
+        return $route;
+    }
 
-			//try matching without regex first
-			if ($el ['methodUri'] === $uri && $methodMatch) {
-				$ret = true;
-			}
-			if (! $ret && $methodMatch) {
-				$regex = '#^' .$methodUri. '$#i';
-				$pregres = preg_match ( $regex, $uri, $matches );
-				if(PREG_NO_ERROR !== preg_last_error()){
-					throw new SystemException('Regex error when matching the method URIs');
-				}
-				if ($matches) {
-					$ret = true;
-				}
-				//all regex surounded by '()' will end up as params to the methods
-				array_shift ( $matches );
-				$el ['params'] = $matches;
-			}
-			return $ret;
-		};
+    /**
+     *
+     * @param string $uri
+     * @param string $method
+     *            (POST | GET | PUT | DELETE | PATCH)
+     * @return Route
+     * @throws ServerException
+     */
+    protected function matchResource($uri, $requestMethod)
+    {
+        $uri = rtrim($this->getServerBaseUri(), '/') . '/' . trim($uri, '/');
+        $filterMatchingMethods = function (&$el) use($uri, $requestMethod)
+        {
+            $ret = false;
+            $matches = false;
+            if (empty($el['method'])) {
+                return false;
+            }
+            $methodMatch = strtolower($requestMethod) === strtolower($el['method']);
+            $methodUri = rtrim($el['methodUri'], '/');
 
-		$filtered = array();
-		foreach ( $this->resources as $className=>$resMeta ) {
-			$res = null;
-			$res = array_filter ( $resMeta, $filterMatchingMethods );
-			if($res){
-				$filtered [$className] = $res;
-				$class = $className;
-			}
-			if(count($filtered) > 1){
-				throw ServerException::duplicateRouteFound();
-			}
-		}
+            // try matching without regex first
+            if ($el['methodUri'] === $uri && $methodMatch) {
+                $ret = true;
+            }
 
-		$cnt = count ( $filtered );
-		if ($cnt == 0) {
-			throw ServerException::notFound ();
-		}
+            if (! $ret && $methodMatch) {
+                $regex = '#^' . $methodUri . '$#i';
+                $pregres = preg_match($regex, $uri, $matches);
+                if (PREG_NO_ERROR !== preg_last_error()) {
+                    throw new SystemException('Regex error when matching the method URIs');
+                }
+                if ($matches) {
+                    $ret = true;
+                }
+                // all regex surounded by '()' will end up as params to the methods
+                array_shift($matches);
+                $el['params'] = $matches;
+            }
 
-		$methodMeta = array_shift ( $filtered[$class] );
-		$route = new Route;
-		$route->setClassName($class);
-		$route->setFunctionName($methodMeta ['function']);
-		$route->setUserAnnotations($methodMeta);
-		if(!empty($methodMeta ['params']))	$route->setParams($methodMeta ['params']);
-		if(!empty($methodMeta ['cacheControlMaxAge']))	$route->setCacheControlMaxAge($methodMeta ['cacheControlMaxAge']);
+            return $ret;
+        };
 
-		return $route;
-	}
+        $filtered = array();
+        foreach ($this->resources as $className => $resMeta) {
+            $res = null;
+            $res = array_filter($resMeta, $filterMatchingMethods);
+            if ($res) {
+                $filtered[$className] = $res;
+                $class = $className;
+            }
+            if (count($filtered) > 1) {
+                throw ServerException::duplicateRouteFound();
+            }
+        }
 
-	/**
-	 * @return the $resourceFiles
-	 */
-	public function getResource() {
-		return $this->resources;
-	}
+        $cnt = count($filtered);
+        if ($cnt == 0) {
+            throw ServerException::notFound();
+        }
 
-	/**
-	 * @param array $resource
-	 */
-	public function setResources($resources) {
-		$this->resources = $resources;
-		return $this;
-	}
+        $methodMeta = array_shift($filtered[$class]);
+        $route = new Route();
+        $route->setClassName($class);
+        $route->setFunctionName($methodMeta['function']);
+        $route->setUserAnnotations($methodMeta);
+        if (! empty($methodMeta['params']))
+            $route->setParams($methodMeta['params']);
+        if (! empty($methodMeta['cacheControlMaxAge']))
+            $route->setCacheControlMaxAge($methodMeta['cacheControlMaxAge']);
 
-	/**
-	 * @return array $resources
-	 */
-	public function getResources() {
-		return $this->resources;
-	}
+        return $route;
+    }
 
-	/**
-	 * @return string $serverBaseUri
-	 */
-	public function getServerBaseUri() {
-		return $this->serverBaseUri;
-	}
+    /**
+     *
+     * @return the $resourceFiles
+     */
+    public function getResource()
+    {
+        return $this->resources;
+    }
 
-	/**
-	 * @param string $serverBaseUri
-	 */
-	public function setServerBaseUri($serverBaseUri) {
-		$this->serverBaseUri = $serverBaseUri;
-		return $this;
-	}
-	/**
-	 * @return \restlt\Request $request
-	 */
-	public function getRequest() {
-		return $this->request;
-	}
+    /**
+     *
+     * @param array $resource
+     */
+    public function setResources($resources)
+    {
+        $this->resources = $resources;
+        return $this;
+    }
 
-	/**
-	 * @param \restlt\Request $request
-	 */
-	public function setRequest(\restlt\RequestInterface $request) {
-		$this->request = $request;
-		return $this;
-	}
+    /**
+     *
+     * @return array $resources
+     */
+    public function getResources()
+    {
+        return $this->resources;
+    }
 
+    /**
+     *
+     * @return string $serverBaseUri
+     */
+    public function getServerBaseUri()
+    {
+        return $this->serverBaseUri;
+    }
 
+    /**
+     *
+     * @param string $serverBaseUri
+     */
+    public function setServerBaseUri($serverBaseUri)
+    {
+        $this->serverBaseUri = $serverBaseUri;
+        return $this;
+    }
+
+    /**
+     *
+     * @return \restlt\Request $request
+     */
+    public function getRequest()
+    {
+        return $this->request;
+    }
+
+    /**
+     *
+     * @param \restlt\Request $request
+     */
+    public function setRequest(\restlt\RequestInterface $request)
+    {
+        $this->request = $request;
+        return $this;
+    }
 }

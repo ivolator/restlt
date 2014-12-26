@@ -23,7 +23,6 @@
  */
 namespace restlt\output;
 
-use restlt\Result;
 use restlt\exceptions\SystemException;
 
 /**
@@ -31,15 +30,18 @@ use restlt\exceptions\SystemException;
  * @author Vo
  *
  */
-class JsonOutputStrategy implements TypeConversionStrategyInterface {
-	public function execute(\restlt\ResultInterface $data) {
-		$ret = new \stdClass ();
-		$ret->data = $data->getData ();
-		$ret->errors = $data->getErrors ();
-		$ret = json_encode ( $data );
-		if (JSON_ERROR_NONE !== json_last_error ()) {
-			throw new SystemException ( 'There was an error while encoding result to JSON' );
-		}
-		return $ret;
-	}
+class JsonOutputStrategy implements TypeConversionStrategyInterface
+{
+
+    public function execute(\restlt\ResultInterface $data)
+    {
+        $ret = new \stdClass();
+        $ret->data = $data->getData();
+        $ret->errors = $data->getErrors();
+        $ret = json_encode($data);
+        if (JSON_ERROR_NONE !== json_last_error()) {
+            throw new SystemException('There was an error while encoding result to JSON');
+        }
+        return $ret;
+    }
 }

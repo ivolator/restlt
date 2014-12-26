@@ -22,7 +22,6 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 namespace restlt\output;
-use restlt\Result;
 
 interface TypeConversionStrategyInterface {
 	function execute(\restlt\ResultInterface $data);
