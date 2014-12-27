@@ -8,9 +8,9 @@ class JsonOutputStrategyTest extends RestLiteTest {
 		$jsonStartegy = new JsonOutputStrategy();
 		$arr = array('abc' => 22,'xyz' => 33);
 		$expected = new stdClass();
+		$expected->httpStatus = 200;
 		$expected->data = $arr;
 		$expected->errors = array();
-		$expected->httpStatus = 200;
 		$expected = json_encode($expected);
 		$data = new Result();
 		$data->setData($arr);

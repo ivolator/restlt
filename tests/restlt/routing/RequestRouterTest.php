@@ -17,7 +17,7 @@ class RequestRouterTest extends RestLiteTest
 		->setMethods(array('getUri','getMethod'))->disableOriginalConstructor()->getmock();
 
 		$mockRequest->expects($this->once())->method('getMethod')->will($this->returnValue('GET'));
-		$mockRequest->expects($this->any())->method('getUri')->will($this->returnValue('/example/resource1'));
+		$mockRequest->expects($this->any())->method('getUri')->will($this->returnValue('/example/resource2'));
 
 		$mockRouter = $this->getMockBuilder('\restlt\routing\RequestRouter')->disableOriginalConstructor()
 		->setMethods(array('getRequest'))->getMock();
@@ -29,7 +29,6 @@ class RequestRouterTest extends RestLiteTest
 
 		$mockRouter->setResources($resources);
 		$mockRouter->getRoute();
-
 	}
 	/**
 	 * @dataProvider getRouteExceptionDataProvider
@@ -63,7 +62,7 @@ class RequestRouterTest extends RestLiteTest
 			array(
 				array(
 					'method' => 'GET',
-					'methodUri' => '/example/resource1',
+					'methodUri' => '/baseuri//example/resource2',
 					'function' => 'getResource1GetMethod'
 				),
 			)
@@ -74,7 +73,7 @@ class RequestRouterTest extends RestLiteTest
 			array(
 				array(
 					'method' => 'POST',
-					'methodUri' => '/example/resource1',
+					'methodUri' => '/baseuri/example/resource2',
 					'function' => 'getResource1PostMethod'
 				),
 			)
@@ -85,7 +84,7 @@ class RequestRouterTest extends RestLiteTest
 			array(
 				array(
 					'method' => 'POST',
-					'methodUri' => '/example/resource1',
+					'methodUri' => '/baseuri/example/resource2',
 					'function' => 'getResource1PostMethod2'
 				),
 			),
@@ -93,32 +92,32 @@ class RequestRouterTest extends RestLiteTest
 			array(
 				array(
 					'method' => 'POST',
-					'methodUri' => '/example/resource1',
+					'methodUri' => '/baseuri/example/resource2',
 					'function' => 'getResource1PostMethodr'
 				),
 			),
 		);
 		return array(
 			array($resources1,'GET','/wrong/uri'),
-			array($resources2,'GET','/example/resource1'),
-			array($resources3,'POST','/example/resource1')
+			array($resources2,'GET','/baseuri/example/resource2'),
+			array($resources3,'POST','/baseuri/example/resource2')
 		);
 	}
 
 
 	public function getRouteDataProvider(){
 		$resources = array(
-			'\example\Resource1' =>
+			'\fixtures\Resource2' =>
 			array(
 				array(
 					'method' => 'GET',
-					'methodUri' => '/example/resource1',
-					'function' => 'getResource1GetMethod'
+					'methodUri' => '/baseuri/example/resource2',
+					'function' => 'getMe'
 				),
 				array(
 					'method' => 'POST',
-					'methodUri' => '/example/resource1',
-					'function' => 'getResource1PostMethod'
+					'methodUri' => '/baseuri/example/resource2',
+					'function' => 'postMe'
 				),
 			)
 		);

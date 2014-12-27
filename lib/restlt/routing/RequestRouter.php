@@ -129,7 +129,9 @@ class RequestRouter implements RouterInterface
             }
 
             if (! $ret && $methodMatch) {
+
                 $regex = '#^' . $methodUri . '$#i';
+
                 $pregres = preg_match($regex, $uri, $matches);
                 if (PREG_NO_ERROR !== preg_last_error()) {
                     throw new SystemException('Regex error when matching the method URIs');
