@@ -154,6 +154,7 @@ class RequestRouter implements RouterInterface
             if ($res) {
                 $filtered[$className] = $res;
                 $class = $className;
+                break;
             }
             if (count($filtered) > 1) {
                 throw ServerException::duplicateRouteFound();
