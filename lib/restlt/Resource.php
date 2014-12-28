@@ -263,6 +263,16 @@ class Resource implements ResourceInterface
     }
 
     /**
+     * Access the request parameter
+     * @param string $paramName - key
+     * @param mixed $default - return this in case there is no value for the $paramName
+     * @return Ambigous
+     */
+    public function getParam($paramName,$default){
+        return $this->getRequest()->get($paramName,$default);
+    }
+
+    /**
      * This method will display all the user
      * documentation notes from the doc <br />blocks of the API calls
      */
