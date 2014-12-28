@@ -30,7 +30,8 @@ class RequestRouterTest extends RestLiteTest
 		$mockRouter->setResources($resources);
 		$ret = $mockRouter->getRoute();
 
-		$this->assertEquals($ret->getClassName(),array_shift(array_keys($resources)));
+		$resource = array_shift(array_keys($resources));
+		$this->assertEquals($ret->getClassName(),$resource);
 		$this->assertEquals($ret->get('method'),$method);
 		$this->assertEquals($ret->get('methodUri'),'/baseuri/'.$uri);
 	}
