@@ -1,5 +1,6 @@
 <?php
 ini_set('display_errors', 'off');
+
 $al = @include realpath(__DIR__ . '/../vendor/autoload.php');
 if (! $al) {
     $al = @include __DIR__ . '/../../../autoload.php';
