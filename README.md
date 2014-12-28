@@ -12,7 +12,7 @@ In require section of your composer.json file add the information for RestLt as 
 { 
         "require" :
         { 
-                "restlt/restlt":"1.0.0b"
+                "restlt/restlt":"1.0.3b"
         }
 }
 ```
@@ -148,8 +148,8 @@ Obtain the parameter ($_REQUEST) and at the same time provide a default value. T
         $this->getRequest()->get('page',1);
 ```
 ###Public API documentation
-If you added User comments to the API resource methods, now you can access them by going to the root of the server.
-`http://myserveurl.com/serverroot.html`
+If you added User comments to the API resource methods, now you can access them by going to the /baseUri/introspect.html URI of the server.
+`http://myserveurl.com/serverroot/introspect.html`
 Where the `serverroot` is the base URI you have defined when initializing the \restlt\Server object.
 
 ##Handling errors
