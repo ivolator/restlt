@@ -74,22 +74,6 @@ namespace restlt\examples\resources;
  * @resourceBaseUri /resource1
  */
 class Resource1 extends \restlt\Resource {
-    public function __construct(\restlt\Request $request, \restlt\Response $response) {
-        parent::__construct($request,$resource);
-        $f1 = function ($request) {
-        };
-
-        $f2 = function ($request,$response,$return) {
-        };
-
-        $f3 = function ($request,$response,$e) {
-            mail('user@example.com', 'Error in resource', $e->getMessage());
-        };
-
-        $this->on ( self::ON_BEFORE, 'getMe', $f2 );
-        $this->on ( self::ON_AFTER, 'getMe', $f1 );
-        $this->on ( self::ON_ERROR, 'getMe', $f3 );
-    }
     /**
      * Note that the regex in "()" gets converted to a parameter of the method
      * Since v 1.1.0a this user comment section will appear in a simple HTML format
@@ -101,7 +85,7 @@ class Resource1 extends \restlt\Resource {
         $obj = new \stdClass ();
         $obj->a = array (9,8,7);
         //obtain the "someParam" - from POST or GET
-        $this->request->get ( 'someParam',$defaultValueIfParamIsMissing );
+        $this->get ( 'someParam',$defaultValueIfParamIsMissing );
         return $boj;
     }
     /**
