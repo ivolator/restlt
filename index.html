@@ -1,35 +1,38 @@
 <!DOCTYPE html>
 <html>
+
   <head>
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+    <meta name="description" content="RestLt : REST done easy with PHP">
 
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
 
-    <title>RestLt by ivolator</title>
+    <title>RestLt</title>
   </head>
 
   <body>
-    <header>
-      <div class="inner">
-        <h1>RestLt</h1>
-        <h2>REST done easy with PHP</h2>
-        <a href="https://github.com/ivolator/restlt" class="button"><small>View project on</small>GitHub</a>
-      </div>
-    </header>
 
-    <div id="content-wrapper">
-      <div class="inner clearfix">
-        <section id="main-content">
-          <h2>
-<a name="a-thin-rest-full-server-implementation-in-php" class="anchor" href="#a-thin-rest-full-server-implementation-in-php"><span class="octicon octicon-link"></span></a>A "thin" REST-full server implementation in PHP</h2>
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/ivolator/restlt">View on GitHub</a>
+
+          <h1 id="project_title">RestLt</h1>
+          <h2 id="project_tagline">REST done easy with PHP</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/ivolator/restlt/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/ivolator/restlt/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h2>
+<a id="a-thin-rest-full-server-implementation-in-php" class="anchor" href="#a-thin-rest-full-server-implementation-in-php" aria-hidden="true"><span class="octicon octicon-link"></span></a>A "thin" REST-full server implementation in PHP</h2>
 
 <p>RestLt is a flexible small library that will allow you to build RESTfull service.
 Most of the sub-components are extensible or replaceable. This would let you modify the server's behavior.
@@ -38,10 +41,10 @@ Any feedback is appreciated!</p>
 <p><a href="https://travis-ci.org/ivolator/restlt"><img src="https://travis-ci.org/ivolator/restlt.png" alt="Build Status"></a></p>
 
 <h2>
-<a name="installing" class="anchor" href="#installing"><span class="octicon octicon-link"></span></a>Installing</h2>
+<a id="installing" class="anchor" href="#installing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installing</h2>
 
 <h3>
-<a name="using-composer" class="anchor" href="#using-composer"><span class="octicon octicon-link"></span></a>Using Composer</h3>
+<a id="using-composer" class="anchor" href="#using-composer" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using Composer</h3>
 
 <p>In require section of your composer.json file add the information for RestLt as follows:</p>
 
@@ -56,25 +59,24 @@ Any feedback is appreciated!</p>
 <p>Run <code>composer.phar --dev update</code></p>
 
 <h3>
-<a name="clone-with-git" class="anchor" href="#clone-with-git"><span class="octicon octicon-link"></span></a>Clone with GIT</h3>
+<a id="clone-with-git" class="anchor" href="#clone-with-git" aria-hidden="true"><span class="octicon octicon-link"></span></a>Clone with GIT</h3>
 
 <p>Use this URL to clone the repo
 <code>https://github.com/ivolator/restlt.git</code></p>
 
 <h2>
-<a name="basics" class="anchor" href="#basics"><span class="octicon octicon-link"></span></a>Basics</h2>
+<a id="basics" class="anchor" href="#basics" aria-hidden="true"><span class="octicon octicon-link"></span></a>Basics</h2>
 
 <h3>
-<a name="server-end-point-setup" class="anchor" href="#server-end-point-setup"><span class="octicon octicon-link"></span></a>Server end point setup</h3>
+<a id="server-end-point-setup" class="anchor" href="#server-end-point-setup" aria-hidden="true"><span class="octicon octicon-link"></span></a>Server end point setup</h3>
 
-<div class="highlight highlight-php"><pre><span class="c1">//Get instance of the server by passing the server base url</span>
-<span class="nv">$s</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Server</span> <span class="p">(</span> <span class="s1">'/'</span> <span class="p">);</span>
-<span class="c1">//Tell the server where to find the resources</span>
-<span class="nv">$s</span><span class="o">-&gt;</span><span class="na">registerResourceFolder</span> <span class="p">(</span> <span class="nx">SOME_APPLICATION_ROOT</span> <span class="o">.</span>  <span class="s1">'/resources'</span><span class="p">,</span> <span class="s1">'name\space\resources'</span> <span class="p">);</span>
-<span class="nv">$s</span><span class="o">-&gt;</span><span class="na">registerResourceClass</span><span class="p">(</span><span class="s1">'example\name\space\Resource'</span><span class="p">);</span>
-<span class="k">echo</span> <span class="nv">$s</span><span class="o">-&gt;</span><span class="na">serve</span> <span class="p">();</span>
-<span class="k">exit</span><span class="p">;</span>
-</pre></div>
+<div class="highlight highlight-php"><pre><span class="pl-s2"><span class="pl-c">//Get instance of the server by passing the server base url</span></span>
+<span class="pl-s2"><span class="pl-vo">$s</span> <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-s3">Server</span> ( <span class="pl-s1"><span class="pl-pds">'</span>/<span class="pl-pds">'</span></span> );</span>
+<span class="pl-s2"><span class="pl-c">//Tell the server where to find the resources</span></span>
+<span class="pl-s2"><span class="pl-vo">$s</span><span class="pl-k">-&gt;</span>registerResourceFolder ( <span class="pl-c1">SOME_APPLICATION_ROOT</span> <span class="pl-k">.</span>  <span class="pl-s1"><span class="pl-pds">'</span>/resources<span class="pl-pds">'</span></span>, <span class="pl-s1"><span class="pl-pds">'</span>name\space\resources<span class="pl-pds">'</span></span> );</span>
+<span class="pl-s2"><span class="pl-vo">$s</span><span class="pl-k">-&gt;</span>registerResourceClass(<span class="pl-s1"><span class="pl-pds">'</span>example\name\space\Resource<span class="pl-pds">'</span></span>);</span>
+<span class="pl-s2"><span class="pl-s3">echo</span> <span class="pl-vo">$s</span><span class="pl-k">-&gt;</span>serve ();</span>
+<span class="pl-s2"><span class="pl-k">exit</span>;</span></pre></div>
 
 <p>In your base server directory add an .htaccess file with the follwing content</p>
 
@@ -89,7 +91,7 @@ Any feedback is appreciated!</p>
 <p>Now you have bootstraped RestLt.</p>
 
 <h3>
-<a name="creating-a-resource" class="anchor" href="#creating-a-resource"><span class="octicon octicon-link"></span></a>Creating a resource</h3>
+<a id="creating-a-resource" class="anchor" href="#creating-a-resource" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating a resource</h3>
 
 <p>A resource in Rest Lite is a class that extends the \restlt\Resource class.
  Each resource can contain methods that respond to multiple GETs, POSTs, PUTs, DELETEs and PATCHs.
@@ -114,67 +116,53 @@ Any feedback is appreciated!</p>
 Note that the full URI for your resource is a combination of the server base URI, that was set during \restlt\Server initialization and the addition of @resourceBaseUri + @methodUri. In general consider the URI as of a regular expression. This is how it is evaluated and followint the preg_match() rules for binding its third parameter, whatever you surround with "()" ends up as a parameter of your method.</li>
 </ul>
 </li>
-</ol><p>For example, if your complete URI ends up to be /account/([0-9]+)/contact/([a-z]+), your method should be accepting 2 parameters. The first of which will be a sequence of digits and the second one letters.</p>
+</ol>
+
+<p>For example, if your complete URI ends up to be /account/([0-9]+)/contact/([a-z]+), your method should be accepting 2 parameters. The first of which will be a sequence of digits and the second one letters.</p>
 
 <p>A resource can have multiple methods that respond to GET, POST, etc.</p>
 
 <h3>
-<a name="a-simple-resource-example" class="anchor" href="#a-simple-resource-example"><span class="octicon octicon-link"></span></a>A simple resource example</h3>
+<a id="a-simple-resource-example" class="anchor" href="#a-simple-resource-example" aria-hidden="true"><span class="octicon octicon-link"></span></a>A simple resource example</h3>
 
-<div class="highlight highlight-php"><pre><span class="k">namespace</span> <span class="nx">restlt\examples\resources</span><span class="p">;</span>
-<span class="sd">/**</span>
-<span class="sd"> * </span>
-<span class="sd"> * @resourceBaseUri /resource1</span>
-<span class="sd"> */</span>
-<span class="k">class</span> <span class="nc">Resource1</span> <span class="k">extends</span> <span class="nx">\restlt\Resource</span> <span class="p">{</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nx">\restlt\Request</span> <span class="nv">$request</span><span class="p">,</span> <span class="nx">\restlt\Response</span> <span class="nv">$response</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">parent</span><span class="o">::</span><span class="na">__construct</span><span class="p">(</span><span class="nv">$request</span><span class="p">,</span><span class="nv">$resource</span><span class="p">);</span>
-        <span class="nv">$f1</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$request</span><span class="p">)</span> <span class="p">{</span>
-        <span class="p">};</span>
-
-        <span class="nv">$f2</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$request</span><span class="p">,</span><span class="nv">$response</span><span class="p">,</span><span class="nv">$return</span><span class="p">)</span> <span class="p">{</span>
-        <span class="p">};</span>
-
-        <span class="nv">$f3</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$request</span><span class="p">,</span><span class="nv">$response</span><span class="p">,</span><span class="nv">$e</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nb">mail</span><span class="p">(</span><span class="s1">'user@example.com'</span><span class="p">,</span> <span class="s1">'Error in resource'</span><span class="p">,</span> <span class="nv">$e</span><span class="o">-&gt;</span><span class="na">getMessage</span><span class="p">());</span>
-        <span class="p">};</span>
-
-        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">on</span> <span class="p">(</span> <span class="nx">self</span><span class="o">::</span><span class="na">ON_BEFORE</span><span class="p">,</span> <span class="s1">'getMe'</span><span class="p">,</span> <span class="nv">$f2</span> <span class="p">);</span>
-        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">on</span> <span class="p">(</span> <span class="nx">self</span><span class="o">::</span><span class="na">ON_AFTER</span><span class="p">,</span> <span class="s1">'getMe'</span><span class="p">,</span> <span class="nv">$f1</span> <span class="p">);</span>
-        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">on</span> <span class="p">(</span> <span class="nx">self</span><span class="o">::</span><span class="na">ON_ERROR</span><span class="p">,</span> <span class="s1">'getMe'</span><span class="p">,</span> <span class="nv">$f3</span> <span class="p">);</span>
-    <span class="p">}</span>
-    <span class="sd">/**</span>
-<span class="sd">     * Note that the regex in "()" gets converted to a parameter of the method</span>
-<span class="sd">     * Since v 1.1.0a this user comment section will appear in a simple HTML format</span>
-<span class="sd">     * accesible at the root of ther server like this: http://url.com/approot.html</span>
-<span class="sd">     * @method GET</span>
-<span class="sd">     * @methodUri /([0-9]+)</span>
-<span class="sd">     */</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">getMe</span><span class="p">(</span><span class="nv">$id</span> <span class="o">=</span> <span class="s1">''</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nv">$obj</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\stdClass</span> <span class="p">();</span>
-        <span class="nv">$obj</span><span class="o">-&gt;</span><span class="na">a</span> <span class="o">=</span> <span class="k">array</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">7</span><span class="p">);</span>
-        <span class="c1">//obtain the "someParam" - from POST or GET</span>
-        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">get</span> <span class="p">(</span> <span class="s1">'someParam'</span><span class="p">,</span><span class="nv">$defaultValueIfParamIsMissing</span> <span class="p">);</span>
-        <span class="k">return</span> <span class="nv">$boj</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="sd">/**</span>
-<span class="sd">     *</span>
-<span class="sd">     * @method PUT</span>
-<span class="sd">     * @methodUri /save</span>
-<span class="sd">     */</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">putMe</span><span class="p">()</span> <span class="p">{</span>
-        <span class="c1">//fetch the parameters from the query string</span>
-        <span class="nv">$params</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">getQueryParams</span> <span class="p">();</span>
-        <span class="nv">$params</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">getPostParams</span> <span class="p">();</span>
-
-        <span class="c1">//get the raw data</span>
-        <span class="nv">$postPayload</span><span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">getRawPost</span> <span class="p">();</span>
-            <span class="o">......</span>
-        <span class="c1">//return whatever you want</span>
-        <span class="k">return</span> <span class="nv">$res</span><span class="p">;</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
+<div class="highlight highlight-php"><pre><span class="pl-s2"><span class="pl-k">namespace</span> <span class="pl-en">restlt\examples\resources</span>;</span>
+<span class="pl-s2"><span class="pl-c">/**</span></span>
+<span class="pl-s2"><span class="pl-c"> * </span></span>
+<span class="pl-s2"><span class="pl-c"> * @resourceBaseUri /resource1</span></span>
+<span class="pl-s2"><span class="pl-c"> */</span></span>
+<span class="pl-s2"><span class="pl-st">class</span> <span class="pl-en">Resource1</span> <span class="pl-s">extends</span> <span class="pl-s3">\restlt\</span><span class="pl-e">Resource</span> {</span>
+<span class="pl-s2"></span>
+<span class="pl-s2">    <span class="pl-c">/**</span></span>
+<span class="pl-s2"><span class="pl-c">     * Note that the regex in "()" gets converted to a parameter of the method</span></span>
+<span class="pl-s2"><span class="pl-c">     * Since v 1.1.0a this user comment section will appear in a simple HTML format</span></span>
+<span class="pl-s2"><span class="pl-c">     * accesible at the root of ther server like this: http://url.com/approot.html</span></span>
+<span class="pl-s2"><span class="pl-c">     * @method GET</span></span>
+<span class="pl-s2"><span class="pl-c">     * @methodUri /([0-9]+)</span></span>
+<span class="pl-s2"><span class="pl-c">     */</span></span>
+<span class="pl-s2">    <span class="pl-s">public</span> <span class="pl-st">function</span> <span class="pl-en">getMe</span>(<span class="pl-vo">$id</span> <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">'</span><span class="pl-pds">'</span></span>) {</span>
+<span class="pl-s2">        <span class="pl-vo">$obj</span> <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-s3">\stdClass</span> ();</span>
+<span class="pl-s2">        <span class="pl-vo">$obj</span><span class="pl-k">-&gt;</span><span class="pl-vo">a</span> <span class="pl-k">=</span> <span class="pl-st">array</span> (<span class="pl-c1">9</span>,<span class="pl-c1">8</span>,<span class="pl-c1">7</span>);</span>
+<span class="pl-s2">        <span class="pl-c">//obtain the "someParam" - from POST or GET</span></span>
+<span class="pl-s2">        <span class="pl-vo">$this</span><span class="pl-k">-&gt;</span>get ( <span class="pl-s1"><span class="pl-pds">'</span>someParam<span class="pl-pds">'</span></span>,<span class="pl-vo">$defaultValueIfParamIsMissing</span> );</span>
+<span class="pl-s2">        <span class="pl-k">return</span> <span class="pl-vo">$boj</span>;</span>
+<span class="pl-s2">    }</span>
+<span class="pl-s2">    <span class="pl-c">/**</span></span>
+<span class="pl-s2"><span class="pl-c">     *</span></span>
+<span class="pl-s2"><span class="pl-c">     * @method PUT</span></span>
+<span class="pl-s2"><span class="pl-c">     * @methodUri /save</span></span>
+<span class="pl-s2"><span class="pl-c">     */</span></span>
+<span class="pl-s2">    <span class="pl-s">public</span> <span class="pl-st">function</span> <span class="pl-en">putMe</span>() {</span>
+<span class="pl-s2">        <span class="pl-c">//fetch the parameters from the query string</span></span>
+<span class="pl-s2">        <span class="pl-vo">$params</span> <span class="pl-k">=</span> <span class="pl-vo">$this</span><span class="pl-k">-&gt;</span><span class="pl-vo">request</span><span class="pl-k">-&gt;</span>getQueryParams ();</span>
+<span class="pl-s2">        <span class="pl-vo">$params</span> <span class="pl-k">=</span> <span class="pl-vo">$this</span><span class="pl-k">-&gt;</span><span class="pl-vo">request</span><span class="pl-k">-&gt;</span>getPostParams ();</span>
+<span class="pl-s2"></span>
+<span class="pl-s2">        <span class="pl-c">//get the raw data</span></span>
+<span class="pl-s2">        <span class="pl-vo">$postPayload</span><span class="pl-k">=</span> <span class="pl-vo">$this</span><span class="pl-k">-&gt;</span><span class="pl-vo">request</span><span class="pl-k">-&gt;</span>getRawPost ();</span>
+<span class="pl-s2">            <span class="pl-k">......</span></span>
+<span class="pl-s2">        <span class="pl-c">//return whatever you want</span></span>
+<span class="pl-s2">        <span class="pl-k">return</span> <span class="pl-vo">$res</span>;</span>
+<span class="pl-s2">    }</span>
+<span class="pl-s2">}</span></pre></div>
 
 <p>For the just coded resource we have created two methods, <code>Resource1::getMe()</code> and <code>Resource1::putMe()</code>. There is no naming convention for the methods. The names are chosen for better clarity. The method Resource1::get() we will be responding to the 'GET' http method and the URI that will access it is /resource1/123 or any number as per the regex. The latter URI will be prepended with the Server base URI. You set the Server base URI when instantiating the \restlt\Server.</p>
 
@@ -183,41 +171,37 @@ The methods must return data in order for you to receive it as a XML or JSON for
 The JSON or XML conversion happens automatically. More on adding your own twist to the output will be discussed in the advanced section.</p>
 
 <h3>
-<a name="accessing-the-get-post-and-raw-data-within-the-resources-methods" class="anchor" href="#accessing-the-get-post-and-raw-data-within-the-resources-methods"><span class="octicon octicon-link"></span></a>Accessing the GET, POST and raw data within the resources' methods.</h3>
+<a id="accessing-the-get-post-and-raw-data-within-the-resources-methods" class="anchor" href="#accessing-the-get-post-and-raw-data-within-the-resources-methods" aria-hidden="true"><span class="octicon octicon-link"></span></a>Accessing the GET, POST and raw data within the resources' methods.</h3>
 
-<div class="highlight highlight-php"><pre><span class="c1">//accessing GET</span>
-        <span class="nv">$params</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">getQueryParams</span> <span class="p">();</span>
-<span class="c1">//accessing POST</span>
-        <span class="nv">$params</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">getPostParams</span> <span class="p">();</span>
-</pre></div>
+<div class="highlight highlight-php"><pre><span class="pl-s2"><span class="pl-c">//accessing GET</span></span>
+<span class="pl-s2">        <span class="pl-vo">$params</span> <span class="pl-k">=</span> <span class="pl-vo">$this</span><span class="pl-k">-&gt;</span><span class="pl-vo">request</span><span class="pl-k">-&gt;</span>getQueryParams ();</span>
+<span class="pl-s2"><span class="pl-c">//accessing POST</span></span>
+<span class="pl-s2">        <span class="pl-vo">$params</span> <span class="pl-k">=</span> <span class="pl-vo">$this</span><span class="pl-k">-&gt;</span><span class="pl-vo">request</span><span class="pl-k">-&gt;</span>getPostParams ();</span></pre></div>
 
 <p>Get the raw data as it was submited in the body</p>
 
-<div class="highlight highlight-php"><pre>        <span class="nv">$postPayload</span><span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">request</span><span class="o">-&gt;</span><span class="na">getRawPost</span> <span class="p">();</span> 
-</pre></div>
+<div class="highlight highlight-php"><pre><span class="pl-s2">        <span class="pl-vo">$postPayload</span><span class="pl-k">=</span> <span class="pl-vo">$this</span><span class="pl-k">-&gt;</span><span class="pl-vo">request</span><span class="pl-k">-&gt;</span>getRawPost (); </span></pre></div>
 
 <p>Get one parameter at a time</p>
 
-<div class="highlight highlight-php"><pre>        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getRequest</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="nv">$paramName</span><span class="p">);</span>
-</pre></div>
+<div class="highlight highlight-php"><pre><span class="pl-s2">        <span class="pl-vo">$this</span><span class="pl-k">-&gt;</span>get(<span class="pl-vo">$paramName</span>);</span></pre></div>
 
 <p>Obtain the parameter ($_REQUEST) and at the same time provide a default value. This helps you avoid the checks for set or empty values</p>
 
-<div class="highlight highlight-php"><pre>        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getRequest</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'page'</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
-</pre></div>
+<div class="highlight highlight-php"><pre><span class="pl-s2">        <span class="pl-vo">$this</span><span class="pl-k">-&gt;</span>get(<span class="pl-s1"><span class="pl-pds">'</span>page<span class="pl-pds">'</span></span>,<span class="pl-c1">1</span>);</span></pre></div>
 
 <h3>
-<a name="public-api-documentation" class="anchor" href="#public-api-documentation"><span class="octicon octicon-link"></span></a>Public API documentation</h3>
+<a id="public-api-documentation" class="anchor" href="#public-api-documentation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Public API documentation</h3>
 
 <p>If you added User comments to the API resource methods, now you can access them by going to the root of the server.
 <code>http://myserveurl.com/serverroot.html</code>
 Where the <code>serverroot</code> is the base URI you have defined when initializing the \restlt\Server object.</p>
 
 <h2>
-<a name="handling-errors" class="anchor" href="#handling-errors"><span class="octicon octicon-link"></span></a>Handling errors</h2>
+<a id="handling-errors" class="anchor" href="#handling-errors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Handling errors</h2>
 
 <h3>
-<a name="exceptions" class="anchor" href="#exceptions"><span class="octicon octicon-link"></span></a>Exceptions</h3>
+<a id="exceptions" class="anchor" href="#exceptions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Exceptions</h3>
 
 <p>All exceptions thrown by the server will end up as 404 or 500 errors.
 If you throw your own error the result code will be 500, but you have the controll of what gets thrown or caught. 
@@ -225,121 +209,111 @@ The message resulting from the latter will be sent to the server in the error ob
 For example if you throw <code>throw new \Exception('My Error',1000);</code> you will get the follwing in the response body.
 The HTTP status code however will be 500.</p>
 
-<div class="highlight highlight-xml"><pre><span class="cp">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
-<span class="nt">&lt;result&gt;</span>
-  <span class="nt">&lt;errors&gt;</span>
-    <span class="nt">&lt;error&gt;</span>
-      <span class="nt">&lt;error&gt;</span>
-        <span class="nt">&lt;message&gt;</span>My Error<span class="nt">&lt;/message&gt;</span>
-        <span class="nt">&lt;code&gt;</span>1000<span class="nt">&lt;/code&gt;</span>
-      <span class="nt">&lt;/error&gt;</span>
-    <span class="nt">&lt;/error&gt;</span>
-  <span class="nt">&lt;/errors&gt;</span>
-<span class="nt">&lt;/result&gt;</span>
-</pre></div>
+<div class="highlight highlight-xml"><pre>&lt;?<span class="pl-ent">xml</span><span class="pl-e"> version</span>=<span class="pl-s1"><span class="pl-pds">"</span>1.0<span class="pl-pds">"</span></span><span class="pl-e"> encoding</span>=<span class="pl-s1"><span class="pl-pds">"</span>UTF-8<span class="pl-pds">"</span></span>?&gt;
+&lt;<span class="pl-ent">result</span>&gt;
+  &lt;<span class="pl-ent">errors</span>&gt;
+    &lt;<span class="pl-ent">error</span>&gt;
+      &lt;<span class="pl-ent">error</span>&gt;
+        &lt;<span class="pl-ent">message</span>&gt;My Error&lt;/<span class="pl-ent">message</span>&gt;
+        &lt;<span class="pl-ent">code</span>&gt;1000&lt;/<span class="pl-ent">code</span>&gt;
+      &lt;/<span class="pl-ent">error</span>&gt;
+    &lt;/<span class="pl-ent">error</span>&gt;
+  &lt;/<span class="pl-ent">errors</span>&gt;
+&lt;/<span class="pl-ent">result</span>&gt;</pre></div>
 
 <h3>
-<a name="phpuser-errors" class="anchor" href="#phpuser-errors"><span class="octicon octicon-link"></span></a>PHP/user errors</h3>
+<a id="phpuser-errors" class="anchor" href="#phpuser-errors" aria-hidden="true"><span class="octicon octicon-link"></span></a>PHP/user errors</h3>
 
 <p>Errors caused by  E_ERROR, E_USER_ERROR, E_WARNING, E_USER_WARNING, E_CORE_ERROR, E_CORE_WARNING, E_DEPRECATED and E_STRICT will end up as 500. You can see this error in the php error log.  </p>
 
 <h2>
-<a name="some-advanced-usage" class="anchor" href="#some-advanced-usage"><span class="octicon octicon-link"></span></a>Some advanced usage</h2>
+<a id="some-advanced-usage" class="anchor" href="#some-advanced-usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Some advanced usage</h2>
 
 <h3>
-<a name="event-hooks" class="anchor" href="#event-hooks"><span class="octicon octicon-link"></span></a>Event Hooks</h3>
+<a id="event-hooks" class="anchor" href="#event-hooks" aria-hidden="true"><span class="octicon octicon-link"></span></a>Event Hooks</h3>
 
 <p>Let's say you need to add some twist to the execution flow or put some checks, logging or whatever comes to mind. There are three event hooks that provide a way to do that. The callbacks provided to these event hooks need to be Callable. The method or function signatures are provided bellow.</p>
 
 <h3>
-<a name="on-before-event----before-the-flow-enters-your-resource-method-" class="anchor" href="#on-before-event----before-the-flow-enters-your-resource-method-"><span class="octicon octicon-link"></span></a>On Before event - * before the flow enters your resource method. *</h3>
+<a id="on-before-event----before-the-flow-enters-your-resource-method-" class="anchor" href="#on-before-event----before-the-flow-enters-your-resource-method-" aria-hidden="true"><span class="octicon octicon-link"></span></a>On Before event - * before the flow enters your resource method. *</h3>
 
-<div class="highlight highlight-php"><pre><span class="k">class</span> <span class="nc">Resource1</span> <span class="k">extends</span> <span class="nx">\restlt\Resource</span> <span class="p">{</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">()</span> <span class="p">{</span>
-        <span class="nv">$f1</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$r</span><span class="p">)</span> <span class="p">{</span>
-             <span class="c1">//do something</span>
-        <span class="p">};</span>
-        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">on</span> <span class="p">(</span> <span class="nx">Resource</span><span class="o">::</span><span class="na">ON_BEFORE</span><span class="p">,</span> <span class="s1">'myFunctionName'</span><span class="p">,</span> <span class="nv">$f1</span> <span class="p">);</span>
-    <span class="p">}</span>
-</pre></div>
+<div class="highlight highlight-php"><pre><span class="pl-s2"><span class="pl-st">class</span> <span class="pl-en">Resource1</span> <span class="pl-s">extends</span> <span class="pl-s3">\restlt\</span><span class="pl-e">Resource</span> {</span>
+<span class="pl-s2">    <span class="pl-s">public</span> <span class="pl-st">function</span> <span class="pl-s3">__construct</span>() {</span>
+<span class="pl-s2">        <span class="pl-vo">$f1</span> <span class="pl-k">=</span> <span class="pl-st">function</span> (<span class="pl-vo">$r</span>) {</span>
+<span class="pl-s2">             <span class="pl-c">//do something</span></span>
+<span class="pl-s2">        };</span>
+<span class="pl-s2">        <span class="pl-vo">$this</span><span class="pl-k">-&gt;</span>on ( <span class="pl-s3">Resource</span><span class="pl-k">::</span><span class="pl-c1">ON_BEFORE</span>, <span class="pl-s1"><span class="pl-pds">'</span>myFunctionName<span class="pl-pds">'</span></span>, <span class="pl-vo">$f1</span> );</span>
+<span class="pl-s2">    }</span></pre></div>
 
 <p>or instead of a closure, pass a Callable</p>
 
-<div class="highlight highlight-php"><pre>    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">on</span> <span class="p">(</span> <span class="nx">Resource</span><span class="o">::</span><span class="na">ON_BEFORE</span><span class="p">,</span> <span class="s1">'myFunctionName'</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="nv">$obj</span><span class="p">,</span><span class="nv">$method</span><span class="p">)</span> <span class="p">);</span>
-    <span class="p">}</span>
-</pre></div>
+<div class="highlight highlight-php"><pre><span class="pl-s2">    <span class="pl-vo">$this</span><span class="pl-k">-&gt;</span>on ( <span class="pl-s3">Resource</span><span class="pl-k">::</span><span class="pl-c1">ON_BEFORE</span>, <span class="pl-s1"><span class="pl-pds">'</span>myFunctionName<span class="pl-pds">'</span></span>, <span class="pl-s3">array</span>(<span class="pl-vo">$obj</span>,<span class="pl-vo">$method</span>) );</span>
+<span class="pl-s2">    }</span></pre></div>
 
 <p>The callback function provided for this event has the following signature</p>
 
-<div class="highlight highlight-php"><pre>    <span class="o">/**</span>
-     <span class="o">*</span> <span class="o">@</span><span class="nx">param</span> <span class="nx">\restlt\Request</span> <span class="nv">$r</span> 
-     <span class="o">*</span> <span class="o">@</span><span class="k">return</span> <span class="nx">void</span>
-     <span class="o">*</span> <span class="o">/</span>
-    <span class="nv">$f</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nx">\restlt\Request</span> <span class="nv">$r</span><span class="p">){};</span>
-</pre></div>
+<div class="highlight highlight-php"><pre><span class="pl-s2">    <span class="pl-c">/**</span></span>
+<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> \restlt\Request $r </span></span>
+<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@return</span> void</span></span>
+<span class="pl-s2"><span class="pl-c">     * /</span></span>
+<span class="pl-s2"><span class="pl-c"><span class="pl-ii">    $f = function (\restlt\Request $r){};</span></span></span></pre></div>
 
 <h3>
-<a name="on-after-event----after-the-resource-function-returns-" class="anchor" href="#on-after-event----after-the-resource-function-returns-"><span class="octicon octicon-link"></span></a>On After event - * after the resource function returns *</h3>
+<a id="on-after-event----after-the-resource-function-returns-" class="anchor" href="#on-after-event----after-the-resource-function-returns-" aria-hidden="true"><span class="octicon octicon-link"></span></a>On After event - * after the resource function returns *</h3>
 
-<div class="highlight highlight-php"><pre><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">on</span> <span class="p">(</span> <span class="nx">Resource</span><span class="o">::</span><span class="na">ON_AFTER</span><span class="p">,</span> <span class="s1">'myFunctionName'</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="nv">$obj</span><span class="p">,</span><span class="nv">$method</span><span class="p">)</span> <span class="p">);</span>
-</pre></div>
+<div class="highlight highlight-php"><pre><span class="pl-s2"><span class="pl-vo">$this</span><span class="pl-k">-&gt;</span>on ( <span class="pl-s3">Resource</span><span class="pl-k">::</span><span class="pl-c1">ON_AFTER</span>, <span class="pl-s1"><span class="pl-pds">'</span>myFunctionName<span class="pl-pds">'</span></span>, <span class="pl-s3">array</span>(<span class="pl-vo">$obj</span>,<span class="pl-vo">$method</span>) );</span></pre></div>
 
 <pre><code>* The callback function provided for this event has the following signature *
 </code></pre>
 
-<div class="highlight highlight-php"><pre>    <span class="o">/**</span>
-     <span class="o">*</span> <span class="o">@</span><span class="nx">param</span> <span class="nx">\restlt\Request</span> <span class="nv">$request</span> 
-     <span class="o">*</span> <span class="o">@</span><span class="nx">param</span> <span class="nx">\restlt\Response</span> <span class="nv">$response</span>
-     <span class="o">*</span> <span class="o">@</span><span class="nx">param</span> <span class="nx">mixed</span> <span class="nv">$return</span> <span class="nx">the</span> <span class="nx">result</span> <span class="nx">of</span> <span class="nx">your</span> <span class="nx">resource</span> <span class="nx">method</span>
-     <span class="o">*</span> <span class="o">@</span><span class="k">return</span> <span class="nx">void</span>
-     <span class="o">*</span> <span class="o">/</span>
-    <span class="nv">$f</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nx">\restlt\Request</span> <span class="nv">$request</span><span class="p">,</span> <span class="nx">\restlt\Response</span> <span class="nv">$response</span><span class="p">,</span> <span class="nv">$return</span><span class="p">){};</span>
-</pre></div>
+<div class="highlight highlight-php"><pre><span class="pl-s2">    <span class="pl-c">/**</span></span>
+<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> \restlt\Request $request </span></span>
+<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> \restlt\Response $response</span></span>
+<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> mixed $return the result of your resource method</span></span>
+<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@return</span> void</span></span>
+<span class="pl-s2"><span class="pl-c">     * /</span></span>
+<span class="pl-s2"><span class="pl-c"><span class="pl-ii">    $f = function (\restlt\Request $request, \restlt\Response $response, $return){};</span></span></span></pre></div>
 
 <h3>
-<a name="on-error----when-an-error-occurs-inside-the-method-" class="anchor" href="#on-error----when-an-error-occurs-inside-the-method-"><span class="octicon octicon-link"></span></a>On error - * when an error occurs inside the method *</h3>
+<a id="on-error----when-an-error-occurs-inside-the-method-" class="anchor" href="#on-error----when-an-error-occurs-inside-the-method-" aria-hidden="true"><span class="octicon octicon-link"></span></a>On error - * when an error occurs inside the method *</h3>
 
 <p>If you throw an exception within a method it will get eventually caught in the top layer and you'll get 500. This event actually is triggered when E_ERROR,E_USER_ERROR,E_WARNING,E_USER_WARNING,E_CORE_ERROR,E_CORE_WARNING,E_DEPRECATED,E_STRICT are thrown.</p>
 
-<div class="highlight highlight-php"><pre>    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">on</span> <span class="p">(</span> <span class="nx">Resource</span><span class="o">::</span><span class="na">ON_ERROR</span><span class="p">,</span> <span class="s1">'myFunctionName'</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="nv">$obj</span><span class="p">,</span><span class="nv">$method</span><span class="p">)</span> <span class="p">);</span>
-</pre></div>
+<div class="highlight highlight-php"><pre><span class="pl-s2">    <span class="pl-vo">$this</span><span class="pl-k">-&gt;</span>on ( <span class="pl-s3">Resource</span><span class="pl-k">::</span><span class="pl-c1">ON_ERROR</span>, <span class="pl-s1"><span class="pl-pds">'</span>myFunctionName<span class="pl-pds">'</span></span>, <span class="pl-s3">array</span>(<span class="pl-vo">$obj</span>,<span class="pl-vo">$method</span>) );</span></pre></div>
 
 <p>Follows the callback function signature</p>
 
-<div class="highlight highlight-php"><pre><span class="o">/**</span>
-<span class="o">*</span> <span class="o">@</span><span class="nx">param</span> <span class="nx">\restlt\Request</span> <span class="nv">$r</span> 
-<span class="o">*</span> <span class="o">@</span><span class="nx">param</span> <span class="nx">\restlt\Response</span> <span class="nv">$r</span>
-<span class="o">*</span> <span class="o">@</span><span class="k">return</span> <span class="nx">\Exception</span> <span class="nv">$exception</span> <span class="o">-</span> <span class="nx">the</span> <span class="nx">result</span> <span class="nx">of</span> <span class="nx">your</span> <span class="nx">resource</span> <span class="nx">method</span>
-<span class="o">*</span> <span class="o">@</span><span class="k">return</span> <span class="nx">void</span>
-<span class="o">*</span> <span class="o">/</span>
-<span class="nv">$f</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nx">\restlt\Request</span> <span class="nv">$request</span><span class="p">,</span> <span class="nx">\restlt\Response</span> <span class="nv">$response</span><span class="p">,</span><span class="nx">\Exception</span> <span class="nv">$exception</span><span class="p">){};</span>
-</pre></div>
+<div class="highlight highlight-php"><pre><span class="pl-s2"><span class="pl-c">/**</span></span>
+<span class="pl-s2"><span class="pl-c">* <span class="pl-k">@param</span> \restlt\Request $r </span></span>
+<span class="pl-s2"><span class="pl-c">* <span class="pl-k">@param</span> \restlt\Response $r</span></span>
+<span class="pl-s2"><span class="pl-c">* <span class="pl-k">@return</span> \Exception $exception - the result of your resource method</span></span>
+<span class="pl-s2"><span class="pl-c">* <span class="pl-k">@return</span> void</span></span>
+<span class="pl-s2"><span class="pl-c">* /</span></span>
+<span class="pl-s2"><span class="pl-c"><span class="pl-ii">$f = function (\restlt\Request $request, \restlt\Response $response,\Exception $exception){};</span></span></span></pre></div>
 
 <h2>
-<a name="register-event-examples" class="anchor" href="#register-event-examples"><span class="octicon octicon-link"></span></a>register event examples:</h2>
+<a id="register-event-examples" class="anchor" href="#register-event-examples" aria-hidden="true"><span class="octicon octicon-link"></span></a>register event examples:</h2>
 
 <h3>
-<a name="register-on_before-event-hook-for-a-specific-resource-method" class="anchor" href="#register-on_before-event-hook-for-a-specific-resource-method"><span class="octicon octicon-link"></span></a>Register ON_BEFORE event hook for a specific resource method</h3>
+<a id="register-on_before-event-hook-for-a-specific-resource-method" class="anchor" href="#register-on_before-event-hook-for-a-specific-resource-method" aria-hidden="true"><span class="octicon octicon-link"></span></a>Register ON_BEFORE event hook for a specific resource method</h3>
 
-<div class="highlight highlight-php"><pre>        <span class="nv">$f1</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$r</span><span class="p">)</span> <span class="p">{</span>
-        <span class="c1">//do something</span>
-        <span class="p">};</span>
-        <span class="c1">//the context here is the Resource, hence $this</span>
-        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">on</span> <span class="p">(</span><span class="nx">\restlt\Resource</span><span class="o">::</span><span class="na">ON_BEFORE</span><span class="p">,</span> <span class="s1">'getMe'</span><span class="p">,</span> <span class="nv">$f1</span> <span class="p">);</span>
-</pre></div>
+<div class="highlight highlight-php"><pre><span class="pl-s2">        <span class="pl-vo">$f1</span> <span class="pl-k">=</span> <span class="pl-st">function</span> (<span class="pl-vo">$r</span>) {</span>
+<span class="pl-s2">        <span class="pl-c">//do something</span></span>
+<span class="pl-s2">        };</span>
+<span class="pl-s2">        <span class="pl-c">//the context here is the Resource, hence $this</span></span>
+<span class="pl-s2">        <span class="pl-vo">$this</span><span class="pl-k">-&gt;</span>on (<span class="pl-s3">\restlt\</span><span class="pl-s3">Resource</span><span class="pl-k">::</span><span class="pl-c1">ON_BEFORE</span>, <span class="pl-s1"><span class="pl-pds">'</span>getMe<span class="pl-pds">'</span></span>, <span class="pl-vo">$f1</span> );</span></pre></div>
 
 <h3>
-<a name="register-on_before-event-hook-for-any-resource-method" class="anchor" href="#register-on_before-event-hook-for-any-resource-method"><span class="octicon octicon-link"></span></a>Register ON_BEFORE event hook for ANY resource method</h3>
+<a id="register-on_before-event-hook-for-any-resource-method" class="anchor" href="#register-on_before-event-hook-for-any-resource-method" aria-hidden="true"><span class="octicon octicon-link"></span></a>Register ON_BEFORE event hook for ANY resource method</h3>
 
-<div class="highlight highlight-php"><pre>        <span class="nv">$f1</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$r</span><span class="p">)</span> <span class="p">{</span>
-        <span class="c1">//do something</span>
-        <span class="p">};</span>
-        <span class="c1">//the context here is the Resource, hence $this</span>
-        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">on</span> <span class="p">(</span><span class="nx">\restlt\Resource</span><span class="o">::</span><span class="na">ON_BEFORE</span><span class="p">,</span> <span class="k">NULL</span><span class="p">,</span> <span class="nv">$f1</span> <span class="p">);</span>
-</pre></div>
+<div class="highlight highlight-php"><pre><span class="pl-s2">        <span class="pl-vo">$f1</span> <span class="pl-k">=</span> <span class="pl-st">function</span> (<span class="pl-vo">$r</span>) {</span>
+<span class="pl-s2">        <span class="pl-c">//do something</span></span>
+<span class="pl-s2">        };</span>
+<span class="pl-s2">        <span class="pl-c">//the context here is the Resource, hence $this</span></span>
+<span class="pl-s2">        <span class="pl-vo">$this</span><span class="pl-k">-&gt;</span>on (<span class="pl-s3">\restlt\</span><span class="pl-s3">Resource</span><span class="pl-k">::</span><span class="pl-c1">ON_BEFORE</span>, <span class="pl-c1">NULL</span>, <span class="pl-vo">$f1</span> );</span></pre></div>
 
 <h2>
-<a name="adding-some-cache" class="anchor" href="#adding-some-cache"><span class="octicon octicon-link"></span></a>Adding some cache</h2>
+<a id="adding-some-cache" class="anchor" href="#adding-some-cache" aria-hidden="true"><span class="octicon octicon-link"></span></a>Adding some cache</h2>
 
 <p>Since the addition of a great amound of resources could cost us in performance, RestLt uses some caching to aleviate this issue.
 In it's most basic implementation the server supports natively Memcached extention. However there are ways to add third party caching systems that are already supporting multitude of backend cache adapters.
@@ -347,90 +321,84 @@ In order to use any of the two third party implementations supported by RestLt y
 When installing RestLt via <a href="getcomposer.org">Composer</a> you should have seen suggestions for either one of those.</p>
 
 <h3>
-<a name="using-built-in-memcached-implementation" class="anchor" href="#using-built-in-memcached-implementation"><span class="octicon octicon-link"></span></a>Using built in Memcached implementation</h3>
+<a id="using-built-in-memcached-implementation" class="anchor" href="#using-built-in-memcached-implementation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using built in Memcached implementation</h3>
 
-<div class="highlight highlight-php"><pre>    <span class="nv">$memcached</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Memcached</span> <span class="p">();</span>
-    <span class="nv">$memcached</span><span class="o">-&gt;</span><span class="na">addServer</span> <span class="p">(</span> <span class="s1">'localhost'</span><span class="p">,</span> <span class="mi">11211</span> <span class="p">);</span>
-    <span class="nv">$s</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Server</span> <span class="p">(</span> <span class="s1">'/'</span> <span class="p">);</span>
-    <span class="nv">$s</span><span class="o">-&gt;</span><span class="na">setCacheAdapter</span> <span class="p">(</span> <span class="k">new</span> <span class="nx">\restlt\cache\RestltMemcachedAdapter</span><span class="p">(</span> <span class="nv">$memcached</span> <span class="p">)</span> <span class="p">);</span>
-    <span class="nv">$s</span><span class="o">-&gt;</span><span class="na">serve</span> <span class="p">();</span>
-</pre></div>
+<div class="highlight highlight-php"><pre><span class="pl-s2">    <span class="pl-vo">$memcached</span> <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-s3">Memcached</span> ();</span>
+<span class="pl-s2">    <span class="pl-vo">$memcached</span><span class="pl-k">-&gt;</span>addServer ( <span class="pl-s1"><span class="pl-pds">'</span>localhost<span class="pl-pds">'</span></span>, <span class="pl-c1">11211</span> );</span>
+<span class="pl-s2">    <span class="pl-vo">$s</span> <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-s3">Server</span> ( <span class="pl-s1"><span class="pl-pds">'</span>/<span class="pl-pds">'</span></span> );</span>
+<span class="pl-s2">    <span class="pl-vo">$s</span><span class="pl-k">-&gt;</span>setCacheAdapter ( <span class="pl-k">new</span> <span class="pl-s3">\restlt\cache\</span><span class="pl-s3">RestltMemcachedAdapter</span>( <span class="pl-vo">$memcached</span> ) );</span>
+<span class="pl-s2">    <span class="pl-vo">$s</span><span class="pl-k">-&gt;</span>serve ();</span></pre></div>
 
 <h3>
-<a name="using-zend-cache-component---zend-cache" class="anchor" href="#using-zend-cache-component---zend-cache"><span class="octicon octicon-link"></span></a>Using Zend Cache component - <a href="http://framework.zend.com/manual/2.0/en/modules/zend.cache.storage.adapter.html">Zend Cache</a>
+<a id="using-zend-cache-component---zend-cache" class="anchor" href="#using-zend-cache-component---zend-cache" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using Zend Cache component - <a href="http://framework.zend.com/manual/2.0/en/modules/zend.cache.storage.adapter.html">Zend Cache</a>
 </h3>
 
 <p>If you are already using ZF2 caching component there is an easy way to add it to RestLt.
 Here assuming that you know how to use <code>Zend\Cache\StorageFactory::adapterFactory</code> you need to obtain a
 StorageAdapter. </p>
 
-<div class="highlight highlight-php"><pre>    <span class="nv">$zendCache</span> <span class="o">=</span> <span class="nx">Zend\Cache\StorageFactory</span><span class="o">::</span><span class="na">adapterFactory</span><span class="p">(</span><span class="s1">'apc'</span><span class="p">,</span><span class="nv">$options</span><span class="p">);</span>
-    <span class="nv">$s</span><span class="o">-&gt;</span><span class="na">setCacheAdapter</span> <span class="p">(</span> <span class="k">new</span> <span class="nx">\restlt\cache\ZFCacheAdapter</span> <span class="p">(</span> <span class="nv">$zendCache</span> <span class="p">)</span> <span class="p">);</span>
-</pre></div>
+<div class="highlight highlight-php"><pre><span class="pl-s2">    <span class="pl-vo">$zendCache</span> <span class="pl-k">=</span> <span class="pl-s3">Zend\Cache\</span><span class="pl-s3">StorageFactory</span><span class="pl-k">::</span>adapterFactory(<span class="pl-s1"><span class="pl-pds">'</span>apc<span class="pl-pds">'</span></span>,<span class="pl-vo">$options</span>);</span>
+<span class="pl-s2">    <span class="pl-vo">$s</span><span class="pl-k">-&gt;</span>setCacheAdapter ( <span class="pl-k">new</span> <span class="pl-s3">\restlt\cache\</span><span class="pl-s3">ZFCacheAdapter</span> ( <span class="pl-vo">$zendCache</span> ) );</span></pre></div>
 
 <h3>
-<a name="using-doctrines-cache-implementation---doctrine-cache" class="anchor" href="#using-doctrines-cache-implementation---doctrine-cache"><span class="octicon octicon-link"></span></a>Using Doctrine's cache implementation - <a href="http://docs.doctrine-project.org/en/latest/reference/caching.html">Doctrine Cache</a>
+<a id="using-doctrines-cache-implementation---doctrine-cache" class="anchor" href="#using-doctrines-cache-implementation---doctrine-cache" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using Doctrine's cache implementation - <a href="http://docs.doctrine-project.org/en/latest/reference/caching.html">Doctrine Cache</a>
 </h3>
 
 <pre><code>Here you should know how to obtain a Doctrine CacheProvider.
 </code></pre>
 
-<div class="highlight highlight-php"><pre>    <span class="nv">$memcache</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Memcache</span><span class="p">();</span>
-    <span class="nv">$memcache</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s1">'memcache_host'</span><span class="p">,</span> <span class="mi">11211</span><span class="p">);</span>
-    <span class="nv">$doctrineCacheProvider</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\Doctrine\Common\Cache\MemcacheCache</span><span class="p">();</span>
-    <span class="nv">$doctrineCacheProvider</span><span class="o">-&gt;</span><span class="na">setMemcache</span><span class="p">(</span><span class="nv">$memcache</span><span class="p">);</span>
-    <span class="nv">$s</span><span class="o">-&gt;</span><span class="na">setCacheAdapter</span> <span class="p">(</span> <span class="k">new</span> <span class="nx">\restlt\cache\DoctrineCacheAdapter</span><span class="p">(</span><span class="nv">$doctrineCacheProvider</span><span class="p">)</span> <span class="p">);</span>
-</pre></div>
+<div class="highlight highlight-php"><pre><span class="pl-s2">    <span class="pl-vo">$memcache</span> <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-s3">Memcache</span>();</span>
+<span class="pl-s2">    <span class="pl-vo">$memcache</span><span class="pl-k">-&gt;</span>connect(<span class="pl-s1"><span class="pl-pds">'</span>memcache_host<span class="pl-pds">'</span></span>, <span class="pl-c1">11211</span>);</span>
+<span class="pl-s2">    <span class="pl-vo">$doctrineCacheProvider</span> <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-s3">\Doctrine\Common\Cache\</span><span class="pl-s3">MemcacheCache</span>();</span>
+<span class="pl-s2">    <span class="pl-vo">$doctrineCacheProvider</span><span class="pl-k">-&gt;</span>setMemcache(<span class="pl-vo">$memcache</span>);</span>
+<span class="pl-s2">    <span class="pl-vo">$s</span><span class="pl-k">-&gt;</span>setCacheAdapter ( <span class="pl-k">new</span> <span class="pl-s3">\restlt\cache\</span><span class="pl-s3">DoctrineCacheAdapter</span>(<span class="pl-vo">$doctrineCacheProvider</span>) );</span></pre></div>
 
 <h3>
-<a name="addig-your-favorite-cache-implementation" class="anchor" href="#addig-your-favorite-cache-implementation"><span class="octicon octicon-link"></span></a>Addig your favorite cache implementation</h3>
+<a id="addig-your-favorite-cache-implementation" class="anchor" href="#addig-your-favorite-cache-implementation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Addig your favorite cache implementation</h3>
 
 <p>If you don't use any of the formerly mentioned cache implementations by Zend or Doctrine you can add your own.
 In order for us to be able to use a third party Cache library we need to create a class that implements <code>restlt\cache\CacheAdapterInterface</code></p>
 
-<div class="highlight highlight-php"><pre><span class="k">class</span> <span class="nc">OtherframeworkCacheAdapter</span> <span class="k">implements</span> <span class="nx">CacheAdapterInterface</span> <span class="p">{</span>
-        <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nv">$cacheInstance</span> <span class="o">=</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
-                <span class="c1">// </span>
-        <span class="p">}</span>
-        <span class="k">public</span> <span class="k">function</span> <span class="nf">test</span><span class="p">(</span><span class="nv">$key</span><span class="p">)</span> <span class="p">{</span>
-                <span class="c1">//</span>
-        <span class="p">}</span>
-
-        <span class="k">public</span> <span class="k">function</span> <span class="nf">set</span><span class="p">(</span><span class="nv">$key</span><span class="p">,</span> <span class="nv">$item</span><span class="p">)</span> <span class="p">{</span>
-                <span class="c1">//</span>
-        <span class="p">}</span>
-
-        <span class="k">public</span> <span class="k">function</span> <span class="nf">get</span><span class="p">(</span><span class="nv">$key</span><span class="p">)</span> <span class="p">{</span>
-                <span class="c1">//</span>
-        <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
+<div class="highlight highlight-php"><pre><span class="pl-s2"><span class="pl-st">class</span> <span class="pl-en">OtherframeworkCacheAdapter</span> <span class="pl-s">implements</span> <span class="pl-e">CacheAdapterInterface</span> {</span>
+<span class="pl-s2">        <span class="pl-s">public</span> <span class="pl-st">function</span> <span class="pl-s3">__construct</span>(<span class="pl-vo">$cacheInstance</span> <span class="pl-k">=</span> <span class="pl-c1">null</span>) {</span>
+<span class="pl-s2">                <span class="pl-c">// </span></span>
+<span class="pl-s2">        }</span>
+<span class="pl-s2">        <span class="pl-s">public</span> <span class="pl-st">function</span> <span class="pl-en">test</span>(<span class="pl-vo">$key</span>) {</span>
+<span class="pl-s2">                <span class="pl-c">//</span></span>
+<span class="pl-s2">        }</span>
+<span class="pl-s2"></span>
+<span class="pl-s2">        <span class="pl-s">public</span> <span class="pl-st">function</span> <span class="pl-en">set</span>(<span class="pl-vo">$key</span>, <span class="pl-vo">$item</span>) {</span>
+<span class="pl-s2">                <span class="pl-c">//</span></span>
+<span class="pl-s2">        }</span>
+<span class="pl-s2"></span>
+<span class="pl-s2">        <span class="pl-s">public</span> <span class="pl-st">function</span> <span class="pl-en">get</span>(<span class="pl-vo">$key</span>) {</span>
+<span class="pl-s2">                <span class="pl-c">//</span></span>
+<span class="pl-s2">        }</span>
+<span class="pl-s2">}</span></pre></div>
 
 <p>Now you have to tell the server to use it in your bootsrap routine.</p>
 
-<div class="highlight highlight-php"><pre><span class="nv">$s</span><span class="o">-&gt;</span><span class="na">setCacheAdapter</span> <span class="p">(</span> <span class="k">new</span> <span class="nx">\restlt\cache\OtherfameworkCacheAdapter</span><span class="p">(</span><span class="nv">$otherframeworkInstance</span><span class="p">)</span> <span class="p">);</span>
-</pre></div>
+<div class="highlight highlight-php"><pre><span class="pl-s2"><span class="pl-vo">$s</span><span class="pl-k">-&gt;</span>setCacheAdapter ( <span class="pl-k">new</span> <span class="pl-s3">\restlt\cache\</span><span class="pl-s3">OtherfameworkCacheAdapter</span>(<span class="pl-vo">$otherframeworkInstance</span>) );</span></pre></div>
 
 <h2>
-<a name="adding-your-own-annotations-to-the-resource-methods-or-the-resource-classes" class="anchor" href="#adding-your-own-annotations-to-the-resource-methods-or-the-resource-classes"><span class="octicon octicon-link"></span></a>Adding your own annotations to the Resource methods or the Resource classes</h2>
+<a id="adding-your-own-annotations-to-the-resource-methods-or-the-resource-classes" class="anchor" href="#adding-your-own-annotations-to-the-resource-methods-or-the-resource-classes" aria-hidden="true"><span class="octicon octicon-link"></span></a>Adding your own annotations to the Resource methods or the Resource classes</h2>
 
 <p>If you need to lock some data needed for processing during request execution you can add a custom annotation to your methods.
 Here is an example how to you could use that feature.</p>
 
-<div class="highlight highlight-php"><pre><span class="sd">/**</span>
-<span class="sd"> * @method POST</span>
-<span class="sd"> * @baseUri /save</span>
-<span class="sd"> * @allowedRoles admin, mega-admin</span>
-<span class="sd"> */</span>
- <span class="k">public</span> <span class="k">function</span> <span class="nf">saveUser</span><span class="p">(){</span>
-     <span class="nv">$roles</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">annotations</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'allowedRoles'</span><span class="p">);</span>
-     <span class="c1">//do something here with the data. $roles now has the string 'admin, mega-admin'</span>
-     <span class="k">return</span> <span class="nv">$something</span><span class="p">;</span>
- <span class="p">}</span>
-</pre></div>
+<div class="highlight highlight-php"><pre><span class="pl-s2"><span class="pl-c">/**</span></span>
+<span class="pl-s2"><span class="pl-c"> * @method POST</span></span>
+<span class="pl-s2"><span class="pl-c"> * @baseUri /save</span></span>
+<span class="pl-s2"><span class="pl-c"> * @allowedRoles admin, mega-admin</span></span>
+<span class="pl-s2"><span class="pl-c"> */</span></span>
+<span class="pl-s2"> <span class="pl-s">public</span> <span class="pl-st">function</span> <span class="pl-en">saveUser</span>(){</span>
+<span class="pl-s2">     <span class="pl-vo">$roles</span> <span class="pl-k">=</span> <span class="pl-vo">$this</span><span class="pl-k">-&gt;</span><span class="pl-vo">annotations</span><span class="pl-k">-&gt;</span>get(<span class="pl-s1"><span class="pl-pds">'</span>allowedRoles<span class="pl-pds">'</span></span>);</span>
+<span class="pl-s2">     <span class="pl-c">//do something here with the data. $roles now has the string 'admin, mega-admin'</span></span>
+<span class="pl-s2">     <span class="pl-k">return</span> <span class="pl-vo">$something</span>;</span>
+<span class="pl-s2"> }</span></pre></div>
 
 <h2>
-<a name="in-need-for-custom-output" class="anchor" href="#in-need-for-custom-output"><span class="octicon octicon-link"></span></a>In need for custom output?</h2>
+<a id="in-need-for-custom-output" class="anchor" href="#in-need-for-custom-output" aria-hidden="true"><span class="octicon octicon-link"></span></a>In need for custom output?</h2>
 
 <p>Out of the box RestLt comes with json and xml output strategies. 
 Let's say you need to provide some home grown obfuscated or even encrypted reponse. 
@@ -439,26 +407,24 @@ It could be that you want to communicate with the client via some specific proto
 Or may be want to change the current ones. Here is how.</p>
 
 <h3>
-<a name="adding-a-custom-response-of-your-own" class="anchor" href="#adding-a-custom-response-of-your-own"><span class="octicon octicon-link"></span></a>Adding a custom response of your own.</h3>
+<a id="adding-a-custom-response-of-your-own" class="anchor" href="#adding-a-custom-response-of-your-own" aria-hidden="true"><span class="octicon octicon-link"></span></a>Adding a custom response of your own.</h3>
 
 <p>First we need to create a class that implements the <code>\restlt\output\TypeConversionStrategyInterface</code>. Let's start.</p>
 
-<div class="highlight highlight-php"><pre><span class="k">namespace</span> <span class="nx">my\name\space</span><span class="p">;</span>
-<span class="k">class</span> <span class="nc">SerializeOutputStrategy</span> <span class="k">implements</span> <span class="nx">\restlt\output\TypeConversionStrategyInterface</span> <span class="p">{</span>
-    <span class="sd">/**</span>
-<span class="sd">     * @see \restlt\output\TypeConversionStrategyInterface::execute()</span>
-<span class="sd">     */</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">execute</span><span class="p">(</span><span class="nx">\restlt\Result</span> <span class="nv">$data</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nb">serialize</span><span class="p">(</span><span class="nv">$data</span><span class="p">);</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
+<div class="highlight highlight-php"><pre><span class="pl-s2"><span class="pl-k">namespace</span> <span class="pl-en">my\name\space</span>;</span>
+<span class="pl-s2"><span class="pl-st">class</span> <span class="pl-en">SerializeOutputStrategy</span> <span class="pl-s">implements</span> <span class="pl-s3">\restlt\output\</span><span class="pl-e">TypeConversionStrategyInterface</span> {</span>
+<span class="pl-s2">    <span class="pl-c">/**</span></span>
+<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@see</span> \restlt\output\TypeConversionStrategyInterface::execute()</span></span>
+<span class="pl-s2"><span class="pl-c">     */</span></span>
+<span class="pl-s2">    <span class="pl-s">public</span> <span class="pl-st">function</span> <span class="pl-en">execute</span>(<span class="pl-s3">\restlt\</span><span class="pl-s3">Result</span> <span class="pl-vo">$data</span>) {</span>
+<span class="pl-s2">        <span class="pl-k">return</span> <span class="pl-s3">serialize</span>(<span class="pl-vo">$data</span>);</span>
+<span class="pl-s2">    }</span>
+<span class="pl-s2">}</span></pre></div>
 
 <p>That's it. We have implemented a serializer sutput strategy for our RestLt server.
 Next on the list to make this work is to tell the server about it.</p>
 
-<div class="highlight highlight-php"><pre><span class="nv">$s</span><span class="o">-&gt;</span><span class="na">getResponse</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">addResponseOutputStrategies</span><span class="p">(</span><span class="s1">'sphp'</span><span class="p">,</span> <span class="s1">'\my\name\space\SerializeOutputStrategy'</span><span class="p">);</span>
-</pre></div>
+<div class="highlight highlight-php"><pre><span class="pl-s2"><span class="pl-vo">$s</span><span class="pl-k">-&gt;</span>getResponse()<span class="pl-k">-&gt;</span>addResponseOutputStrategies(<span class="pl-s1"><span class="pl-pds">'</span>sphp<span class="pl-pds">'</span></span>, <span class="pl-s1"><span class="pl-pds">'</span>\my\name\space\SerializeOutputStrategy<span class="pl-pds">'</span></span>);</span></pre></div>
 
 <p>What we did here is the follwoing. We let the server know that if we encounter '.sphp' extension in our URL we will respond with the associated output, in this case <code>SerializeOutputStrategy</code>.
 Now all of your request ( GET, POST, PUT, PATCH ...) with URLs such like:</p>
@@ -468,31 +434,34 @@ Now all of your request ( GET, POST, PUT, PATCH ...) with URLs such like:</p>
 <code>http://example.com/my/path/123.sphp</code> </li>
 <li>
 <code>http://example.com/my/path.sphp?q=stuff</code> </li>
-</ul><p>etc. will respond with serialized data accoring to your new output strategy.</p>
+</ul>
+
+<p>etc. will respond with serialized data accoring to your new output strategy.</p>
 
 <h3>
-<a name="extending-the-currently-available-restltoutputxmltypeconverter-and-restltoutputjsontypeconverter" class="anchor" href="#extending-the-currently-available-restltoutputxmltypeconverter-and-restltoutputjsontypeconverter"><span class="octicon octicon-link"></span></a>Extending the currently available <code>\restlt\output\XmlTypeConverter</code> and <code>\restlt\output\JsonTypeConverter</code>.</h3>
+<a id="extending-the-currently-available-restltoutputxmltypeconverter-and-restltoutputjsontypeconverter" class="anchor" href="#extending-the-currently-available-restltoutputxmltypeconverter-and-restltoutputjsontypeconverter" aria-hidden="true"><span class="octicon octicon-link"></span></a>Extending the currently available <code>\restlt\output\XmlTypeConverter</code> and <code>\restlt\output\JsonTypeConverter</code>.</h3>
 
 <p>To modify the behaviour of the current JSON or XMl converters, you will need to extend them. There is not much to remember here. Extending the class is nothing different than what you do with any other class you do extend.
 However you need to register your new class with the server and associate it with the XML or JSON types.</p>
 
-<div class="highlight highlight-php"><pre><span class="nv">$s</span><span class="o">-&gt;</span><span class="na">getResponse</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">addResponseOutputStrategies</span><span class="p">(</span><span class="s1">'xml'</span><span class="p">,</span> <span class="s1">'\my\name\space\MyXmlStrategy'</span><span class="p">);</span>
-</pre></div>
+<div class="highlight highlight-php"><pre><span class="pl-s2"><span class="pl-vo">$s</span><span class="pl-k">-&gt;</span>getResponse()<span class="pl-k">-&gt;</span>addResponseOutputStrategies(<span class="pl-s1"><span class="pl-pds">'</span>xml<span class="pl-pds">'</span></span>, <span class="pl-s1"><span class="pl-pds">'</span>\my\name\space\MyXmlStrategy<span class="pl-pds">'</span></span>);</span></pre></div>
 
 <p>Now all requests of the kind <code>http://example.com/my/path.xml?q=stuff</code> will be processed by your new class.
 Also,client requests that are made with 'Content-type:application/xml' will be processed by it too. 
 the same goes if you decide to extend the json converter.</p>
 
 <h2>
-<a name="doc-block-meta-reference" class="anchor" href="#doc-block-meta-reference"><span class="octicon octicon-link"></span></a>Doc block Meta reference</h2>
+<a id="doc-block-meta-reference" class="anchor" href="#doc-block-meta-reference" aria-hidden="true"><span class="octicon octicon-link"></span></a>Doc block Meta reference</h2>
 
 <table>
-<thead><tr>
+<thead>
+<tr>
 <th>Annotation</th>
 <th align="center">Where</th>
 <th align="right">Required</th>
 <th>Values</th>
-</tr></thead>
+</tr>
+</thead>
 <tbody>
 <tr>
 <td>@resourceBaseUri</td>
@@ -519,14 +488,16 @@ the same goes if you decide to extend the json converter.</p>
 <td>GET, POST, PUT, PATCH, DELETE</td>
 </tr>
 </tbody>
-</table><h3>
-<a name="resource-class-doc-block" class="anchor" href="#resource-class-doc-block"><span class="octicon octicon-link"></span></a>Resource class doc block</h3>
+</table>
+
+<h3>
+<a id="resource-class-doc-block" class="anchor" href="#resource-class-doc-block" aria-hidden="true"><span class="octicon octicon-link"></span></a>Resource class doc block</h3>
 
 <pre><code>@resourceBaseUri -&gt; specifies the resource base URI relative to the Server base URI
 </code></pre>
 
 <h3>
-<a name="resource-method-doc-block" class="anchor" href="#resource-method-doc-block"><span class="octicon octicon-link"></span></a>Resource method doc block</h3>
+<a id="resource-method-doc-block" class="anchor" href="#resource-method-doc-block" aria-hidden="true"><span class="octicon octicon-link"></span></a>Resource method doc block</h3>
 
 <pre><code>@method -&gt; specifies what HTTP method this resource method respnds to. POST, GET, PUT, PATCH, DELETE are allowed
 @methodBaseUri -&gt; URI relative to the resource base uri value specified in the @resourceBaseUri
@@ -534,7 +505,7 @@ the same goes if you decide to extend the json converter.</p>
 </code></pre>
 
 <h2>
-<a name="logging" class="anchor" href="#logging"><span class="octicon octicon-link"></span></a>Logging</h2>
+<a id="logging" class="anchor" href="#logging" aria-hidden="true"><span class="octicon octicon-link"></span></a>Logging</h2>
 
 <p>As of version 1.2.0-alpha there is a way to add a logger.
 Added was <a href="https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md">PSR-3</a> compatible logger. However a native logger implementation is not and probably will not be added.
@@ -546,38 +517,38 @@ You will need to inject your logger which should implement Psr\Log\LoggerInterfa
 <p>An adapter for the Zend Logger will be added when this version is released.</p>
 
 <h2>
-<a name="misc-usage-tricks" class="anchor" href="#misc-usage-tricks"><span class="octicon octicon-link"></span></a>Misc. usage tricks</h2>
+<a id="misc-usage-tricks" class="anchor" href="#misc-usage-tricks" aria-hidden="true"><span class="octicon octicon-link"></span></a>Misc. usage tricks</h2>
 
 <h3>
-<a name="forcing-the-server-to-respond-always-with-spcified-reponse-type-regardles-of-the-request-content-type" class="anchor" href="#forcing-the-server-to-respond-always-with-spcified-reponse-type-regardles-of-the-request-content-type"><span class="octicon octicon-link"></span></a>Forcing the server to respond always with spcified reponse type regardles of the request <code>Content-type</code>
+<a id="forcing-the-server-to-respond-always-with-spcified-reponse-type-regardles-of-the-request-content-type" class="anchor" href="#forcing-the-server-to-respond-always-with-spcified-reponse-type-regardles-of-the-request-content-type" aria-hidden="true"><span class="octicon octicon-link"></span></a>Forcing the server to respond always with spcified reponse type regardles of the request <code>Content-type</code>
 </h3>
 
 <p>The default behavior is specified by the Accept header. If the 'Accept' is plain/text or anything that does not refer to SML of JSON the
 default response will be returned in JSON.
 1. Force response type for all Resources registered with the server to respond with XML or JSON</p>
 
-<div class="highlight highlight-php"><pre><span class="nv">$s</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\restlt\Server</span><span class="p">(</span><span class="s1">'base/uri'</span><span class="p">);</span>
-<span class="nv">$s</span><span class="o">-&gt;</span><span class="na">getResponse</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">setForceResponseType</span><span class="p">(</span><span class="nx">Response</span><span class="o">::</span><span class="na">APPLICATION_JSON</span><span class="p">);</span>
-</pre></div>
+<div class="highlight highlight-php"><pre><span class="pl-s2"><span class="pl-vo">$s</span> <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-s3">\restlt\</span><span class="pl-s3">Server</span>(<span class="pl-s1"><span class="pl-pds">'</span>base/uri<span class="pl-pds">'</span></span>);</span>
+<span class="pl-s2"><span class="pl-vo">$s</span><span class="pl-k">-&gt;</span>getResponse()<span class="pl-k">-&gt;</span>setForceResponseType(<span class="pl-s3">Response</span><span class="pl-k">::</span><span class="pl-c1">APPLICATION_JSON</span>);</span></pre></div>
 
 <ol>
-<li>Forcing a method to always respond with XML or JSON.
-<code>php
-/**
-* @resourceBaseUri /entity
-*/
-class myResource extends \restlt\Resource
-/**
-* @methodUri /submit
-* @method POST
-*/
-public function myMethod(){
-$this-&gt;getResponse()-&gt;setForceResponseType(\restlt\Response::APPLICATION_XML);
-#some code here ...
-return $result;
-}
-</code>
-</li>
+<li>Forcing a method to always respond with XML or JSON.</li>
+</ol>
+
+<div class="highlight highlight-php"><pre><span class="pl-s2"><span class="pl-c">/**</span></span>
+<span class="pl-s2"><span class="pl-c"> * @resourceBaseUri /entity</span></span>
+<span class="pl-s2"><span class="pl-c"> */</span></span>
+<span class="pl-s2"><span class="pl-st">class</span> <span class="pl-en">myResource</span> <span class="pl-s">extends</span> <span class="pl-s3">\restlt\</span><span class="pl-e">Resource</span></span>
+<span class="pl-s2"><span class="pl-c">/**</span></span>
+<span class="pl-s2"><span class="pl-c"> * @methodUri /submit</span></span>
+<span class="pl-s2"><span class="pl-c"> * @method POST</span></span>
+<span class="pl-s2"><span class="pl-c"> */</span></span>
+<span class="pl-s2">public function myMethod(){</span>
+<span class="pl-s2">    <span class="pl-vo">$this</span><span class="pl-k">-&gt;</span>getResponse()<span class="pl-k">-&gt;</span>setForceResponseType(<span class="pl-s3">\restlt\</span><span class="pl-s3">Response</span><span class="pl-k">::</span><span class="pl-c1">APPLICATION_XML</span>);</span>
+<span class="pl-s2">    <span class="pl-c">#some code here ...</span></span>
+<span class="pl-s2">    <span class="pl-k">return</span> <span class="pl-vo">$result</span>;</span>
+<span class="pl-s2">}</span></pre></div>
+
+<ol>
 <li>Non-coding trick to force desired response
 When creating the URL for the client simply append to the end of the URI (not the  query part) .json or .xml
 
@@ -590,26 +561,18 @@ When creating the URL for the client simply append to the end of the URI (not th
 </ul>
 </li>
 </ol>
-        </section>
-
-        <aside id="sidebar">
-          <a href="https://github.com/ivolator/restlt/zipball/master" class="button">
-            <small>Download</small>
-            .zip file
-          </a>
-          <a href="https://github.com/ivolator/restlt/tarball/master" class="button">
-            <small>Download</small>
-            .tar.gz file
-          </a>
-
-          <p class="repo-owner"><a href="https://github.com/ivolator/restlt"></a> is maintained by <a href="https://github.com/ivolator">ivolator</a>.</p>
-
-          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
-        </aside>
-      </div>
+      </section>
     </div>
 
-            <script type="text/javascript">
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">RestLt maintained by <a href="https://github.com/ivolator">ivolator</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+              <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
             document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
           </script>
@@ -619,6 +582,7 @@ When creating the URL for the client simply append to the end of the URI (not th
             pageTracker._trackPageview();
             } catch(err) {}
           </script>
+
 
   </body>
 </html>
