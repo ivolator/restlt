@@ -426,16 +426,16 @@ class Server
      */
     public function getSelfAutoDocsMeta()
     {
-        return [
-            '\restlt\Resource' => [
-                [
+        return array(
+            '\restlt\Resource' => array(
+                array(
                     "method" => "GET",
                     "methodUri" => $this->getBaseUri() . '/introspect',
                     "function" => "getApiInfo",
                     "cacheControlMaxAge" => 1200,
 //TODO - IM**       "forceResponse" => Response::TEXT_HTML
-                ]
-            ]
-        ];
+                )
+            )
+        );
     }
 }

@@ -6,10 +6,6 @@ class RestLiteTest extends \PHPUnit_Framework_TestCase {
 		parent::setUp ();
 	}
 
-	public function testSkip(){
-		$this->markTestSkipped();
-	}
-
 	/**
 	 * Cleans up the environment after running a test.
 	 */
