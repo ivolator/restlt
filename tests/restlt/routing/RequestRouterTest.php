@@ -11,13 +11,13 @@ class RequestRouterTest extends RestLiteTest
 	 * @dataProvider getrouteDataProvider
 	 * @param $resource
 	 */
-	public function testGetRoute($resources){
+	public function testGetRoute($resources, $method, $uri){
 
 		$mockRequest = $this->getMockBuilder('\restlt\routing\RequestRouter')
 		->setMethods(array('getUri','getMethod'))->disableOriginalConstructor()->getmock();
 
-		$mockRequest->expects($this->once())->method('getMethod')->will($this->returnValue('GET'));
-		$mockRequest->expects($this->any())->method('getUri')->will($this->returnValue('/example/resource2'));
+		$mockRequest->expects($this->once())->method('getMethod')->will($this->returnValue($method));
+		$mockRequest->expects($this->any())->method('getUri')->will($this->returnValue($uri));
 
 		$mockRouter = $this->getMockBuilder('\restlt\routing\RequestRouter')->disableOriginalConstructor()
 		->setMethods(array('getRequest'))->getMock();
@@ -28,7 +28,11 @@ class RequestRouterTest extends RestLiteTest
 		$mockRouter->setServerBaseUri('/baseuri');
 
 		$mockRouter->setResources($resources);
-		$mockRouter->getRoute();
+		$ret = $mockRouter->getRoute();
+
+		$this->assertEquals($ret->getClassName(),array_shift(array_keys($resources)));
+		$this->assertEquals($ret->get('method'),$method);
+		$this->assertEquals($ret->get('methodUri'),'/baseuri/'.$uri);
 	}
 	/**
 	 * @dataProvider getRouteExceptionDataProvider
@@ -62,8 +66,8 @@ class RequestRouterTest extends RestLiteTest
 			array(
 				array(
 					'method' => 'GET',
-					'methodUri' => '/baseuri//example/resource2',
-					'function' => 'getResource1GetMethod'
+					'methodUri' => '/baseuri/example/resource2',
+					'function' => 'getMe'
 				),
 			)
 		);
@@ -74,33 +78,14 @@ class RequestRouterTest extends RestLiteTest
 				array(
 					'method' => 'POST',
 					'methodUri' => '/baseuri/example/resource2',
-					'function' => 'getResource1PostMethod'
+					'function' => 'postMe'
 				),
 			)
 		);
-		//test dupe
-		$resources3 = array(
-			'\example\Resource1' =>
-			array(
-				array(
-					'method' => 'POST',
-					'methodUri' => '/baseuri/example/resource2',
-					'function' => 'getResource1PostMethod2'
-				),
-			),
-			'\example\Resource2' =>
-			array(
-				array(
-					'method' => 'POST',
-					'methodUri' => '/baseuri/example/resource2',
-					'function' => 'getResource1PostMethodr'
-				),
-			),
-		);
+
 		return array(
 			array($resources1,'GET','/wrong/uri'),
 			array($resources2,'GET','/baseuri/example/resource2'),
-			array($resources3,'POST','/baseuri/example/resource2')
 		);
 	}
 
@@ -111,18 +96,37 @@ class RequestRouterTest extends RestLiteTest
 			array(
 				array(
 					'method' => 'GET',
-					'methodUri' => '/baseuri/example/resource2',
+					'methodUri' => '/baseuri/resource2/([0-9]+)',
 					'function' => 'getMe'
 				),
 				array(
 					'method' => 'POST',
-					'methodUri' => '/baseuri/example/resource2',
+					'methodUri' => '/baseuri/resource2',
 					'function' => 'postMe'
+				),
+				array(
+					'method' => 'PUT',
+					'methodUri' => '/baseuri/resource2/put',
+					'function' => 'putMe'
+				),
+				array(
+					'method' => 'PATCH',
+					'methodUri' => '/baseuri/resource2/patch',
+					'function' => 'patchMe'
+				),
+				array(
+					'method' => 'DELETE',
+					'methodUri' => '/baseuri/resource2/del',
+					'function' => 'deleteMe'
 				),
 			)
 		);
 		return array(
-			array($resources)
+			array($resources,'GET','resource2/([0-9]+)'),
+			array($resources,'POST','resource2'),
+			array($resources,'PUT','resource2/put'),
+			array($resources,'PATCH','resource2/patch'),
+			array($resources,'DELETE','resource2/del')
 		);
 	}
 

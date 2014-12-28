@@ -60,7 +60,7 @@ class Resource2 extends \restlt\Resource {
 	}
 
 	/**
-	 *
+	 * @methodUri /
 	 * @method POST
 	 */
 	public function postMe() {
