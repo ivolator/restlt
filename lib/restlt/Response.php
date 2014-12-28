@@ -306,6 +306,7 @@ class Response implements \restlt\ResponseInterface
         }
 
         $ret = $this->_send($data ? $data : null, $conversionStrategy);
+
         return $ret;
     }
 
@@ -338,6 +339,7 @@ class Response implements \restlt\ResponseInterface
      */
     protected function _send($data = null, $conversionStrategy)
     {
+
         if (isset($_SERVER['HTTP_CONNECTION'])) {
             header('x-custom-rest-server: RestLt');
             header('Allow: POST, GET, PUT, DELETE, PATCH, HEAD');
@@ -360,17 +362,14 @@ class Response implements \restlt\ResponseInterface
             ->getMethod() !== Request::HEAD) {
             $this->getResultObject()->setData($data);
             return $this->getResultObject()->toString($conversionStrategy);
-        } elseif ($this->getRequestRouter()->getRequest()->getMethod() === Request::HEAD) {
-            return null;
         } elseif ($this->displayError) {
             $this->getResultObject()->addError($this->displayError->getMessage(), $this->displayError->getCode());
             return $this->getResultObject()->toString($conversionStrategy);
         }
 
-echo '<pre>IM**' . __FILE__.'::'.__METHOD__.'::'.__LINE__ . PHP_EOL . '<br />';
-var_dump($conversionStrategy);
-echo '</pre>';
-exit;
+        if ($this->getRequestRouter()->getRequest()->getMethod() === Request::HEAD) {
+            return null;
+        }
         $this->getResultObject()->addError('Unknown server error', self::INTERNALSERVERERROR);
         return $this->getResultObject()->toString($conversionStrategy);
     }
