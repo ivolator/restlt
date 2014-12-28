@@ -51,7 +51,7 @@ Any feedback is appreciated!</p>
 <pre><code>{ 
         "require" :
         { 
-                "restlt/restlt":"1.0.0b"
+                "restlt/restlt":"1.0.3b"
         }
 }
 </code></pre>
@@ -131,7 +131,6 @@ Note that the full URI for your resource is a combination of the server base URI
 <span class="pl-s2"><span class="pl-c"> * @resourceBaseUri /resource1</span></span>
 <span class="pl-s2"><span class="pl-c"> */</span></span>
 <span class="pl-s2"><span class="pl-st">class</span> <span class="pl-en">Resource1</span> <span class="pl-s">extends</span> <span class="pl-s3">\restlt\</span><span class="pl-e">Resource</span> {</span>
-<span class="pl-s2"></span>
 <span class="pl-s2">    <span class="pl-c">/**</span></span>
 <span class="pl-s2"><span class="pl-c">     * Note that the regex in "()" gets converted to a parameter of the method</span></span>
 <span class="pl-s2"><span class="pl-c">     * Since v 1.1.0a this user comment section will appear in a simple HTML format</span></span>
@@ -184,7 +183,9 @@ The JSON or XML conversion happens automatically. More on adding your own twist 
 
 <p>Get one parameter at a time</p>
 
-<div class="highlight highlight-php"><pre><span class="pl-s2">        <span class="pl-vo">$this</span><span class="pl-k">-&gt;</span>get(<span class="pl-vo">$paramName</span>);</span></pre></div>
+<div class="highlight highlight-php"><pre><span class="pl-s2">        <span class="pl-vo">$this</span><span class="pl-k">-&gt;</span>getRequest()<span class="pl-k">-&gt;</span>get(<span class="pl-vo">$paramName</span>, <span class="pl-vo">$default</span>);</span>
+<span class="pl-s2">        <span class="pl-c1">also</span> <span class="pl-c1">available</span> <span class="pl-c1">through</span> <span class="pl-c1">a</span> <span class="pl-c1">local</span> <span class="pl-c1">method</span> <span class="pl-c1">call</span></span>
+<span class="pl-s2">        <span class="pl-vo">$this</span><span class="pl-k">-&gt;</span>get(<span class="pl-vo">$paramName</span>, <span class="pl-vo">$default</span>);</span></pre></div>
 
 <p>Obtain the parameter ($_REQUEST) and at the same time provide a default value. This helps you avoid the checks for set or empty values</p>
 
@@ -193,8 +194,8 @@ The JSON or XML conversion happens automatically. More on adding your own twist 
 <h3>
 <a id="public-api-documentation" class="anchor" href="#public-api-documentation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Public API documentation</h3>
 
-<p>If you added User comments to the API resource methods, now you can access them by going to the root of the server.
-<code>http://myserveurl.com/serverroot.html</code>
+<p>If you added User comments to the API resource methods, now you can access them by going to the /baseUri/introspect.html URI of the server.
+<code>http://myserveurl.com/serverroot/introspect.html</code>
 Where the <code>serverroot</code> is the base URI you have defined when initializing the \restlt\Server object.</p>
 
 <h2>
@@ -470,7 +471,7 @@ the same goes if you decide to extend the json converter.</p>
 <td>string</td>
 </tr>
 <tr>
-<td>@baseUri</td>
+<td>@methodUri</td>
 <td align="center">METHDO</td>
 <td align="right">NO</td>
 <td>string/regex or empty</td>
@@ -500,7 +501,7 @@ the same goes if you decide to extend the json converter.</p>
 <a id="resource-method-doc-block" class="anchor" href="#resource-method-doc-block" aria-hidden="true"><span class="octicon octicon-link"></span></a>Resource method doc block</h3>
 
 <pre><code>@method -&gt; specifies what HTTP method this resource method respnds to. POST, GET, PUT, PATCH, DELETE are allowed
-@methodBaseUri -&gt; URI relative to the resource base uri value specified in the @resourceBaseUri
+@methodUri -&gt; URI relative to the resource base uri value specified in the @resourceBaseUri
 @cacheControlMaxAge -&gt; this value directly affects the 'Cache-Control max-age' HTTP header value and has nothing to do with the local caching feature  
 </code></pre>
 
