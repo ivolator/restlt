@@ -125,11 +125,13 @@ Get the raw data as it was submited in the body
 ```
 Get one parameter at a time
 ```php
-        $this->getRequest()->get($paramName);
+        $this->getRequest()->get($paramName, $default);
+        also available through a local method call
+        $this->get($paramName, $default);
 ```
 Obtain the parameter ($_REQUEST) and at the same time provide a default value. This helps you avoid the checks for set or empty values
 ```php
-        $this->getRequest()->get('page',1);
+        $this->get('page',1);
 ```
 ###Public API documentation
 If you added User comments to the API resource methods, now you can access them by going to the /baseUri/introspect.html URI of the server.
