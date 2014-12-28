@@ -37,7 +37,7 @@ use restlt\exceptions\ApplicationException;
 class RequestRouter implements RouterInterface
 {
 
-    protected static $routes = [];
+    protected static $routes = array();
 
     /**
      *
