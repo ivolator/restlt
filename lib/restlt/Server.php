@@ -128,7 +128,7 @@ class Server
     public function serve()
     {
         try {
-            $docMeta = [];
+            $docMeta = array();
             if (true === $this->autoDocs) {
                 $docMeta = $this->getSelfAutoDocsMeta();
             }
