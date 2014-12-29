@@ -74,22 +74,6 @@ namespace restlt\examples\resources;
  * @resourceBaseUri /resource1
  */
 class Resource1 extends \restlt\Resource {
-    public function __construct(\restlt\Request $request, \restlt\Response $response) {
-        parent::__construct($request,$resource);
-        $f1 = function ($request) {
-        };
-
-        $f2 = function ($request,$response,$return) {
-        };
-
-        $f3 = function ($request,$response,$e) {
-            mail('user@example.com', 'Error in resource', $e->getMessage());
-        };
-
-        $this->on ( self::ON_BEFORE, 'getMe', $f2 );
-        $this->on ( self::ON_AFTER, 'getMe', $f1 );
-        $this->on ( self::ON_ERROR, 'getMe', $f3 );
-    }
     /**
      * Note that the regex in "()" gets converted to a parameter of the method
      * Since v 1.1.0a this user comment section will appear in a simple HTML format
@@ -101,7 +85,7 @@ class Resource1 extends \restlt\Resource {
         $obj = new \stdClass ();
         $obj->a = array (9,8,7);
         //obtain the "someParam" - from POST or GET
-        $this->request->get ( 'someParam',$defaultValueIfParamIsMissing );
+        $this->get ( 'someParam',$defaultValueIfParamIsMissing );
         return $boj;
     }
     /**
@@ -141,11 +125,13 @@ Get the raw data as it was submited in the body
 ```
 Get one parameter at a time
 ```php
-        $this->getRequest()->get($paramName);
+        $this->getRequest()->get($paramName, $default);
+        also available through a local method call
+        $this->get($paramName, $default);
 ```
 Obtain the parameter ($_REQUEST) and at the same time provide a default value. This helps you avoid the checks for set or empty values
 ```php
-        $this->getRequest()->get('page',1);
+        $this->get('page',1);
 ```
 ###Public API documentation
 If you added User comments to the API resource methods, now you can access them by going to the /baseUri/introspect.html URI of the server.
