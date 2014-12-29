@@ -111,7 +111,7 @@ class Server
         if ($baseUri) {
             $this->baseUri = $baseUri;
         } else {
-            $baseUri = '/';
+            $this->baseUri = '/';
         }
 
         $this->name = $name;
