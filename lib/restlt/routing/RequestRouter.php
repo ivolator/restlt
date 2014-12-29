@@ -112,7 +112,8 @@ class RequestRouter implements RouterInterface
      */
     protected function matchResource($uri, $requestMethod)
     {
-        $uri = rtrim($this->getServerBaseUri(), '/') . '/' . trim($uri, '/');
+        $uri = '/' . trim($uri, '/');
+
         $filterMatchingMethods = function (&$el) use($uri, $requestMethod)
         {
             $ret = false;
@@ -129,7 +130,6 @@ class RequestRouter implements RouterInterface
             }
 
             if (! $ret && $methodMatch) {
-
                 $regex = '#^' . $methodUri . '$#i';
 
                 $pregres = preg_match($regex, $uri, $matches);

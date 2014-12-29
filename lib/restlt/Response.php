@@ -25,7 +25,6 @@ namespace restlt;
 
 use restlt\routing\Route;
 use restlt\exceptions\ApplicationException;
-use restlt\exceptions\ServerException;
 
 /**
  *

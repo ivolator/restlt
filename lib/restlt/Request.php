@@ -173,7 +173,7 @@ class Request implements \restlt\RequestInterface {
 	 */
 	public function getUri() {
 		if (! $this->uri) {
-			$res = parse_url ( $_SERVER ['REQUEST_URI'] );
+			$res = parse_url ( '/' . trim($_SERVER ['REQUEST_URI'],'/') );
 			$this->uri = $res ['path'] ? $res ['path'] : '/';
 			$this->uri = str_replace('//', '/', $this->uri);
 		}
