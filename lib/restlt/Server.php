@@ -430,7 +430,7 @@ class Server
             '\restlt\Resource' => array(
                 array(
                     "method" => "GET",
-                    "methodUri" => $this->getBaseUri() . '/introspect',
+                    "methodUri" => '/introspect',
                     "function" => "getApiInfo",
                     "cacheControlMaxAge" => 1200,
 //TODO - IM**       "forceResponse" => Response::TEXT_HTML

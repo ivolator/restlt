@@ -53,7 +53,6 @@ class RequestRouterTest extends RestLiteTest
         $resource = array_shift($arr);
         $this->assertEquals($ret->getClassName(), $resource);
         $this->assertEquals($ret->get('method'), $method);
-        $this->assertEquals($ret->get('methodUri'), $uri);
     }
 
     /**
@@ -166,27 +165,27 @@ class RequestRouterTest extends RestLiteTest
             array(
                 $resources,
                 'GET',
-                '/resource2/([0-9]+)'
+                '/baseuri/resource2/123'
             ),
             array(
                 $resources,
                 'POST',
-                '/resource2'
+                '/baseuri/resource2'
             ),
             array(
                 $resources,
                 'PUT',
-                '/resource2/put'
+                '/baseuri/resource2/put'
             ),
             array(
                 $resources,
                 'PATCH',
-                '/resource2/patch'
+                '/baseuri/resource2/patch'
             ),
             array(
                 $resources,
                 'DELETE',
-                '/resource2/del'
+                '/baseuri/resource2/del'
             )
         );
     }

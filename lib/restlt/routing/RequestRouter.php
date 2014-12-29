@@ -86,8 +86,7 @@ class RequestRouter implements RouterInterface
         $ext = pathinfo($requestUri, PATHINFO_EXTENSION);
         $requestUriStripped = preg_replace('#\.' . $ext . '$#', '', $requestUri);
 
-        $resourceUri = str_replace($this->serverBaseUri, '/', $requestUriStripped);
-        $resourceUri = str_replace('//', '/', $resourceUri);
+        $resourceUri = str_replace('//', '/', $requestUriStripped);
 
         if (\restlt\Request::HEAD === strtoupper($method))
             $method = \restlt\Request::GET;
@@ -113,8 +112,8 @@ class RequestRouter implements RouterInterface
     protected function matchResource($uri, $requestMethod)
     {
         $uri = '/' . trim($uri, '/');
-
-        $filterMatchingMethods = function (&$el) use($uri, $requestMethod)
+        $serverBaseUri = $this->getServerBaseUri();
+        $filterMatchingMethods = function (&$el) use($uri, $requestMethod, $serverBaseUri)
         {
             $ret = false;
             $matches = false;
@@ -122,14 +121,9 @@ class RequestRouter implements RouterInterface
                 return false;
             }
             $methodMatch = strtolower($requestMethod) === strtolower($el['method']);
-            $methodUri = rtrim($el['methodUri'], '/');
+            $methodUri = $serverBaseUri . rtrim($el['methodUri'], '/');
 
-            // try matching without regex first
-            if ($el['methodUri'] === $uri && $methodMatch) {
-                $ret = true;
-            }
-
-            if (! $ret && $methodMatch) {
+            if ($methodMatch) {
                 $regex = '#^' . $methodUri . '$#i';
 
                 $pregres = preg_match($regex, $uri, $matches);
@@ -171,11 +165,12 @@ class RequestRouter implements RouterInterface
         $route->setClassName($class);
         $route->setFunctionName($methodMeta['function']);
         $route->setUserAnnotations($methodMeta);
-        if (! empty($methodMeta['params']))
+        if (! empty($methodMeta['params'])) {
             $route->setParams($methodMeta['params']);
-        if (! empty($methodMeta['cacheControlMaxAge']))
+        }
+        if (! empty($methodMeta['cacheControlMaxAge'])) {
             $route->setCacheControlMaxAge($methodMeta['cacheControlMaxAge']);
-
+        }
         return $route;
     }
 
