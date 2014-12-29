@@ -110,7 +110,10 @@ class Server
     {
         if ($baseUri) {
             $this->baseUri = $baseUri;
+        } else {
+            $baseUri = '/';
         }
+
         $this->name = $name;
         register_shutdown_function(array(
             $this,
