@@ -112,7 +112,8 @@ class RequestRouter implements RouterInterface
     protected function matchResource($uri, $requestMethod)
     {
         $uri = '/' . trim($uri, '/');
-        $serverBaseUri = $this->getServerBaseUri();
+        $serverBaseUri = rtrim($this->getServerBaseUri(),'/') . '/';
+
         $filterMatchingMethods = function (&$el) use($uri, $requestMethod, $serverBaseUri)
         {
             $ret = false;
@@ -121,11 +122,10 @@ class RequestRouter implements RouterInterface
                 return false;
             }
             $methodMatch = strtolower($requestMethod) === strtolower($el['method']);
-            $methodUri = $serverBaseUri . rtrim($el['methodUri'], '/');
+            $methodUri = $serverBaseUri . trim($el['methodUri'], '/');
 
             if ($methodMatch) {
                 $regex = '#^' . $methodUri . '$#i';
-
                 $pregres = preg_match($regex, $uri, $matches);
                 if (PREG_NO_ERROR !== preg_last_error()) {
                     throw new SystemException('Regex error when matching the method URIs');
