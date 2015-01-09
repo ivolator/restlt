@@ -22,35 +22,40 @@
 * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 namespace restlt\log;
+
 /**
- * 
+ *
  * @author vo
  *
  */
 use Psr\Log\LoggerInterface;
 
 /**
- * 
+ *
  * @author vo
  *
  */
-class Log {
-	/**
-	 * 
-	 * @var \Psr\Log\LoggerInterface
-	 */
-	protected $psrLogger = null;
-	/**
-	 * 
-	 * @var integer
-	 */
-	protected $logLevel = null;
-	
-	public function __construct(LoggerInterface $psrLogger, $level='critical'){
-		$this->logLevel = $level;
-		$this->psrLogger = $psrLogger;
-	}
-	
+class Log
+{
+
+    /**
+     *
+     * @var \Psr\Log\LoggerInterface
+     */
+    protected $psrLogger = null;
+
+    /**
+     *
+     * @var string
+     */
+    protected $logLevel = null;
+
+    public function __construct(LoggerInterface $psrLogger, $level = 'critical')
+    {
+        $this->logLevel = $level;
+        $this->psrLogger = $psrLogger;
+    }
+
     /**
      * Logs with an arbitrary level.
      *
@@ -59,24 +64,47 @@ class Log {
      * @param array $context
      * @return null
      */
-    public function log($messsage){
-    	$this->getLogger()->log($this->logLevel, $messsage);
+    public function log($messsage, $logLevel = NULL)
+    {
+        $logLevel = $logLevel ? $logLevel : $this->logLevel;
+        $this->getLogger()->log($logLevel, $messsage);
     }
-	
-    /**
-	 * @return \Psr\Log\LoggerInterface $logger
-	 */
-	public function getLogger() {
-		return $this->psrLogger;
-	}
 
-	/**
+    /**
+     *
+     * @return \Psr\Log\LoggerInterface $logger
+     */
+    public function getLogger()
+    {
+        return $this->psrLogger;
+    }
+
+    /**
      * (non-PHPdoc)
+     *
      * @see Psr\Log.LoggerAwareInterface::setLogger()
      */
-	public function setLogger(LoggerInterface $logger) {
-		$this->psrLogger = $logger;
-		return $this;
-	}
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->psrLogger = $logger;
+        return $this;
+    }
 
+    /**
+     *
+     * @return the $logLevel
+     */
+    public function getLogLevel()
+    {
+        return $this->logLevel;
+    }
+
+    /**
+     *
+     * @param string $logLevel
+     */
+    public function setLogLevel($logLevel)
+    {
+        $this->logLevel = $logLevel;
+    }
 }

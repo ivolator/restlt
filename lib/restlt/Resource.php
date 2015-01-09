@@ -24,6 +24,7 @@ namespace restlt;
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 use restlt\exceptions\ApplicationException;
+use restlt\log\NullLogger;
 
 /**
  *
@@ -250,6 +251,9 @@ class Resource implements ResourceInterface
      */
     public function getLog()
     {
+        if (!$this->log){
+            $this->log = new NullLogger();
+        }
         return $this->log;
     }
 

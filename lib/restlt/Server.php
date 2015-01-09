@@ -110,10 +110,7 @@ class Server
     {
         if ($baseUri) {
             $this->baseUri = $baseUri;
-        } else {
-            $this->baseUri = '/';
         }
-
         $this->name = $name;
         register_shutdown_function(array(
             $this,
@@ -144,6 +141,7 @@ class Server
             $ret = $this->getResponse()->send();
         } catch (\Exception $e) {
             $this->getResponse()->setStatus(Response::INTERNALSERVERERROR);
+            $this->getResponse()->setRequestRouter($this->getRequestRouter());
             $ret = $this->getResponse()->send();
             $this->getLog()->log('RestLt: Exception Message' . PHP_EOL . $e->getMessage());
             $this->getLog()->log('RestLt: Exception Code' . PHP_EOL . $e->getCode());
@@ -408,7 +406,10 @@ class Server
      */
     public function setLoggerImplementation(LoggerInterface $logger, $logLevel = null)
     {
-        $this->log = new Log($logger, $logLevel);
+        $this->log = new Log($logger);
+        if ($logLevel) {
+        	$this->log->setLogLevel($logLevel);
+        }
         return $this;
     }
 
