@@ -403,6 +403,8 @@ class Server
     /**
      *
      * @param LoggerInterface $logger
+     * @param $logLevel - set default logging PSR-3 levels for all calls made through the framework's logger
+     * @return \restlt\Server
      */
     public function setLoggerImplementation(LoggerInterface $logger, $logLevel = null)
     {
