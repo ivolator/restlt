@@ -25,57 +25,60 @@ namespace restlt\output;
 
 use restlt\Result;
 
-class XmlOtputStrategy implements TypeConversionStrategyInterface {
+class XmlOtputStrategy implements TypeConversionStrategyInterface
+{
 
-	/**
-	 *
-	 * @var \DOMDocument
-	 */
-	protected $dom = null;
+    /**
+     *
+     * @var \DOMDocument
+     */
+    protected $dom = null;
 
-	/**
-	 * (non-PHPdoc)
-	 *
-	 * @see \restlt\output\TypeConversionStrategyInterface::execute()
-	 */
-	public function execute(\restlt\ResultInterface $data) {
-		$this->dom = new \DOMDocument ( '1.0', 'UTF-8' );
-		$domEl = $this->fromMixed ( $data );
-		$this->dom->appendChild ( $domEl );
-		$this->dom->formatOutput = true;
-		return $this->dom->saveXML ();
-	}
+    /**
+     * (non-PHPdoc)
+     *
+     * @see \restlt\output\TypeConversionStrategyInterface::execute()
+     */
+    public function execute(\restlt\ResultInterface $data)
+    {
+        $this->dom = new \DOMDocument('1.0', 'UTF-8');
+        $domEl = $this->fromMixed($data);
+        $this->dom->appendChild($domEl);
+        $this->dom->formatOutput = true;
+        return $this->dom->saveXML();
+    }
 
-	/**
-	 *
-	 * @param array $mixed
-	 * @param \DOMElement $domEl
-	 * @return DOMElement
-	 */
-	protected function fromMixed($mixed,\DOMElement $domEl = null) {
-		if (! $domEl) {
-			$domEl = $this->dom->createElement ( 'result' );
-		}
+    /**
+     *
+     * @param array $mixed
+     * @param \DOMElement $domEl
+     * @return DOMElement
+     */
+    protected function fromMixed($mixed, \DOMElement $domEl = null)
+    {
+        if (! $domEl) {
+            $domEl = $this->dom->createElement('result');
+        }
 
-		foreach ( $mixed as $name => $value ) {
-			if (is_numeric ( $name )) {
-				$name = $domEl->tagName;
-			}
-			if (is_scalar ( $value )) {
-				$el = $this->dom->createElement ( ( string ) $name, $value );
-				$domEl->appendChild ( $el );
-			} elseif(is_object($value)){
-				$name = get_class($value);
-				$el = $this->dom->createElement ( ( string ) $name );
-				$el = $this->fromMixed ( $value, $el );
-				$domEl->appendChild ( $el );
-			} elseif(is_array($value)) {
-				$el = $this->dom->createElement ( ( string ) $name );
-				$el = $this->fromMixed ( $value, $el );
-				$domEl->appendChild ( $el );
-			}
-		}
+        foreach ($mixed as $name => $value) {
+            if (is_numeric($name)) {
+                $name = $domEl->tagName;
+            }
+            if (is_scalar($value)) {
+                $el = $this->dom->createElement((string) $name, $value);
+                $domEl->appendChild($el);
+            } elseif (is_object($value)) {
+                $name = get_class($value);
+                $el = $this->dom->createElement((string) $name);
+                $el = $this->fromMixed($value, $el);
+                $domEl->appendChild($el);
+            } elseif (is_array($value)) {
+                $el = $this->dom->createElement((string) $name);
+                $el = $this->fromMixed($value, $el);
+                $domEl->appendChild($el);
+            }
+        }
 
-		return $domEl;
-	}
+        return $domEl;
+    }
 }

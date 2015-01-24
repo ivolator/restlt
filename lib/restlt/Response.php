@@ -147,7 +147,7 @@ class Response implements \restlt\ResponseInterface
      *
      * @var string
      */
-    protected $forceResponseType = null;
+    protected $forceContentType = null;
 
     /**
      *
@@ -264,34 +264,40 @@ class Response implements \restlt\ResponseInterface
         $route = null;
 
         try {
-            if ($this->status === self::OK && $this->getRequestRouter() && $this->getRequestRouter()->getRoute()) {
+            if ($this->status === self::OK && $this->getRequestRouter()) {
                 $data = $this->getRoutedResponse($this->getRequestRouter());
                 $route = $this->getRequestRouter()->getRoute();
-            }
-
-            if ($this->getRequestRouter()) {
+                $annotations = $route?$route->getUserAnnotations():null;
+                if (isset($annotations['forceContentType']) && $annotations['forceContentType']) {
+                    $contentType = $annotations['forceContentType'];
+                    $this->setForceContentType($contentType);
+                }
                 $contentType = $this->getRequestRouter()
                     ->getRequest()
                     ->getContentType();
-            }
-
-            if ($this->forceResponseType) {
-                $conversionStrategy = $this->getConversionStrategy($this->forceResponseType);
             }
         } catch (\restlt\exceptions\ServerException $e) {
             $this->setStatus($e->getCode());
             $this->displayError = $e;
         }
 
-        if ($route && $route->getOutputTypeOverrideExt()) {
-            $conversionStrategy = $this->getConversionStrategy($route->getOutputTypeOverrideExt());
-        } elseif ($this->forceResponseType) {
-            $conversionStrategy = $this->getConversionStrategy($this->forceResponseType);
+        $cType = $this->getContentTypeFromRoute($route);
+        $contentType = $cType ? $cType : $contentType;
+        // Precedence:
+        // 3. Forced by developer
+        if ($this->forceContentType) {
+            $contentType = $this->forceContentType;
+            $conversionStrategy = $this->getConversionStrategy($this->forceContentType);
         }
 
-        if ($route) {
-            $cType = $this->getContentTypeFromRoute($route);
-            $contentType = $cType ? $cType : $contentType;
+        // 2. Get conversion from ext
+        if (! $conversionStrategy && $route && $route->getOutputTypeOverrideExt()) {
+            $conversionStrategy = $this->getConversionStrategy($route->getOutputTypeOverrideExt());
+        }
+
+        // 1. from content type
+        if (! $conversionStrategy && $route) {
+            $conversionStrategy = $this->getConversionStrategy($contentType);
         }
 
         // everything failed - default to json
@@ -338,7 +344,6 @@ class Response implements \restlt\ResponseInterface
      */
     protected function _send($data = null, $conversionStrategy)
     {
-
         if (isset($_SERVER['HTTP_CONNECTION'])) {
             header('x-custom-rest-server: RestLt');
             header('Allow: POST, GET, PUT, DELETE, PATCH, HEAD');
@@ -366,7 +371,9 @@ class Response implements \restlt\ResponseInterface
             return $this->getResultObject()->toString($conversionStrategy);
         }
 
-        if ($this->getRequestRouter()->getRequest()->getMethod() === Request::HEAD) {
+        if ($this->getRequestRouter()
+            ->getRequest()
+            ->getMethod() === Request::HEAD) {
             return null;
         }
         $this->getResultObject()->addError('Unknown server error', self::INTERNALSERVERERROR);
@@ -389,6 +396,7 @@ class Response implements \restlt\ResponseInterface
             $class = $this->responseOutputStrategies[array_pop($strategies)];
         }
 
+        // try to match
         preg_match_all('#xml|json|html#i', $contentType, $matches);
         if (! $class && isset($matches[0][0]) && strtolower($matches[0][0])) {
             $class = $this->responseOutputStrategies[$matches[0][0]];
@@ -504,11 +512,11 @@ class Response implements \restlt\ResponseInterface
 
     /**
      *
-     * @return the $forceResponseType
+     * @return the $forceContentType
      */
-    public function getForceResponseType()
+    public function getForceContentType()
     {
-        return $this->forceResponseType;
+        return $this->forceContentType;
     }
 
     /**
@@ -517,20 +525,11 @@ class Response implements \restlt\ResponseInterface
      * at the end of the URI path.
      * Adding a '.somethinelse' is dictated by the association with a custom output type converter (TypeConversionStrategyInterface)
      *
-     * @param string $forceResponseType
+     * @param string $forceContentType
      */
-    public function setForceResponseType($forceResponseType)
+    public function setForceContentType($forceContentType)
     {
-        if ($forceResponseType && in_array($forceResponseType, array(
-            self::APPLICATION_JSON,
-            self::APPLICATION_XML,
-            self::TEXT_HTML,
-            self::TEXT_PLAIN
-        ))) {
-            $this->forceResponseType = $forceResponseType;
-        } else {
-            throw new \InvalidArgumentException('Invalid response type. Must be one of Response::APPLICATION_JSON,Response::APPLICATION_XML,Response::TEXT_PLAIN');
-        }
+        $this->forceContentType = $forceContentType;
         return $this;
     }
 

@@ -69,11 +69,10 @@ class RequestRouter implements RouterInterface
      *
      * @param \restlt\Request $request
      * @return \restlt\Route
+     * @throws ServerException
      */
     public function getRoute()
     {
-        $route = null;
-
         $request = $this->getRequest();
 
         $method = $request->getMethod();

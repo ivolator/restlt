@@ -94,7 +94,7 @@ class ResponseTest extends RestLiteTest
             ->method('getContentTypeFromRoute')
             ->will($this->returnValue($contentType));
 
-        $this->assertEmpty($this->mockResponse->getForceResponseType());
+        $this->assertEmpty($this->mockResponse->getForceContentType());
         $this->mockResponse->expects($this->any())
             ->method('getRoutedResponse')
             ->will($this->returnValue($data ? $data->getData() : null));

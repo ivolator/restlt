@@ -17,15 +17,15 @@ $al = require_once APP_ROOT . '/vendor/autoload.php';
  */
 $memcached = new \Memcached ();
 $memcached->addServer ( 'localhost', 11211 );
-$s = new \restlt\Server ( '/app' );
+$server = new \restlt\Server ( '/app' );
 
 //Using Zend Log with stream writer
 $zl = new Logger ();
 $zl->addWriter ( new \Zend\Log\Writer\Stream ( 'restlt.log' ) );
-$s->setLoggerImplementation ( new \restlt\log\ZendLogger ( $zl ) );
+$server->setLoggerImplementation ( new \restlt\log\ZendLogger ( $zl ) );
 
 //Using build in memcached adapter
-$s->setCacheAdapter ( new \restlt\cache\RestltMemcachedAdapter ( $memcached ) );
+$server->setCacheAdapter ( new \restlt\cache\RestltMemcachedAdapter ( $memcached ) );
 
 /**
  * Or you can use the Zend Framework cache implementation instead
@@ -35,12 +35,12 @@ $s->setCacheAdapter ( new \restlt\cache\RestltMemcachedAdapter ( $memcached ) );
  */
 
 //Inserting custom output strategy
-$s->getResponse ()->addResponseOutputStrategies ( 'sphp', '\restlt\output\SerializeOutputStrategy' );
+$server->getResponse ()->addResponseOutputStrategies ( 'sphp', '\restlt\output\SerializeOutputStrategy' );
 
 //Adding a folder with resources
-$s->registerResourceFolder ( APP_ROOT . '/vendor/restlt/restlt/lib/restlt/examples/resources', 'restlt\examples\resources' );
+$server->registerResourceFolder ( APP_ROOT . '/vendor/restlt/restlt/lib/restlt/examples/resources', 'restlt\examples\resources' );
 
 //Serve request
-echo $s->serve ();
+echo $server->serve ();
 exit ();
 

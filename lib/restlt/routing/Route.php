@@ -23,114 +23,145 @@
  */
 namespace restlt\routing;
 
-class Route implements RouteInterface {
-	
-	protected $className = '';
-	protected $functionName = '';
-	protected $params = array ();
-	protected $cacheControlMaxAge = array ();
-	protected $outputTypeOverrideExt = null;
-	protected $userAnnotations = array ();
-	
-	/**
-	 * @return the $cacheControlMaxAge
-	 */
-	public function getCacheControlMaxAge() {
-		return ( int ) $this->cacheControlMaxAge;
-	}
-	
-	/**
-	 * @param multitype: $cacheControlMaxAge
-	 */
-	public function setCacheControlMaxAge($cacheControlMaxAge) {
-		$this->cacheControlMaxAge = ( int ) $cacheControlMaxAge;
-	}
-	
-	/**
-	 * @return the $className
-	 */
-	public function getClassName() {
-		return $this->className;
-	}
-	
-	/**
-	 * @param field_type $className
-	 */
-	public function setClassName($className) {
-		$this->className = $className;
-	}
-	
-	/**
-	 * @return the $functionName
-	 */
-	public function getFunctionName() {
-		return $this->functionName;
-	}
-	
-	/**
-	 * @param field_type $functionName
-	 */
-	public function setFunctionName($functionName) {
-		$this->functionName = $functionName;
-	}
-	
-	/**
-	 * @return the $params
-	 */
-	public function getParams() {
-		return $this->params;
-	}
-	
-	/**
-	 * @param field_type $params
-	 */
-	public function setParams($params) {
-		$this->params = $params;
-	}
-	
-	/**
-	 * @return the $outputType
-	 */
-	public function getOutputTypeOverrideExt() {
-		$ret = '';
-		if ($this->outputTypeOverrideExt)
-			$ret = strtolower ( $this->outputTypeOverrideExt );
-		return $ret;
-	}
-	
-	/**
-	 * @param field_type $outputType
-	 */
-	public function setOutputTypeOverrideExt($outputType) {
-		$this->outputTypeOverrideExt = $outputType;
-	}
-	/**
-	 * @return the $userAnnotations
-	 */
-	public function getUserAnnotations() {
-		return $this->userAnnotations;
-	}
-	
-	/**
-	 * @param multitype: $userAnnotations
-	 */
-	public function setUserAnnotations($userAnnotations) {
-		$this->userAnnotations = $userAnnotations;
-	}
-	
-	/**
-	 * Get user annotation
-	 *
-	 * @param string $name
-	 * @return Ambigous <NULL, multitype:>
-	 */
-	public function get($name) {
-		$ret = null;
-		if ($this->userAnnotations && isset ( $this->userAnnotations [$name] )) {
-			$ret = $this->userAnnotations [$name];
-		}
-		return $ret;
-	}
+class Route implements RouteInterface
+{
 
+    protected $className = '';
+
+    protected $functionName = '';
+
+    protected $params = array();
+
+    protected $cacheControlMaxAge = array();
+
+    protected $outputTypeOverrideExt = null;
+
+    protected $userAnnotations = array();
+
+    /**
+     *
+     * @return the $cacheControlMaxAge
+     */
+    public function getCacheControlMaxAge()
+    {
+        return (int) $this->cacheControlMaxAge;
+    }
+
+    /**
+     *
+     * @param multitype: $cacheControlMaxAge
+     */
+    public function setCacheControlMaxAge($cacheControlMaxAge)
+    {
+        $this->cacheControlMaxAge = (int) $cacheControlMaxAge;
+    }
+
+    /**
+     *
+     * @return the $className
+     */
+    public function getClassName()
+    {
+        return $this->className;
+    }
+
+    /**
+     *
+     * @param field_type $className
+     */
+    public function setClassName($className)
+    {
+        $this->className = $className;
+    }
+
+    /**
+     *
+     * @return the $functionName
+     */
+    public function getFunctionName()
+    {
+        return $this->functionName;
+    }
+
+    /**
+     *
+     * @param field_type $functionName
+     */
+    public function setFunctionName($functionName)
+    {
+        $this->functionName = $functionName;
+    }
+
+    /**
+     *
+     * @return the $params
+     */
+    public function getParams()
+    {
+        return $this->params;
+    }
+
+    /**
+     *
+     * @param field_type $params
+     */
+    public function setParams($params)
+    {
+        $this->params = $params;
+    }
+
+    /**
+     *
+     * @return the $outputType
+     */
+    public function getOutputTypeOverrideExt()
+    {
+        $ret = '';
+        if ($this->outputTypeOverrideExt)
+            $ret = strtolower($this->outputTypeOverrideExt);
+        return $ret;
+    }
+
+    /**
+     *
+     * @param field_type $outputType
+     */
+    public function setOutputTypeOverrideExt($outputType)
+    {
+        $this->outputTypeOverrideExt = $outputType;
+    }
+
+    /**
+     *
+     * @return the $userAnnotations
+     */
+    public function getUserAnnotations()
+    {
+        return $this->userAnnotations;
+    }
+
+    /**
+     *
+     * @param multitype: $userAnnotations
+     */
+    public function setUserAnnotations($userAnnotations)
+    {
+        $this->userAnnotations = $userAnnotations;
+    }
+
+    /**
+     * Get user annotation
+     *
+     * @param string $name
+     * @return Ambigous <NULL, multitype:>
+     */
+    public function get($name)
+    {
+        $ret = null;
+        if ($this->userAnnotations && isset($this->userAnnotations[$name])) {
+            $ret = $this->userAnnotations[$name];
+        }
+        return $ret;
+    }
 }
 

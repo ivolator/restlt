@@ -23,13 +23,16 @@
  */
 namespace restlt\exceptions;
 
-class ServerException extends ApplicationException {
-	public static function notFound($msg = 'Resource not found', $code = \restlt\Response::NOTFOUND) {
-		return new self ( $msg, $code );
-	}
+class ServerException extends ApplicationException
+{
 
-	public static function duplicateRouteFound($msg = 'There are more than one matching resource paths for this request!',$code = \restlt\Response::MULTIPLECHOICES)
-	{
-		return new self ( $msg, $code );
-	}
+    public static function notFound($msg = 'Resource not found', $code = \restlt\Response::NOTFOUND)
+    {
+        return new self($msg, $code);
+    }
+
+    public static function duplicateRouteFound($msg = 'There are more than one matching resource paths for this request!', $code = \restlt\Response::MULTIPLECHOICES)
+    {
+        return new self($msg, $code);
+    }
 }

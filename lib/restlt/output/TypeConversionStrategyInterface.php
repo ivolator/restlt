@@ -23,6 +23,7 @@
  */
 namespace restlt\output;
 
-interface TypeConversionStrategyInterface {
-	function execute(\restlt\ResultInterface $data);
+interface TypeConversionStrategyInterface
+{
+    function execute(\restlt\ResultInterface $data);
 }
