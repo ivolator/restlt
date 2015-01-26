@@ -64,7 +64,7 @@ class Log
      * @param array $context
      * @return null
      */
-    public function log($messsage, $logLevel = NULL, $context = ['RestLt'])
+    public function log($messsage, $logLevel = NULL, $context = array('RestLt'))
     {
         $logLevel = $logLevel ? $logLevel : $this->logLevel;
         $this->getLogger()->log($logLevel, $messsage, $context);
