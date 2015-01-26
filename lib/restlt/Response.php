@@ -267,14 +267,14 @@ class Response implements \restlt\ResponseInterface
             if ($this->status === self::OK && $this->getRequestRouter()) {
                 $data = $this->getRoutedResponse($this->getRequestRouter());
                 $route = $this->getRequestRouter()->getRoute();
+                $contentType = $this->getRequestRouter()
+                    ->getRequest()
+                    ->getContentType();
                 $annotations = $route?$route->getUserAnnotations():null;
                 if (isset($annotations['forceContentType']) && $annotations['forceContentType']) {
                     $contentType = $annotations['forceContentType'];
                     $this->setForceContentType($contentType);
                 }
-                $contentType = $this->getRequestRouter()
-                    ->getRequest()
-                    ->getContentType();
             }
         } catch (\restlt\exceptions\ServerException $e) {
             $this->setStatus($e->getCode());
