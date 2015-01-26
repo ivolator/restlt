@@ -437,7 +437,6 @@ class Server
                     "function" => "getApiInfo",
                     "cacheControlMaxAge" => 1200,
                     'forceContentType' => Response::TEXT_HTML
-//TODO - IM**       "forceResponse" => Response::TEXT_HTML
                 )
             )
         );
