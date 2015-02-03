@@ -365,7 +365,8 @@ class Server
             E_STRICT
         ))) {
             $msg = 'An error with message ' . $error['message'] . ' occured at line ' . $error['line'] . ' in ' . $error['file'];
-            throw new ServerException($msg, Response::INTERNALSERVERERROR);
+            $this->getLog()->log($msg, $this->getLog()
+                ->getLogLevel());
         }
     }
 
@@ -403,7 +404,8 @@ class Server
     /**
      *
      * @param LoggerInterface $logger
-     * @param $logLevel - set default logging PSR-3 levels for all calls made through the framework's logger
+     * @param $logLevel -
+     *            set default logging PSR-3 levels for all calls made through the framework's logger
      * @return \restlt\Server
      */
     public function setLoggerImplementation(LoggerInterface $logger)

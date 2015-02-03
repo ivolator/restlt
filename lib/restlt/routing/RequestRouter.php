@@ -108,7 +108,7 @@ class RequestRouter implements RouterInterface
      * @return Route
      * @throws ServerException
      */
-    protected function matchResource($uri, $requestMethod)
+    public function matchResource($uri, $requestMethod)
     {
         $uri = '/' . trim($uri, '/');
         $serverBaseUri = $this->getServerBaseUri();
@@ -121,10 +121,9 @@ class RequestRouter implements RouterInterface
             }
             $methodMatch = strtolower($requestMethod) === strtolower($el['method']);
             $methodUri = $serverBaseUri . rtrim($el['methodUri'], '/');
-
+            $methodUri = parse_url($methodUri,PHP_URL_PATH);
             if ($methodMatch) {
                 $regex = '#^' . $methodUri . '$#i';
-
                 $pregres = preg_match($regex, $uri, $matches);
                 if (PREG_NO_ERROR !== preg_last_error()) {
                     throw new SystemException('Regex error when matching the method URIs');
@@ -143,6 +142,7 @@ class RequestRouter implements RouterInterface
         $filtered = array();
         foreach ($this->resources as $className => $resMeta) {
             $res = null;
+
             $res = array_filter($resMeta, $filterMatchingMethods);
             if ($res) {
                 $filtered[$className] = $res;
@@ -160,7 +160,7 @@ class RequestRouter implements RouterInterface
         }
 
         $methodMeta = array_shift($filtered[$class]);
-        $route = new Route();
+        $route = $this->createRouteObject();
         $route->setClassName($class);
         $route->setFunctionName($methodMeta['function']);
         $route->setUserAnnotations($methodMeta);
@@ -237,5 +237,13 @@ class RequestRouter implements RouterInterface
     {
         $this->request = $request;
         return $this;
+    }
+
+    /**
+     *
+     * @return \restlt\routing\Route
+     */
+    public function createRouteObject(){
+        return new Route();
     }
 }

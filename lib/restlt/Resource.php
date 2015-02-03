@@ -251,7 +251,7 @@ class Resource implements ResourceInterface
      */
     public function getLog()
     {
-        if (!$this->log){
+        if (! $this->log) {
             $this->log = new NullLogger();
         }
         return $this->log;
@@ -268,12 +268,16 @@ class Resource implements ResourceInterface
 
     /**
      * Access the request parameter
-     * @param string $paramName - key
-     * @param mixed $default - return this in case there is no value for the $paramName
+     *
+     * @param string $paramName
+     *            - key
+     * @param mixed $default
+     *            - return this in case there is no value for the $paramName
      * @return Ambigous
      */
-    public function getParam($paramName,$default){
-        return $this->getRequest()->get($paramName,$default);
+    public function getParam($paramName, $default)
+    {
+        return $this->getRequest()->get($paramName, $default);
     }
 
     /**
@@ -304,5 +308,14 @@ class Resource implements ResourceInterface
         $ret .= '</div>';
         // TODO
         return nl2br($ret);
+    }
+
+    /**
+     *
+     * @return the $server
+     */
+    public function getServer()
+    {
+        return $this->server;
     }
 }

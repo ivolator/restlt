@@ -112,7 +112,7 @@ class MetadataBuilder implements MetadataBuilderInterface{
 				$methodsMeta = $this->getAnnotationsParser()->getMethodMeta ( $class );
 				if (! $methodsMeta )
 					continue;
-				$resourceBaseUri = $classMeta ['resourceBaseUri'];
+                $resourceBaseUri = isset($classMeta['resourceBaseUri']) ? $classMeta['resourceBaseUri'] : '';
 				$methodsMeta = array_map ( function (&$el) use($resourceBaseUri) {
 					$methodUri = isset ( $el ['methodUri'] ) ? trim ( $el ['methodUri'], '/' ) : '/';
 					$el ['methodUri'] = rtrim(rtrim ( $resourceBaseUri, ' /' ) . '/' . $methodUri,'/ ');

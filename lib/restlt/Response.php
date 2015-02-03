@@ -25,6 +25,8 @@ namespace restlt;
 
 use restlt\routing\Route;
 use restlt\exceptions\ApplicationException;
+use restlt\log\NullLogger;
+use restlt\log\Log;
 
 /**
  *
@@ -270,7 +272,7 @@ class Response implements \restlt\ResponseInterface
                 $contentType = $this->getRequestRouter()
                     ->getRequest()
                     ->getContentType();
-                $annotations = $route?$route->getUserAnnotations():null;
+                $annotations = $route ? $route->getUserAnnotations() : null;
                 if (isset($annotations['forceContentType']) && $annotations['forceContentType']) {
                     $contentType = $annotations['forceContentType'];
                     $this->setForceContentType($contentType);
@@ -574,7 +576,8 @@ class Response implements \restlt\ResponseInterface
             E_STRICT
         ))) {
             $msg = 'An error with message ' . $error['message'] . ' occured at line ' . $error['line'] . ' in ' . $error['file'];
-            throw new \Exception($msg, Response::INTERNALSERVERERROR);
+            $this->getLog()->log($msg, $this->getLog()
+                ->getLogLevel());
         }
     }
 
@@ -628,6 +631,9 @@ class Response implements \restlt\ResponseInterface
      */
     public function getLog()
     {
+        if (! $this->log) {
+            $this->log = new Log(new NullLogger(), 'critical');
+        }
         return $this->log;
     }
 
