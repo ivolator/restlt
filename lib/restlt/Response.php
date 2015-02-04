@@ -27,6 +27,8 @@ use restlt\routing\Route;
 use restlt\exceptions\ApplicationException;
 use restlt\log\NullLogger;
 use restlt\log\Log;
+use restlt\output\JsonOutputStrategy;
+use restlt\exceptions\ServerException;
 
 /**
  *
@@ -361,23 +363,26 @@ class Response implements \restlt\ResponseInterface
             }
         }
 
+        $method = $this->getRequestRouter()
+            ->getRequest()
+            ->getMethod();
         // prepare the payload if any
         $this->getResultObject()->setHttpStatus($this->status);
-        if ($data && $this->getRequestRouter() && $this->getRequestRouter()
-            ->getRequest()
-            ->getMethod() !== Request::HEAD) {
+        if ($data && $this->getRequestRouter() && $method !== Request::HEAD) {
             $this->getResultObject()->setData($data);
             return $this->getResultObject()->toString($conversionStrategy);
         } elseif ($this->displayError) {
             $this->getResultObject()->addError($this->displayError->getMessage(), $this->displayError->getCode());
             return $this->getResultObject()->toString($conversionStrategy);
+        } elseif (! $data && $method !== Request::HEAD) {
+            $this->getResultObject()->setData(null);
+            return $this->getResultObject()->toString($conversionStrategy);
         }
 
-        if ($this->getRequestRouter()
-            ->getRequest()
-            ->getMethod() === Request::HEAD) {
+        if ($method === Request::HEAD) {
             return null;
         }
+
         $this->getResultObject()->addError('Unknown server error', self::INTERNALSERVERERROR);
         return $this->getResultObject()->toString($conversionStrategy);
     }
@@ -578,6 +583,11 @@ class Response implements \restlt\ResponseInterface
             $msg = 'An error with message ' . $error['message'] . ' occured at line ' . $error['line'] . ' in ' . $error['file'];
             $this->getLog()->log($msg, $this->getLog()
                 ->getLogLevel());
+            $this->setStatus(Response::INTERNALSERVERERROR);
+            $this->displayError = new ServerException('Internal Server Error', Response::INTERNALSERVERERROR);
+            $ret = $this->_send(null, $this->getConversionStrategy(Response::APPLICATION_JSON));
+            echo $ret;
+            exit();
         }
     }
 
