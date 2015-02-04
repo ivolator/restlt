@@ -121,6 +121,7 @@ class RequestRouter implements RouterInterface
             }
             $methodMatch = strtolower($requestMethod) === strtolower($el['method']);
             $methodUri = $serverBaseUri . rtrim($el['methodUri'], '/');
+            $methodUri = str_replace('//', '/', $methodUri);
             $methodUri = parse_url($methodUri,PHP_URL_PATH);
             if ($methodMatch) {
                 $regex = '#^' . $methodUri . '$#i';
@@ -171,15 +172,6 @@ class RequestRouter implements RouterInterface
             $route->setCacheControlMaxAge($methodMeta['cacheControlMaxAge']);
         }
         return $route;
-    }
-
-    /**
-     *
-     * @return the $resourceFiles
-     */
-    public function getResource()
-    {
-        return $this->resources;
     }
 
     /**

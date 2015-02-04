@@ -27,7 +27,6 @@ use restlt\routing\Route;
 use restlt\exceptions\ApplicationException;
 use restlt\log\NullLogger;
 use restlt\log\Log;
-use restlt\output\JsonOutputStrategy;
 use restlt\exceptions\ServerException;
 
 /**
