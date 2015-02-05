@@ -123,6 +123,7 @@ class RequestRouter implements RouterInterface
             $methodUri = $serverBaseUri . rtrim($el['methodUri'], '/');
             $methodUri = str_replace('//', '/', $methodUri);
             $methodUri = parse_url($methodUri,PHP_URL_PATH);
+
             if ($methodMatch) {
                 $regex = '#^' . $methodUri . '$#i';
                 $pregres = preg_match($regex, $uri, $matches);
@@ -136,7 +137,6 @@ class RequestRouter implements RouterInterface
                 array_shift($matches);
                 $el['params'] = $matches;
             }
-
             return $ret;
         };
 

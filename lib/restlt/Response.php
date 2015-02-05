@@ -627,9 +627,10 @@ class Response implements \restlt\ResponseInterface
     {
         $errorStack = $resource->getErrors();
         $errorStack->rewind();
+        $resultObject = $this->getResultObject();
         while ($errorStack->valid()) {
             $error = $errorStack->pop();
-            $this->getResultObject()->addError($error[0], isset($error[1]) ? $error[1] : null);
+            $resultObject->addError($error[0], isset($error[1]) ? $error[1] : null);
             $errorStack->next();
         }
     }
