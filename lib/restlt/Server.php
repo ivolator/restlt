@@ -29,9 +29,9 @@ use restlt\log\Log;
 use restlt\cache\CacheAdapterInterface;
 use restlt\Cache;
 use restlt\meta\MetadataBuilder;
-use restlt\exceptions\ServerException;
 use restlt\meta\MetadataBuilderInterface;
 use restlt\meta\AnnotationsParser;
+use Psr\Log\LogLevel;
 
 /**
  *
@@ -127,6 +127,7 @@ class Server
      */
     public function serve()
     {
+        $start = microtime(true);
         try {
             $docMeta = array();
             if (true === $this->autoDocs) {
@@ -147,7 +148,9 @@ class Server
             $this->getLog()->log('RestLt: Exception Code' . PHP_EOL . $e->getCode());
             $this->getLog()->log('RestLt: Exception Trace' . PHP_EOL . $e->getTraceAsString());
         }
-        $this->getLog()->log('RestLt: RESPONSE' . PHP_EOL . $ret);
+        $this->getLog()->log('RestLt: RESPONSE' . PHP_EOL . $ret, LogLevel::INFO);
+        $end = microtime(true);
+        $this->getLog()->log('Total framework + resource time  :  ' . ($end - $start), LogLevel::INFO);
         return $ret;
     }
 

@@ -63,6 +63,7 @@ class Result implements ResultInterface {
 	 */
 	public function setErrors($errors) {
 		$this->errors = $errors;
+		return $this;
 	}
 
 	public function addError($errorMessage, $errorCode) {
@@ -81,6 +82,7 @@ class Result implements ResultInterface {
 	 */
 	public function setData($data) {
 		$this->data = $data;
+		return $this;
 	}
 
 	/**

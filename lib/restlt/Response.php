@@ -231,7 +231,13 @@ class Response implements \restlt\ResponseInterface
                         $this,
                         $e
                     ));
-                    $this->setStatus(Response::INTERNALSERVERERROR);
+
+                    //Keep the set status unless its 200
+                    if($this->status && $this->status !== self::OK){
+                        $this->setStatus($this->status);
+                    } else {
+                        $this->setStatus(Response::INTERNALSERVERERROR);
+                    }
                     $this->executeCallbacks(Resource::ON_AFTER, $route->getFunctionName(), $cbs, array(
                         $router->getRequest(),
                         $this,
