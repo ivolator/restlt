@@ -42,7 +42,7 @@ class ServerTest extends RestLiteTest {
 		$this->mockServer->expects ( $this->any () )->method ( 'getRequestRouter' )->will ( $this->returnValue ( new MockRequestRouter () ) );
 		$this->mockServer->expects ( $this->any () )->method ( 'getResponse' )->will ( $this->returnValue ( $this->mockResponse ) );
 
-		$this->mockServer->expects ( $this->exactly ( 3 ) )->method ( 'getLog' )->will ( $this->returnValue ( new \restlt\log\Log(new NullLogger(), 'critical') ) );
+		$this->mockServer->expects ( $this->any() )->method ( 'getLog' )->will ( $this->returnValue ( new \restlt\log\Log(new NullLogger(), 'critical') ) );
 
 		echo $this->mockServer->serve ( false );
 		$this->expectOutputString ( 'responsestring' );
