@@ -12,7 +12,7 @@ In require section of your composer.json file add the information for RestLt as 
 { 
         "require" :
         { 
-                "restlt/restlt":"1.0.3b"
+                "restlt/restlt":"1.1.0b"
         }
 }
 ```
