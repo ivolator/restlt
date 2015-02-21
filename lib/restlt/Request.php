@@ -225,4 +225,17 @@ class Request implements \restlt\RequestInterface {
 		}
 		return $ret;
 	}
+
+	/**
+	 *
+	 * @return boolean
+	 */
+	function isHttpsRequest()
+	{
+	    $ret = false;
+	    if (! empty($_SERVER['HTTPS']) || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) {
+	        $ret = true;
+	    }
+	    return $ret;
+	}
 }

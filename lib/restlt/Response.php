@@ -208,7 +208,7 @@ class Response implements \restlt\ResponseInterface
                     $resourceObj->setAnnotations($route);
                     // before the method was processed
                     $this->executeCallbacks(Resource::ON_BEFORE, $route->getFunctionName(), $cbs, array(
-                        $router->getRequest()
+                        $resourceObj,
                     ));
                     register_shutdown_function(array(
                         $this,
@@ -221,19 +221,17 @@ class Response implements \restlt\ResponseInterface
                     ), $params);
                     // after method was processed
                     $this->executeCallbacks(Resource::ON_AFTER, $route->getFunctionName(), $cbs, array(
-                        $router->getRequest(),
-                        $this,
+                        $resourceObj,
                         $ret
                     ));
                 } catch (\Exception $e) {
                     $this->executeCallbacks(Resource::ON_ERROR, $route->getFunctionName(), $cbs, array(
-                        $router->getRequest(),
-                        $this,
+                        $resourceObj,
                         $e
                     ));
 
-                    //Keep the set status unless its 200
-                    if($this->status && $this->status !== self::OK){
+                    // Keep the set status unless its 200
+                    if ($this->status && $this->status !== self::OK) {
                         $this->setStatus($this->status);
                     } else {
                         $this->setStatus(Response::INTERNALSERVERERROR);
