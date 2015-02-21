@@ -183,10 +183,11 @@ or instead of a closure, pass a Callable
 The callback function provided for this event has the following signature
 ```php
     /**
-     * @param \restlt\Request $r 
+     * ON_BEFORE callbakc
+     * @param \restlt\Resource $resource 
      * @return void
      * /
-    $f = function (\restlt\Request $r){};
+    $f = function (\restlt\Resource $resource){};
 ```
 ### On After event - * after the resource function returns *
 ```php
@@ -195,12 +196,12 @@ $this->on ( Resource::ON_AFTER, 'myFunctionName', array($obj,$method) );
     * The callback function provided for this event has the following signature *
 ```php
     /**
-     * @param \restlt\Request $request 
-     * @param \restlt\Response $response
+     * ON_AFTER call back
+     * @param \restlt\Resource $resource 
      * @param mixed $return the result of your resource method
      * @return void
      * /
-    $f = function (\restlt\Request $request, \restlt\Response $response, $return){};
+    $f = function (\restlt\Resource $resource, $return){};
 ```
 ### On error - * when an error occurs inside the method *
 If you throw an exception within a method it will get eventually caught in the top layer and you'll get 500. This event actually is triggered when E_ERROR,E_USER_ERROR,E_WARNING,E_USER_WARNING,E_CORE_ERROR,E_CORE_WARNING,E_DEPRECATED,E_STRICT are thrown.
@@ -210,12 +211,12 @@ If you throw an exception within a method it will get eventually caught in the t
 Follows the callback function signature
 ```php
 /**
-* @param \restlt\Request $r 
-* @param \restlt\Response $r
-* @return \Exception $exception - the result of your resource method
-* @return void
-* /
-$f = function (\restlt\Request $request, \restlt\Response $response,\Exception $exception){};
+ * ON_ERROR call back
+ * @param \restlt\Resource $resource 
+ * @return \Exception $exception - the result of your resource method
+ * @return void
+ * /
+$f = function (\restlt\Resource $resource, \Exception $exception){};
 ```
 ## register event examples: 
 ### Register ON_BEFORE event hook for a specific resource method
