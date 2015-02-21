@@ -254,10 +254,11 @@ The HTTP status code however will be 500.</p>
 <p>The callback function provided for this event has the following signature</p>
 
 <div class="highlight highlight-php"><pre><span class="pl-s2">    <span class="pl-c">/**</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> \restlt\Request $r </span></span>
+<span class="pl-s2"><span class="pl-c">     * ON_BEFORE callbakc</span></span>
+<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> \restlt\Resource $resource </span></span>
 <span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@return</span> void</span></span>
 <span class="pl-s2"><span class="pl-c">     * /</span></span>
-<span class="pl-s2"><span class="pl-c"><span class="pl-ii">    $f = function (\restlt\Request $r){};</span></span></span></pre></div>
+<span class="pl-s2"><span class="pl-c"><span class="pl-ii">    $f = function (\restlt\Resource $resource){};</span></span></span></pre></div>
 
 <h3>
 <a id="on-after-event----after-the-resource-function-returns-" class="anchor" href="#on-after-event----after-the-resource-function-returns-" aria-hidden="true"><span class="octicon octicon-link"></span></a>On After event - * after the resource function returns *</h3>
@@ -268,12 +269,12 @@ The HTTP status code however will be 500.</p>
 </code></pre>
 
 <div class="highlight highlight-php"><pre><span class="pl-s2">    <span class="pl-c">/**</span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> \restlt\Request $request </span></span>
-<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> \restlt\Response $response</span></span>
+<span class="pl-s2"><span class="pl-c">     * ON_AFTER call back</span></span>
+<span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> \restlt\Resource $resource </span></span>
 <span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@param</span> mixed $return the result of your resource method</span></span>
 <span class="pl-s2"><span class="pl-c">     * <span class="pl-k">@return</span> void</span></span>
 <span class="pl-s2"><span class="pl-c">     * /</span></span>
-<span class="pl-s2"><span class="pl-c"><span class="pl-ii">    $f = function (\restlt\Request $request, \restlt\Response $response, $return){};</span></span></span></pre></div>
+<span class="pl-s2"><span class="pl-c"><span class="pl-ii">    $f = function (\restlt\Resource $resource, $return){};</span></span></span></pre></div>
 
 <h3>
 <a id="on-error----when-an-error-occurs-inside-the-method-" class="anchor" href="#on-error----when-an-error-occurs-inside-the-method-" aria-hidden="true"><span class="octicon octicon-link"></span></a>On error - * when an error occurs inside the method *</h3>
@@ -285,12 +286,12 @@ The HTTP status code however will be 500.</p>
 <p>Follows the callback function signature</p>
 
 <div class="highlight highlight-php"><pre><span class="pl-s2"><span class="pl-c">/**</span></span>
-<span class="pl-s2"><span class="pl-c">* <span class="pl-k">@param</span> \restlt\Request $r </span></span>
-<span class="pl-s2"><span class="pl-c">* <span class="pl-k">@param</span> \restlt\Response $r</span></span>
-<span class="pl-s2"><span class="pl-c">* <span class="pl-k">@return</span> \Exception $exception - the result of your resource method</span></span>
-<span class="pl-s2"><span class="pl-c">* <span class="pl-k">@return</span> void</span></span>
-<span class="pl-s2"><span class="pl-c">* /</span></span>
-<span class="pl-s2"><span class="pl-c"><span class="pl-ii">$f = function (\restlt\Request $request, \restlt\Response $response,\Exception $exception){};</span></span></span></pre></div>
+<span class="pl-s2"><span class="pl-c"> * ON_ERROR call back</span></span>
+<span class="pl-s2"><span class="pl-c"> * <span class="pl-k">@param</span> \restlt\Resource $resource </span></span>
+<span class="pl-s2"><span class="pl-c"> * <span class="pl-k">@return</span> \Exception $exception - the result of your resource method</span></span>
+<span class="pl-s2"><span class="pl-c"> * <span class="pl-k">@return</span> void</span></span>
+<span class="pl-s2"><span class="pl-c"> * /</span></span>
+<span class="pl-s2"><span class="pl-c"><span class="pl-ii">$f = function (\restlt\Resource $resource, \Exception $exception){};</span></span></span></pre></div>
 
 <h2>
 <a id="register-event-examples" class="anchor" href="#register-event-examples" aria-hidden="true"><span class="octicon octicon-link"></span></a>register event examples:</h2>
