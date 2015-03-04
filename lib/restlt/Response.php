@@ -576,12 +576,8 @@ class Response implements \restlt\ResponseInterface
         if (in_array($error['type'], array(
             E_ERROR,
             E_USER_ERROR,
-            E_WARNING,
-            E_USER_WARNING,
             E_CORE_ERROR,
-            E_CORE_WARNING,
-            E_DEPRECATED,
-            E_STRICT
+            E_COMPILE_ERROR
         ))) {
             $msg = 'An error with message ' . $error['message'] . ' occured at line ' . $error['line'] . ' in ' . $error['file'];
             $this->getLog()->log($msg, $this->getLog()
