@@ -116,10 +116,16 @@ class Server
             $this,
             'shutdown'
         ));
-        if (! $request)
+        if (! $request) {
             $this->setRequest(new Request());
-        if (! $response)
+        } else {
+            $this->setRequest($request);
+        }
+        if (! $response) {
             $this->setResponse(new Response());
+        } else {
+            $this->setResponse($response);
+        }
     }
 
     /**
@@ -360,7 +366,7 @@ class Server
         if (in_array($error['type'], array(
             E_ERROR,
             E_USER_ERROR,
-            E_CORE_ERROR, 
+            E_CORE_ERROR,
             E_COMPILE_ERROR
         ))) {
             $msg = 'An error with message ' . $error['message'] . ' occured at line ' . $error['line'] . ' in ' . $error['file'];

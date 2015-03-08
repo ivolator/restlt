@@ -23,11 +23,12 @@
  */
 namespace restlt;
 
-use restlt\routing\Route;
 use restlt\exceptions\ApplicationException;
+use restlt\exceptions\ServerException;
 use restlt\log\NullLogger;
 use restlt\log\Log;
-use restlt\exceptions\ServerException;
+use restlt\routing\RequestRouter;
+use restlt\routing\Route;
 
 /**
  *
@@ -180,6 +181,11 @@ class Response implements \restlt\ResponseInterface
         $this->headers[$name] = $value;
     }
 
+    protected function getResourceObj(Route $route, RequestRouter $router){
+        $class = $route->getClassName();
+        $resourceObj = new $class($router->getRequest(), $this);
+        return $resourceObj;
+    }
     /**
      *
      * @param RequestRouter $route
@@ -193,8 +199,7 @@ class Response implements \restlt\ResponseInterface
         $route = $router->getRoute();
 
         if ($route && $route->getClassName() && $route->getFunctionName()) {
-            $class = $route->getClassName();
-            $resourceObj = new $class($router->getRequest(), $this);
+            $resourceObj = $this->getResourceObj($route, $router);
             if ($this->log) {
                 $resourceObj->setLog($this->log);
             }

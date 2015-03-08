@@ -110,6 +110,7 @@ class RequestRouter implements RouterInterface
      */
     public function matchResource($uri, $requestMethod)
     {
+        $uri = urldecode($uri);
         $uri = '/' . trim($uri, '/');
         $serverBaseUri = $this->getServerBaseUri();
         $filterMatchingMethods = function (&$el) use($uri, $requestMethod, $serverBaseUri)
