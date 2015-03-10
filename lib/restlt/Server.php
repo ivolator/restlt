@@ -152,9 +152,6 @@ class Server
             $this->getRequestRouter()->setMetadataBuilder($this->getMetadataBuilder());
             $this->getResponse()->setRequestRouter($this->getRequestRouter());
             $this->getResponse()->setLog($this->getLog());
-echo '<pre>IM**' . __FILE__.'::'.__METHOD__.'::'.__LINE__ . PHP_EOL . '<br />';
-var_dump($this->getCacheInstance()->get('resourceClasses'));
-echo '</pre>';
             $ret = $this->getResponse()->send();
         } catch (\Exception $e) {
             $this->getResponse()->setStatus(Response::INTERNALSERVERERROR);
@@ -185,9 +182,6 @@ echo '</pre>';
         if($this->getCacheInstance()->test('resourceClasses')){
             return $this;
         }
-        echo '<pre>IM**' . __FILE__.'::'.__METHOD__.'::'.__LINE__ . PHP_EOL . '<br />';
-        var_dump($this->getCacheInstance()->get('resourceClasses'));
-        echo '</pre>';
         if (class_exists($className, true)) {
             if (! empty($fileName)) {
                 $this->resourceClasses[$fileName] = $className;
@@ -217,9 +211,6 @@ echo '</pre>';
     {
         //no need to do again if cached
         if($this->getCacheInstance()->test('resourceClasses')){
-        echo '<pre>IM**' . __FILE__.'::'.__METHOD__.'::'.__LINE__ . PHP_EOL . '<br />';
-        var_dump($this->getCacheInstance()->get('resourceClasses'));
-        echo '</pre>';
             return $this;
         }
         if (is_readable($folderPath) && is_dir($folderPath)) {
