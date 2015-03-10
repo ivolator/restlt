@@ -48,7 +48,6 @@ class DoctrineCacheAdapter implements CacheAdapterInterface {
 		} else {
 			throw ApplicationException::cacheException('This cache provider is not part of Doctrine');
 		}
-
 	}
 
 	/**
@@ -57,7 +56,8 @@ class DoctrineCacheAdapter implements CacheAdapterInterface {
 	 * @see \restlt\cache\CacheAdapterInterface::get()
 	 */
 	public function get($key) {
-		return $this->doctrineCache->fetch($key);
+		$ret = $this->doctrineCache->fetch($key);
+		return $ret;
 	}
 
 	/**
@@ -65,8 +65,9 @@ class DoctrineCacheAdapter implements CacheAdapterInterface {
 	 *
 	 * @see \restlt\cache\CacheAdapterInterface::set()
 	 */
-	public function set($key, $item) {
-		return $this->doctrineCache->save($key, $item);
+	public function set($key, $item, $ttl = 0) {
+		$ret = $this->doctrineCache->save($key, $item, $ttl);
+		return $ret;
 	}
 
 	/**

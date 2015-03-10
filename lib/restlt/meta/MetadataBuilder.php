@@ -102,11 +102,7 @@ class MetadataBuilder implements MetadataBuilderInterface{
 	public function buildMeta() {
 		$ret = array();
 
-		if ($this->cache && $this->cache->test ( $this->getCacheKey () )) {
-			$ret = $this->cache->get ( $this->getCacheKey () );
-		}
-
-		if (! $ret && $this->resourceClasses) {
+		if ($this->resourceClasses) {
 			foreach ( $this->resourceClasses as $class ) {
 				$classMeta = $this->getAnnotationsParser()->getClassMeta ( $class );
 				$methodsMeta = $this->getAnnotationsParser()->getMethodMeta ( $class );
@@ -123,12 +119,12 @@ class MetadataBuilder implements MetadataBuilderInterface{
 					return isset($el['method']);
 				});
 				$ret [$class] = $methodsMeta;
+				yield $class => $methodsMeta;
 			}
 
-			$this->cache && $this->cache->set ( $this->getCacheKey (), $ret );
+		} else {
+		    yield null;
 		}
-
-		return $ret;
 	}
 
 	/**

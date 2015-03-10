@@ -30,57 +30,66 @@ namespace restlt;
  * @author Vo
  *
  */
-class Cache {
+class Cache
+{
 
-	/**
-	 *
-	 * @var \restlt\cache\CacheAdapterInterface
-	 */
-	protected $cacheAdapter = null;
+    /**
+     *
+     * @var \restlt\cache\CacheAdapterInterface
+     */
+    protected $cacheAdapter = null;
 
-	public function __construct(\restlt\cache\CacheAdapterInterface $cacheAdapter = null) {
-		if ($cacheAdapter) {
-			$this->cacheAdapter = $cacheAdapter;
-		}
-	}
-	/**
-	 *
-	 * @return boolean
-	 */
-	public function test($key) {
-		return $this->cacheAdapter->test ( $key );
-	}
+    public function __construct(\restlt\cache\CacheAdapterInterface $cacheAdapter = null)
+    {
+        if ($cacheAdapter) {
+            $this->cacheAdapter = $cacheAdapter;
+        }
+    }
 
-	/**
-	 *
-	 * @param string $key
-	 * @param mixed $item
-	 * @return boolean
-	 */
-	public function set($key, $item) {
-		return $this->cacheAdapter->set ( $key, $item );
-	}
+    /**
+     *
+     * @return boolean
+     */
+    public function test($key)
+    {
+        return $this->cacheAdapter->test($key);
+    }
 
-	/**
-	 *
-	 * @return mixed
-	 */
-	public function get($key) {
-		return $this->cacheAdapter->get ( $key );
-	}
-	/**
-	 *
-	 * @return restlt\cache\CacheAdapterInterface $cacheAdapter
-	 */
-	public function getCacheAdapter() {
-		return $this->cacheAdapter;
-	}
+    /**
+     *
+     * @param string $key
+     * @param mixed $item
+     * @return boolean
+     */
+    public function set($key, $item, $ttl = 0)
+    {
+        return $this->cacheAdapter->set($key, $item, $ttl);
+    }
 
-	/**
-	 *
-	 * @param restlt\cache\CacheAdapterInterface $cacheAdapter
-	 */
-	public function setCacheAdapter($cacheAdapter) {
-		return $this->cacheAdapter = $cacheAdapter;
-	}
+    /**
+     *
+     * @return mixed
+     */
+    public function get($key)
+    {
+        return $this->cacheAdapter->get($key);
+    }
+
+    /**
+     *
+     * @return restlt\cache\CacheAdapterInterface $cacheAdapter
+     */
+    public function getCacheAdapter()
+    {
+        return $this->cacheAdapter;
+    }
+
+    /**
+     *
+     * @param restlt\cache\CacheAdapterInterface $cacheAdapter
+     */
+    public function setCacheAdapter($cacheAdapter)
+    {
+        return $this->cacheAdapter = $cacheAdapter;
+    }
 }
