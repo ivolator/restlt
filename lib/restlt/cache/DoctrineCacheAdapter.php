@@ -75,6 +75,6 @@ class DoctrineCacheAdapter implements CacheAdapterInterface {
 	 * @see \restlt\cache\CacheAdapterInterface::test()
 	 */
 	public function test($key) {
-		return $this->doctrineCache->delete($key);
+		return $this->doctrineCache->contains($key);
 	}
 }
