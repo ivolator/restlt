@@ -68,7 +68,6 @@ class RestltMemcachedAdapter implements CacheAdapterInterface {
 		if ($res) {
 			$ret = true;
 		}
-	    error_log(' TEST result code ' . $this->mc->getResultCode ()  . PHP_EOL, 3, '/tmp/xhprof.log');
 		return $ret;
 	}
 
@@ -80,7 +79,6 @@ class RestltMemcachedAdapter implements CacheAdapterInterface {
 		if ($this->mc->getResultCode () == \Memcached::RES_NOTFOUND) {
 			$ret = false;
 		}
-	    error_log(' SET result code' . $this->mc->getResultCode ()  . PHP_EOL, 3, '/tmp/xhprof.log');
 		return true;
 	}
 

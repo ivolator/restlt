@@ -23,28 +23,35 @@
  */
 namespace restlt\cache;
 
-interface CacheAdapterInterface{
-	/**
-	 *
-	 * adapter configurations options
-	 * @param array $options
-	 */
-	public function __construct( $cacheInstance = null);
+interface CacheAdapterInterface
+{
 
-	/**
-	 * @return boolean
-	 */
-	public function test($key);
+    /**
+     *
+     *
+     * adapter configurations options
+     *
+     * @param array $options
+     */
+    public function __construct($cacheInstance = null);
 
-	/**
-	 * @param string $key
-	 * @param mixed $item
-	 * @return boolean
-	 */
-	public function set($key,$item);
+    /**
+     *
+     * @return boolean
+     */
+    public function test($key);
 
-	/**
-	 * @return mixed
-	 */
-	public function get($key);
+    /**
+     *
+     * @param string $key
+     * @param mixed $item
+     * @return boolean
+     */
+    public function set($key, $item, $ttl = 0);
+
+    /**
+     *
+     * @return mixed
+     */
+    public function get($key);
 }
