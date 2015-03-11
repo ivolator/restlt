@@ -163,8 +163,6 @@ class RequestRouter implements RouterInterface
 
         $filtered = array();
         foreach ($this->getMetadataBuilder()->getResourcesMeta() as $className => $resMeta) {
-            $res = null;
-
             $res = array_filter($resMeta, $filterMatchingMethods);
             if ($res) {
                 $filtered[$className] = $res;

@@ -125,6 +125,11 @@ class MetadataBuilder implements MetadataBuilderInterface{
 		} else {
 		    yield null;
 		}
+		//add selfdocumenting
+		$docs = $this->server->getSelfAutoDocsMeta();
+		$keys = array_keys($docs);
+		$vals = array_values($docs);
+		yield $keys[0] => $vals[0];
 	}
 
 	/**
@@ -189,4 +194,5 @@ class MetadataBuilder implements MetadataBuilderInterface{
 	public function getCacheKey() {
 		return $this->cacheKeySalt . self::META_CACHE_KEY;
 	}
+
 }

@@ -146,8 +146,6 @@ class Server
                 $docMeta = $this->getSelfAutoDocsMeta();
             }
             $this->getLog()->log('RestLt: REQUEST' . PHP_EOL . $this->getRequest());
-//             $resources = array_merge($this->getMetadataBuilder()->getResourcesMeta(), $docMeta);
-//             $this->getRequestRouter()->setResources($resources);
             $this->getRequestRouter()->setCache($this->getCacheInstance());
             $this->getRequestRouter()->setMetadataBuilder($this->getMetadataBuilder());
             $this->getResponse()->setRequestRouter($this->getRequestRouter());
