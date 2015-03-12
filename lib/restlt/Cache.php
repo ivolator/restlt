@@ -63,7 +63,8 @@ class Cache
      */
     public function set($key, $item, $ttl = 0)
     {
-        return $this->cacheAdapter->set($key, $item, $ttl);
+        $data = serialize($item);
+        return $this->cacheAdapter->set($key, $data, $ttl);
     }
 
     /**
@@ -72,7 +73,9 @@ class Cache
      */
     public function get($key)
     {
-        return $this->cacheAdapter->get($key);
+        $ret = $this->cacheAdapter->get($key);
+        $ret = unserialize($ret);
+        return $ret;
     }
 
     /**
