@@ -29,6 +29,7 @@ use restlt\log\NullLogger;
 use restlt\log\Log;
 use restlt\routing\RequestRouter;
 use restlt\routing\Route;
+use Psr\Log\LogLevel;
 
 /**
  *
@@ -183,8 +184,11 @@ class Response implements \restlt\ResponseInterface
 
     protected function getResourceObj(Route $route, RequestRouter $router){
         $class = $route->getClassName();
-        $resourceObj = new $class($router->getRequest(), $this);
-        return $resourceObj;
+        if(class_exists($class)){
+            return new $class($router->getRequest(), $this);
+        }
+        $this->getLog()->log('Resource class ' . $class .' was not found',LogLevel::CRITICAL);
+        throw ServerException::notFound();
     }
     /**
      *
