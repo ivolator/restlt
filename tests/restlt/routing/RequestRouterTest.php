@@ -36,7 +36,8 @@ class RequestRouterTest extends RestLiteTest
         $mockRouter = $this->getMockBuilder('\restlt\routing\RequestRouter')
             ->disableOriginalConstructor()
             ->setMethods(array(
-            'getRequest'
+            'getRequest',
+            'getMetadataBuilder'
         ))
             ->getMock();
 
@@ -45,8 +46,12 @@ class RequestRouterTest extends RestLiteTest
             ->will($this->returnValue($mockRequest));
 
         $mockRouter->setServerBaseUri('/baseuri');
+        $bldr = new MyMetadataBldr();
+        $bldr->meta = $resources;
+        $mockRouter->expects($this->any())
+            ->method('getMetadataBuilder')
+            ->will($this->returnValue($bldr));
 
-        $mockRouter->setResources($resources);
         $ret = $mockRouter->getRoute();
 
         $arr = array_keys($resources);
@@ -79,7 +84,8 @@ class RequestRouterTest extends RestLiteTest
         $mockRouter = $this->getMockBuilder('\restlt\routing\RequestRouter')
             ->disableOriginalConstructor()
             ->setMethods(array(
-            'getRequest'
+            'getRequest',
+            'getMetadataBuilder'
         ))
             ->getMock();
 
@@ -88,8 +94,12 @@ class RequestRouterTest extends RestLiteTest
             ->will($this->returnValue($mockRequest));
 
         $mockRouter->setServerBaseUri('/baseuri');
+        $bldr = new MyMetadataBldr();
+        $bldr->meta = $resources;
+        $mockRouter->expects($this->any())
+            ->method('getMetadataBuilder')
+            ->will($this->returnValue($bldr));
 
-        $mockRouter->setResources($resources);
         $mockRouter->getRoute();
     }
 
@@ -196,5 +206,16 @@ class RequestRouterTest extends RestLiteTest
     protected function tearDown()
     {
         parent::tearDown();
+    }
+}
+
+class MyMetadataBldr
+{
+
+    public $meta = [];
+
+    public function getResourcesMeta()
+    {
+        return $this->meta;
     }
 }
