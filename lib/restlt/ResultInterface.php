@@ -24,13 +24,25 @@
 namespace restlt;
 
 use restlt\output\TypeConversionStrategyInterface;
+
 /**
  *
  * @author Vo
  *
  */
-interface ResultInterface {
-	public function toString(TypeConversionStrategyInterface $conversionStrategy = null);
-	public function setData($data);
+interface ResultInterface
+{
+
+    public function toString(TypeConversionStrategyInterface $conversionStrategy = null);
+
+    public function setData($data);
+
+    public function getData();
+
+    public function addError();
+
+    public function setHttpStatus($status);
+
+    public function getHttpStatus();
 }
 
