@@ -1,6 +1,6 @@
-##A "thin" REST-full server implementation in PHP 
+#A "thin" REST-full server implementation in PHP 
 RestLt is a flexible small library that will allow you to build RESTfull service.
-Most of the sub-components are extensible or replaceable. This would let you modify the server's behavior.
+V2.0.0b is PHP 5.5 and up
 Any feedback is appreciated!
 
 
@@ -12,7 +12,7 @@ In require section of your composer.json file add the information for RestLt as 
 { 
         "require" :
         { 
-                "restlt/restlt":"1.1.0b"
+                "restlt/restlt":"2.0.0b"
         }
 }
 ```

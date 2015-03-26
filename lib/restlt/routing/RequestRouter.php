@@ -41,6 +41,18 @@ class RequestRouter implements RouterInterface
 
     /**
      *
+     * @var \restlt\Cache
+     */
+    protected $cache = null;
+
+    /**
+     *
+     * @var \restlt\meta\MetadataBuilderInterface
+     */
+    protected $metadataBuilder = null;
+
+    /**
+     *
      * @var array
      */
     protected $resources = array();
@@ -112,6 +124,14 @@ class RequestRouter implements RouterInterface
     {
         $uri = urldecode($uri);
         $uri = '/' . trim($uri, '/');
+        // bail out early
+        if ($this->cache && $this->cache->test($uri)) {
+            $route = $this->cache->get($uri);
+            if (false !== $route) {
+                return $route;
+            }
+        }
+
         $serverBaseUri = $this->getServerBaseUri();
         $filterMatchingMethods = function (&$el) use($uri, $requestMethod, $serverBaseUri)
         {
@@ -123,7 +143,7 @@ class RequestRouter implements RouterInterface
             $methodMatch = strtolower($requestMethod) === strtolower($el['method']);
             $methodUri = $serverBaseUri . rtrim($el['methodUri'], '/');
             $methodUri = str_replace('//', '/', $methodUri);
-            $methodUri = parse_url($methodUri,PHP_URL_PATH);
+            $methodUri = parse_url($methodUri, PHP_URL_PATH);
 
             if ($methodMatch) {
                 $regex = '#^' . $methodUri . '$#i';
@@ -142,9 +162,7 @@ class RequestRouter implements RouterInterface
         };
 
         $filtered = array();
-        foreach ($this->resources as $className => $resMeta) {
-            $res = null;
-
+        foreach ($this->getMetadataBuilder()->getResourcesMeta() as $className => $resMeta) {
             $res = array_filter($resMeta, $filterMatchingMethods);
             if ($res) {
                 $filtered[$className] = $res;
@@ -171,6 +189,10 @@ class RequestRouter implements RouterInterface
         }
         if (! empty($methodMeta['cacheControlMaxAge'])) {
             $route->setCacheControlMaxAge($methodMeta['cacheControlMaxAge']);
+        }
+
+        if ($this->cache) {
+            $this->cache->set($uri, $route);
         }
         return $route;
     }
@@ -236,7 +258,46 @@ class RequestRouter implements RouterInterface
      *
      * @return \restlt\routing\Route
      */
-    public function createRouteObject(){
+    public function createRouteObject()
+    {
         return new Route();
+    }
+
+    /**
+     *
+     * @return \restlt\meta\MetadataBuilderInterface $metadataBuilder
+     */
+    public function getMetadataBuilder()
+    {
+        return $this->metadataBuilder;
+    }
+
+    /**
+     *
+     * @param \restlt\meta\MetadataBuilderInterface $metadataBuilder
+     */
+    public function setMetadataBuilder(\restlt\meta\MetadataBuilderInterface $metadataBuilder)
+    {
+        $this->metadataBuilder = $metadataBuilder;
+        return $this;
+    }
+
+    /**
+     *
+     * @return the $cache
+     */
+    public function getCache()
+    {
+        return $this->cache;
+    }
+
+    /**
+     *
+     * @param CacheAwareTrait $cache
+     */
+    public function setCache($cache)
+    {
+        $this->cache = $cache;
+        return $this;
     }
 }

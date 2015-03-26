@@ -32,6 +32,7 @@ use restlt\meta\MetadataBuilder;
 use restlt\meta\MetadataBuilderInterface;
 use restlt\meta\AnnotationsParser;
 use Psr\Log\LogLevel;
+use restlt\cache\NullCacheAdapter;
 
 /**
  *
@@ -40,6 +41,11 @@ use Psr\Log\LogLevel;
  */
 class Server
 {
+    /**
+     *
+     * @var \restlt\Cache
+     */
+    protected static $cacheInstance = null;
 
     /**
      * The path after the domain that will precede all resource URIS
@@ -140,11 +146,10 @@ class Server
                 $docMeta = $this->getSelfAutoDocsMeta();
             }
             $this->getLog()->log('RestLt: REQUEST' . PHP_EOL . $this->getRequest());
-            $resources = array_merge($this->getMetadataBuilder()->getResourcesMeta(), $docMeta);
-            $this->getRequestRouter()->setResources($resources);
+            $this->getRequestRouter()->setCache($this->getCacheInstance());
+            $this->getRequestRouter()->setMetadataBuilder($this->getMetadataBuilder());
             $this->getResponse()->setRequestRouter($this->getRequestRouter());
             $this->getResponse()->setLog($this->getLog());
-
             $ret = $this->getResponse()->send();
         } catch (\Exception $e) {
             $this->getResponse()->setStatus(Response::INTERNALSERVERERROR);
@@ -171,6 +176,10 @@ class Server
      */
     public function registerResourceClass($className, $fileName = null)
     {
+        //no need to do again if cached
+        if($this->getCacheInstance()->test('resourceClasses')){
+            return $this;
+        }
         if (class_exists($className, true)) {
             if (! empty($fileName)) {
                 $this->resourceClasses[$fileName] = $className;
@@ -198,6 +207,10 @@ class Server
      */
     public function registerResourceFolder($folderPath, $namespace = '\\')
     {
+        //no need to do again if cached
+        if($this->getCacheInstance()->test('resourceClasses')){
+            return $this;
+        }
         if (is_readable($folderPath) && is_dir($folderPath)) {
             foreach (glob($folderPath . '/*.php') as $value) {
                 $pathinfo = pathinfo($value);
@@ -314,15 +327,29 @@ class Server
         if (! $this->metadataBuilder) {
             $mdb = new MetadataBuilder($this, $this->getResourceClasses());
             $mdb->setAnnotationsParser(new AnnotationsParser());
-            if ($this->getCacheAdapter()) {
-                $cache = new Cache($this->getCacheAdapter());
-                $mdb->setCache($cache);
-            }
+            $mdb->setCache($this->getCacheInstance());
+            $this->getCacheInstance()->set('resourceClasses', $this->getResourceClasses());
             $this->metadataBuilder = $mdb;
         }
         return $this->metadataBuilder;
     }
 
+    /**
+     * @return \restlt\Cache
+     */
+    protected function getCacheInstance(){
+        if(self::$cacheInstance){
+            return self::$cacheInstance;
+        }
+
+        if ($this->getCacheAdapter()) {
+            self::$cacheInstance = new Cache($this->getCacheAdapter());
+        } else {
+            self::$cacheInstance = new Cache(new NullCacheAdapter());
+        }
+
+        return self::$cacheInstance;
+    }
     /**
      *
      * @param \restlt\meta\MetadataBuilderInterface $metadataBuilder
@@ -381,6 +408,9 @@ class Server
      */
     public function getResourceClasses()
     {
+        if($this->getCacheInstance()->test('resourceClasses')){
+            $this->resourceClasses = $this->getCacheInstance()->get('resourceClasses');
+        }
         return $this->resourceClasses;
     }
 

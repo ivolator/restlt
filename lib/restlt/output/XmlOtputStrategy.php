@@ -23,8 +23,6 @@
  */
 namespace restlt\output;
 
-use restlt\Result;
-
 class XmlOtputStrategy implements TypeConversionStrategyInterface
 {
 
@@ -54,7 +52,7 @@ class XmlOtputStrategy implements TypeConversionStrategyInterface
      * @param \DOMElement $domEl
      * @return DOMElement
      */
-    protected function fromMixed($mixed, \DOMElement $domEl = null)
+    protected function fromMixed($mixed,\DOMElement $domEl = null)
     {
         if (! $domEl) {
             $domEl = $this->dom->createElement('result');
