@@ -148,14 +148,6 @@ class Request implements \restlt\RequestInterface {
 	protected function buildHeadersList(array $SERVER = array()) {
 		$ret = array ();
 
-		$accpetable = '#(' . Response::APPLICATION_JSON . ')|(' . Response::APPLICATION_XML . ')|(' . Response::TEXT_PLAIN . ')|(application/.*\+json)|(application/.*\+xml)#';
-		if (isset ( $_SERVER ['HTTP_ACCEPT'] )) {
-			$res = preg_match ( $accpetable, $_SERVER ['HTTP_ACCEPT'], $match );
-			if (! $res) {
-				throw new ServerException ( 'Invalid request MIME type', Response::NOTACCEPTABLE );
-			}
-		}
-
 		if ($SERVER) {
 			foreach ( $SERVER as $k => $v ) {
 				if (stristr ( $k, 'http_' )) {
