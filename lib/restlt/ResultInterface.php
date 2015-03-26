@@ -39,7 +39,7 @@ interface ResultInterface
 
     public function getData();
 
-    public function addError();
+    public function addError($errorMessage, $errorCode);
 
     public function setHttpStatus($status);
 
