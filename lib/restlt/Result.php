@@ -23,7 +23,6 @@
 */
 namespace restlt;
 
-use restlt\output\TypeConverter;
 use restlt\output\TypeConversionStrategyInterface;
 /**
  *
@@ -90,10 +89,7 @@ class Result implements ResultInterface {
 	 * @see \restlt\ResultInterface::toString()
 	 */
 	public function toString(TypeConversionStrategyInterface $conversionStrategy = null) {
-
-		$tc = new TypeConverter($conversionStrategy);
-
-		return $tc->convert($this);
+		return $conversionStrategy->execute($this);
 	}
 
 	public function getHttpStatus() {
