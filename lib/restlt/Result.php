@@ -90,10 +90,7 @@ class Result implements ResultInterface {
 	 * @see \restlt\ResultInterface::toString()
 	 */
 	public function toString(TypeConversionStrategyInterface $conversionStrategy = null) {
-
-		$tc = new TypeConverter($conversionStrategy);
-
-		return $tc->convert($this);
+		return $conversionStrategy->execute($this);
 	}
 
 	public function getHttpStatus() {
