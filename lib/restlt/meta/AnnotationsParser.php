@@ -77,16 +77,18 @@ class AnnotationsParser
         try {
             $classRefl = new \ReflectionClass($className);
             $parent = $classRefl->getParentClass();
-            $parentMethods = $parent->getMethods(\ReflectionMethod::IS_PUBLIC | \ReflectionMethod::IS_PROTECTED);
-
-            //collect parent methods
+            $parentMethods = [];
+            if ($parent) {
+                $parentMethods = $parent->getMethods(\ReflectionMethod::IS_PUBLIC | \ReflectionMethod::IS_PROTECTED);
+            }
+            // collect parent methods
             $parentMethodNames = [];
             foreach ($parentMethods as $pm) {
                 $parentMethodNames[] = $pm->getName();
             }
 
             foreach ($classRefl->getMethods() as $methodRefl) {
-                //skip parent methods
+                // skip parent methods
                 if (in_array($methodRefl->getName(), $parentMethodNames)) {
                     continue;
                 }
