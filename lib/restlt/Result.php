@@ -23,7 +23,6 @@
 */
 namespace restlt;
 
-use restlt\output\TypeConverter;
 use restlt\output\TypeConversionStrategyInterface;
 /**
  *

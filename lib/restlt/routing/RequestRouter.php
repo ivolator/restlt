@@ -124,9 +124,10 @@ class RequestRouter implements RouterInterface
     {
         $uri = urldecode($uri);
         $uri = '/' . trim($uri, '/');
+        $cacheKey = $requestMethod . ':'.$uri;
         // bail out early
-        if ($this->cache && $this->cache->test($uri)) {
-            $route = $this->cache->get($uri);
+        if ($this->cache && $this->cache->test($cacheKey)) {
+            $route = $this->cache->get($cacheKey);
             if (false !== $route) {
                 return $route;
             }
@@ -192,7 +193,7 @@ class RequestRouter implements RouterInterface
         }
 
         if ($this->cache) {
-            $this->cache->set($uri, $route);
+            $this->cache->set($cacheKey, $route);
         }
         return $route;
     }

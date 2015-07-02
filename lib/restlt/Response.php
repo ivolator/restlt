@@ -233,6 +233,18 @@ class Response implements \restlt\ResponseInterface
                         $resourceObj,
                         $ret
                     ));
+                } catch (ServerException $e) {
+                    $this->executeCallbacks(Resource::ON_ERROR, $route->getFunctionName(), $cbs, array(
+                        $resourceObj,
+                        $e
+                    ));
+                    $this->displayError = $e;
+                    if ($this->status && $this->status !== self::OK) {
+                        $this->setStatus($this->status);
+                    } else {
+                        $this->status = $e->getCode();
+                    }
+                    $this->getLog()->log($e->getMessage() . PHP_EOL . $e->getTraceAsString(), LogLevel::INFO);
                 } catch (\Exception $e) {
                     $this->executeCallbacks(Resource::ON_ERROR, $route->getFunctionName(), $cbs, array(
                         $resourceObj,
@@ -245,12 +257,14 @@ class Response implements \restlt\ResponseInterface
                     } else {
                         $this->setStatus(Response::INTERNALSERVERERROR);
                     }
+
+                    $this->getLog()->log($e->getMessage() . PHP_EOL . $e->getTraceAsString(), LogLevel::CRITICAL);
                     $this->executeCallbacks(Resource::ON_AFTER, $route->getFunctionName(), $cbs, array(
                         $router->getRequest(),
                         $this,
                         $ret
                     ));
-                    $this->displayError = $e;
+                    $this->displayError = new \Exception('Internal server error', $this->status);
                 }
                 $resourceObj->clearCallbacks();
                 $this->setUserErrors($resourceObj);
