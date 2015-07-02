@@ -34,9 +34,8 @@ class AnnotationsParser
 
     protected static $instance = null;
 
-//     protected function __construct()
-//     {}
-
+    // protected function __construct()
+    // {}
     public static function getInstance()
     {
         if (null === static::$instance) {
@@ -77,7 +76,20 @@ class AnnotationsParser
         $ret = array();
         try {
             $classRefl = new \ReflectionClass($className);
+            $parent = $classRefl->getParentClass();
+            $parentMethods = $parent->getMethods(\ReflectionMethod::IS_PUBLIC | \ReflectionMethod::IS_PROTECTED);
+
+            //collect parent methods
+            $parentMethodNames = [];
+            foreach ($parentMethods as $pm) {
+                $parentMethodNames[] = $pm->getName();
+            }
+
             foreach ($classRefl->getMethods() as $methodRefl) {
+                //skip parent methods
+                if (in_array($methodRefl->getName(), $parentMethodNames)) {
+                    continue;
+                }
                 $res = $this->parseDocComment($methodRefl->getDocComment());
                 if ($res) {
                     $res['comment'] = $this->getUserComment($methodRefl->getDocComment());
