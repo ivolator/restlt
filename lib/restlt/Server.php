@@ -41,6 +41,7 @@ use restlt\cache\NullCacheAdapter;
  */
 class Server
 {
+
     /**
      *
      * @var \restlt\Cache
@@ -145,7 +146,9 @@ class Server
             if (true === $this->autoDocs) {
                 $docMeta = $this->getSelfAutoDocsMeta();
             }
-            $this->getLog()->log('RestLt: REQUEST' . PHP_EOL . $this->getRequest());
+            $this->getLog()->log('RestLt: REQUEST ' . $this->getRequest()
+                ->getUri() . PHP_EOL . $this->getRequest()
+                ->getRawPost());
             $this->getRequestRouter()->setCache($this->getCacheInstance());
             $this->getRequestRouter()->setMetadataBuilder($this->getMetadataBuilder());
             $this->getResponse()->setRequestRouter($this->getRequestRouter());
@@ -155,9 +158,12 @@ class Server
             $this->getResponse()->setStatus(Response::INTERNALSERVERERROR);
             $this->getResponse()->setRequestRouter($this->getRequestRouter());
             $ret = $this->getResponse()->send();
-            $this->getLog()->log('RestLt: Exception Message' . PHP_EOL . $e->getMessage());
-            $this->getLog()->log('RestLt: Exception Code' . PHP_EOL . $e->getCode());
-            $this->getLog()->log('RestLt: Exception Trace' . PHP_EOL . $e->getTraceAsString());
+            $msg = 'RestLt: Exception Message' . PHP_EOL . $e->getMessage() . PHP_EOL;
+            $msg .= 'RestLt: Exception Code' . PHP_EOL . $e->getCode() . PHP_EOL;
+            $msg .= 'RestLt: Exception Trace' . PHP_EOL . $e->getTraceAsString();
+            $this->getLog()->log($msg, LogLevel::ALERT, [
+                $this->name
+            ]);
         }
         $this->getLog()->log('RestLt: RESPONSE' . PHP_EOL . $ret, LogLevel::INFO);
         $end = microtime(true);
@@ -176,8 +182,8 @@ class Server
      */
     public function registerResourceClass($className, $fileName = null)
     {
-        //no need to do again if cached
-        if($this->getCacheInstance()->test('resourceClasses')){
+        // no need to do again if cached
+        if (! $this->resourceClasses[$fileName] || $this->getCacheInstance()->test('resourceClasses')) {
             return $this;
         }
         if (class_exists($className, true)) {
@@ -207,8 +213,8 @@ class Server
      */
     public function registerResourceFolder($folderPath, $namespace = '\\')
     {
-        //no need to do again if cached
-        if($this->getCacheInstance()->test('resourceClasses')){
+        // no need to do again if cached
+        if ($this->getCacheInstance()->test('resourceClasses')) {
             return $this;
         }
         if (is_readable($folderPath) && is_dir($folderPath)) {
@@ -269,7 +275,7 @@ class Server
 
     /**
      *
-     * @return the $request
+     * @return \restlt\Request $request
      */
     public function getRequest()
     {
@@ -328,17 +334,18 @@ class Server
             $mdb = new MetadataBuilder($this, $this->getResourceClasses());
             $mdb->setAnnotationsParser(new AnnotationsParser());
             $mdb->setCache($this->getCacheInstance());
-            $this->getCacheInstance()->set('resourceClasses', $this->getResourceClasses());
             $this->metadataBuilder = $mdb;
         }
         return $this->metadataBuilder;
     }
 
     /**
+     *
      * @return \restlt\Cache
      */
-    protected function getCacheInstance(){
-        if(self::$cacheInstance){
+    protected function getCacheInstance()
+    {
+        if (self::$cacheInstance) {
             return self::$cacheInstance;
         }
 
@@ -350,6 +357,7 @@ class Server
 
         return self::$cacheInstance;
     }
+
     /**
      *
      * @param \restlt\meta\MetadataBuilderInterface $metadataBuilder
@@ -392,9 +400,13 @@ class Server
         $error = error_get_last();
         if (in_array($error['type'], array(
             E_ERROR,
-            E_USER_ERROR,
+            E_PARSE,
             E_CORE_ERROR,
-            E_COMPILE_ERROR
+            E_CORE_WARNING,
+            E_COMPILE_ERROR,
+            E_COMPILE_WARNING,
+            E_RECOVERABLE_ERROR,
+            E_WARNING
         ))) {
             $msg = 'An error with message ' . $error['message'] . ' occured at line ' . $error['line'] . ' in ' . $error['file'];
             $this->getLog()->log($msg, $this->getLog()
@@ -408,8 +420,10 @@ class Server
      */
     public function getResourceClasses()
     {
-        if($this->getCacheInstance()->test('resourceClasses')){
+        if ($this->getCacheInstance()->test('resourceClasses')) {
             $this->resourceClasses = $this->getCacheInstance()->get('resourceClasses');
+        } else {
+            $this->getCacheInstance()->set('resourceClasses', $this->resourceClasses);
         }
         return $this->resourceClasses;
     }
