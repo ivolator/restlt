@@ -2,7 +2,8 @@ language: php
 php:
   - "5.5"
 install:
-   composer require --dev "psr/log":"1.0.*@dev"
+   - composer selfupdate
+   - composer require --dev "psr/log":"1.0.*@dev"
 script: 
    - cd tests
    - phpunit -c config.xml

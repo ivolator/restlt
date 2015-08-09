@@ -10,6 +10,7 @@ class ServerTest extends RestLiteTest {
 	protected $mockResponse = null;
 	protected $mockRequest = null;
 	protected $mockRequesRouter = null;
+	protected $mockCache = null;
 
 	/**
 	 * Prepares the environment before running a test.
@@ -20,12 +21,12 @@ class ServerTest extends RestLiteTest {
 
 		$this->mockRequesRouter = $this->getMockBuilder ( '\restlt\RouterInterface' )->setMethods ( array ('setResources' ) )->disableOriginalConstructor ()->getMock ();
 
-		$this->mockServer = $this->getMockBuilder ( '\restlt\Server' )->disableOriginalConstructor ()->setMethods ( array ('getRequest', 'getMetadataBuilder', 'getRequestRouter', 'getResponse', 'getLog' ) )->getMock ();
+		$this->mockServer = $this->getMockBuilder ( '\restlt\Server' )->disableOriginalConstructor ()->setMethods ( array ('getCacheInstance','getRequest', 'getMetadataBuilder', 'getRequestRouter', 'getResponse', 'getLog' ) )->getMock ();
 
-		$this->mockRequest = $this->getMockBuilder ( 'restlt\Request' )->disableOriginalConstructor ()->getMock ();
+		$this->mockRequest = $this->getMockBuilder ( 'restlt\Request' )->disableOriginalConstructor ()->setMethods(['getUri','getRawPost'])->getMock ();
 		$this->mockResponse = $this->getMockBuilder ( 'restlt\Response' )->setMethods ( array ('setRequestRouter', 'send' ) )->disableOriginalConstructor ()->getMock ();
-
-		$this->mockServer->expects ( $this->any () )->method ( 'getRequest' )->will ( $this->returnArgument ( $this->mockRequest ) );
+		$this->mockCache = $this->getMockBuilder('restlt\Cache')->disableOriginalConstructor()->setMethods(['set','get','test'])->getMock();
+		$this->mockServer->expects ( $this->any () )->method ( 'getCacheInstance' )->willReturn( $this->mockCache );
 	}
 
 	/**
@@ -41,6 +42,9 @@ class ServerTest extends RestLiteTest {
 		$this->mockServer->expects ( $this->any () )->method ( 'getMetadataBuilder' )->will ( $this->returnValue ( $this->mockMetaDataBuilder ) );
 		$this->mockServer->expects ( $this->any () )->method ( 'getRequestRouter' )->will ( $this->returnValue ( new MockRequestRouter () ) );
 		$this->mockServer->expects ( $this->any () )->method ( 'getResponse' )->will ( $this->returnValue ( $this->mockResponse ) );
+		$this->mockServer->expects ( $this->any () )->method ( 'getRequest' )->will ( $this->returnValue ( $this->mockRequest ) );
+		$this->mockServer->expects ( $this->any () )->method ( 'getCacheInstance' )->will ( $this->returnValue ( $this->mockCache ) );
+
 
 		$this->mockServer->expects ( $this->any() )->method ( 'getLog' )->will ( $this->returnValue ( new \restlt\log\Log(new NullLogger(), 'critical') ) );
 
@@ -56,11 +60,17 @@ class ServerTest extends RestLiteTest {
 	}
 
 	public function testRegisterResourceClass() {
-		$ret = $this->mockServer->registerResourceClass ( 'fixtureRegisterClass' );
 
 		$expected = array ('fixtureRegisterClass' => 'fixtureRegisterClass' );
+		$this->mockCache->expects($this->once())->method('get')->willReturn($expected);
+		$this->mockCache->expects($this->any())->method('test')->willReturn(true);
 
-		$this->assertEquals ( $expected, $this->mockServer->getResourceClasses () );
+	    $this->mockServer->expects ( $this->any () )->method ( 'getCacheInstance' )->willReturn( $this->mockCache );
+
+
+	    $ret = $this->mockServer->registerResourceClass ( 'fixtureRegisterClass' );
+
+	    $this->assertEquals ( $expected, $this->mockServer->getResourceClasses () );
 	}
 
 	/**
@@ -68,7 +78,10 @@ class ServerTest extends RestLiteTest {
 	 * @expectedEcxeptionMessage Folder not found
 	 */
 	public function testRegisterResourceClassThrowsFileNotFound() {
-		$ret = $this->mockServer->registerResourceClass ( '\restlt\tests\InvalidClass' );
+		$this->mockCache->expects($this->once())->method('test')->willReturn(false);
+	    $this->mockServer->expects ( $this->any () )->method ( 'getCacheInstance' )->willReturn( $this->mockCache );
+
+	    $ret = $this->mockServer->registerResourceClass ( '\restlt\tests\InvalidClass' );
 	}
 
 	/**

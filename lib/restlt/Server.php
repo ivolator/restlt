@@ -183,7 +183,7 @@ class Server
     public function registerResourceClass($className, $fileName = null)
     {
         // no need to do again if cached
-        if (! $this->resourceClasses[$fileName] || $this->getCacheInstance()->test('resourceClasses')) {
+        if ($this->getCacheInstance()->test('resourceClasses')) {
             return $this;
         }
         if (class_exists($className, true)) {
