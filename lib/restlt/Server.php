@@ -142,13 +142,15 @@ class Server
     {
         $start = microtime(true);
         try {
+            $url = $this->getRequest()->getUri();
             $docMeta = array();
             if (true === $this->autoDocs) {
                 $docMeta = $this->getSelfAutoDocsMeta();
             }
-            $this->getLog()->log('RestLt: REQUEST ' . $this->getRequest()
-                ->getUri() . PHP_EOL . $this->getRequest()
-                ->getRawPost());
+            $this->getLog()->log('RestLt: REQUEST ' . $url . PHP_EOL . $this->getRequest()
+                ->getRawPost(), LogLevel::INFO, [
+                $this->name
+            ]);
             $this->getRequestRouter()->setCache($this->getCacheInstance());
             $this->getRequestRouter()->setMetadataBuilder($this->getMetadataBuilder());
             $this->getResponse()->setRequestRouter($this->getRequestRouter());
@@ -161,13 +163,14 @@ class Server
             $msg = 'RestLt: Exception Message' . PHP_EOL . $e->getMessage() . PHP_EOL;
             $msg .= 'RestLt: Exception Code' . PHP_EOL . $e->getCode() . PHP_EOL;
             $msg .= 'RestLt: Exception Trace' . PHP_EOL . $e->getTraceAsString();
-            $this->getLog()->log($msg, LogLevel::ALERT, [
+            $this->getLog()->log($msg, LogLevel::CRITICAL, [
                 $this->name
             ]);
         }
-        $this->getLog()->log('RestLt: RESPONSE' . PHP_EOL . $ret, LogLevel::INFO);
         $end = microtime(true);
-        $this->getLog()->log('Total framework + resource time  :  ' . ($end - $start), LogLevel::INFO);
+        $this->getLog()->log('RestLt: RESPONSE to ' . $url . PHP_EOL . $ret . ' Total framework + resource time ::' . ($end - $start), LogLevel::INFO, [
+            $this->name
+        ]);
         return $ret;
     }
 
@@ -332,7 +335,9 @@ class Server
     {
         if (! $this->metadataBuilder) {
             $mdb = new MetadataBuilder($this, $this->getResourceClasses());
-            $mdb->setAnnotationsParser(new AnnotationsParser());
+            $ap = new AnnotationsParser();
+            $ap->setCache($this->getCacheInstance());
+            $mdb->setAnnotationsParser($ap);
             $mdb->setCache($this->getCacheInstance());
             $this->metadataBuilder = $mdb;
         }
