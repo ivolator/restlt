@@ -40,6 +40,15 @@ class RequestRouter implements RouterInterface
     protected static $routes = array();
 
     /**
+     * For how long to cache the metadata
+     * Default 24h
+     * Null forever
+     *
+     * @var integer
+     */
+    protected  $routeMetaTtl = 86400;
+
+    /**
      *
      * @var \restlt\Cache
      */
@@ -193,7 +202,7 @@ class RequestRouter implements RouterInterface
         }
 
         if ($this->cache) {
-            $this->cache->set($cacheKey, $route);
+            $this->cache->set($cacheKey, $route, $this->routeMetaTtl);
         }
         return $route;
     }

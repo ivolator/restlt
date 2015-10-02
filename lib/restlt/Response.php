@@ -139,7 +139,13 @@ class Response implements \restlt\ResponseInterface
      *
      * @var integer
      */
-    protected $status = 200;
+    protected $status = null;
+
+    /**
+     *
+     * @var string
+     */
+    protected $statusReasonPhrase = null;
 
     /**
      *
@@ -182,14 +188,16 @@ class Response implements \restlt\ResponseInterface
         $this->headers[$name] = $value;
     }
 
-    protected function getResourceObj(Route $route, RequestRouter $router){
+    protected function getResourceObj(Route $route, RequestRouter $router)
+    {
         $class = $route->getClassName();
-        if(class_exists($class)){
+        if (class_exists($class)) {
             return new $class($router->getRequest(), $this);
         }
-        $this->getLog()->log('Resource class ' . $class .' was not found',LogLevel::CRITICAL);
+        $this->getLog()->log('Resource class ' . $class . ' was not found', LogLevel::CRITICAL);
         throw ServerException::notFound();
     }
+
     /**
      *
      * @param RequestRouter $route
@@ -217,7 +225,7 @@ class Response implements \restlt\ResponseInterface
                     $resourceObj->setAnnotations($route);
                     // before the method was processed
                     $this->executeCallbacks(Resource::ON_BEFORE, $route->getFunctionName(), $cbs, array(
-                        $resourceObj,
+                        $resourceObj
                     ));
                     register_shutdown_function(array(
                         $this,
@@ -233,18 +241,22 @@ class Response implements \restlt\ResponseInterface
                         $resourceObj,
                         $ret
                     ));
+                    $this->status = self::OK;
+
                 } catch (ServerException $e) {
                     $this->executeCallbacks(Resource::ON_ERROR, $route->getFunctionName(), $cbs, array(
                         $resourceObj,
                         $e
                     ));
                     $this->displayError = $e;
-                    if ($this->status && $this->status !== self::OK) {
-                        $this->setStatus($this->status);
+                    //Assume that every code thrown with an exception is an HTTP code
+                    if ($e->getCode()) {
+                        $this->setStatus($e->getCode(), $e->getMessage());
+                        $this->getLog()->log($e->getMessage() . PHP_EOL . $e->getTraceAsString(), LogLevel::INFO);
                     } else {
-                        $this->status = $e->getCode();
+                        $this->setStatus(self::INTERNALSERVERERROR, 'Internal Server Error');
                     }
-                    $this->getLog()->log($e->getMessage() . PHP_EOL . $e->getTraceAsString(), LogLevel::INFO);
+
                 } catch (\Exception $e) {
                     $this->executeCallbacks(Resource::ON_ERROR, $route->getFunctionName(), $cbs, array(
                         $resourceObj,
@@ -294,7 +306,7 @@ class Response implements \restlt\ResponseInterface
         $route = null;
 
         try {
-            if ($this->status === self::OK && $this->getRequestRouter()) {
+            if ($this->getRequestRouter()) {
                 $data = $this->getRoutedResponse($this->getRequestRouter());
                 $route = $this->getRequestRouter()->getRoute();
                 $contentType = $this->getRequestRouter()
@@ -378,14 +390,19 @@ class Response implements \restlt\ResponseInterface
             header('x-custom-rest-server: RestLt');
             header('Allow: POST, GET, PUT, DELETE, PATCH, HEAD');
             header('Connection: close');
-            if (version_compare(PHP_VERSION, '5.4.0', '>=')) {
-                http_response_code($this->status);
+            if($this->statusReasonPhrase){
+                header('HTTP/1.1 ' . $this->status . ' ' .$this->statusReasonPhrase);
             } else {
-                header("HTTP/1.0 " . $this->status);
+                if(is_callable('http_response_code')){
+                    http_response_code($this->status);
+                } else {
+                    header('HTTP/1.1 ' . $this->status);
+                }
             }
+
             foreach ($this->headers as $header => $value) {
                 $hStr = $header . ': ' . $value;
-                header($hStr, true, $this->status);
+                header($hStr, true);
             }
         }
 
@@ -502,11 +519,15 @@ class Response implements \restlt\ResponseInterface
     /**
      *
      * @param int $status
+     * @param string $phrase
      * @return Response
      */
-    public function setStatus($status)
+    public function setStatus($status, $phrase = null)
     {
         $this->status = $status;
+        if ($phrase) {
+            $this->statusReasonPhrase = $phrase;
+        }
         return $this;
     }
 
