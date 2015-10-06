@@ -336,7 +336,6 @@ class Server
         if (! $this->metadataBuilder) {
             $mdb = new MetadataBuilder($this, $this->getResourceClasses());
             $ap = new AnnotationsParser();
-            $ap->setCache($this->getCacheInstance());
             $mdb->setAnnotationsParser($ap);
             $mdb->setCache($this->getCacheInstance());
             $this->metadataBuilder = $mdb;
