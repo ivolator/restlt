@@ -40,15 +40,6 @@ class RequestRouter implements RouterInterface
     protected static $routes = array();
 
     /**
-     * For how long to cache the metadata
-     * Default 24h
-     * Null forever
-     *
-     * @var integer
-     */
-    protected  $routeMetaTtl = 86400;
-
-    /**
      *
      * @var \restlt\Cache
      */
@@ -133,14 +124,6 @@ class RequestRouter implements RouterInterface
     {
         $uri = urldecode($uri);
         $uri = '/' . trim($uri, '/');
-        $cacheKey = $requestMethod . ':'.$uri;
-        // bail out early
-        if ($this->cache && $this->cache->test($cacheKey)) {
-            $route = $this->cache->get($cacheKey);
-            if (false !== $route) {
-                return $route;
-            }
-        }
 
         $serverBaseUri = $this->getServerBaseUri();
         $filterMatchingMethods = function (&$el) use($uri, $requestMethod, $serverBaseUri)
@@ -201,9 +184,6 @@ class RequestRouter implements RouterInterface
             $route->setCacheControlMaxAge($methodMeta['cacheControlMaxAge']);
         }
 
-        if ($this->cache) {
-            $this->cache->set($cacheKey, $route, $this->routeMetaTtl);
-        }
         return $route;
     }
 

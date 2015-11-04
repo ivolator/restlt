@@ -10,10 +10,10 @@
  * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
  * the Software, and to permit persons to whom the Software is furnished to do so,
  * subject to the following conditions:
-
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
  * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
@@ -241,22 +241,19 @@ class Response implements \restlt\ResponseInterface
                         $resourceObj,
                         $ret
                     ));
-                    $this->status = self::OK;
-
                 } catch (ServerException $e) {
                     $this->executeCallbacks(Resource::ON_ERROR, $route->getFunctionName(), $cbs, array(
                         $resourceObj,
                         $e
                     ));
                     $this->displayError = $e;
-                    //Assume that every code thrown with an exception is an HTTP code
+                    // Assume that every code thrown with an exception is an HTTP code
                     if ($e->getCode()) {
                         $this->setStatus($e->getCode(), $e->getMessage());
                         $this->getLog()->log($e->getMessage() . PHP_EOL . $e->getTraceAsString(), LogLevel::INFO);
                     } else {
                         $this->setStatus(self::INTERNALSERVERERROR, 'Internal Server Error');
                     }
-
                 } catch (\Exception $e) {
                     $this->executeCallbacks(Resource::ON_ERROR, $route->getFunctionName(), $cbs, array(
                         $resourceObj,
@@ -390,10 +387,14 @@ class Response implements \restlt\ResponseInterface
             header('x-custom-rest-server: RestLt');
             header('Allow: POST, GET, PUT, DELETE, PATCH, HEAD');
             header('Connection: close');
-            if($this->statusReasonPhrase){
-                header('HTTP/1.1 ' . $this->status . ' ' .$this->statusReasonPhrase);
+
+            if (!$this->status) {
+                $this->status = self::OK;
+            }
+            if ($this->statusReasonPhrase) {
+                header('HTTP/1.1 ' . $this->status . ' ' . $this->statusReasonPhrase);
             } else {
-                if(is_callable('http_response_code')){
+                if (is_callable('http_response_code')) {
                     http_response_code($this->status);
                 } else {
                     header('HTTP/1.1 ' . $this->status);
@@ -554,8 +555,7 @@ class Response implements \restlt\ResponseInterface
     /**
      *
      * @param array $responseOutputStrategies
-     * @param string $strategyClassName
-     *            - FQCN
+     * @param string $strategyClassName - FQCN
      * @return Response
      */
     public function addResponseOutputStrategies($outputType, $strategyClassName)
