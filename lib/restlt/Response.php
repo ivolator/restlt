@@ -383,28 +383,29 @@ class Response implements \restlt\ResponseInterface
      */
     protected function _send($data = null, $conversionStrategy)
     {
-        if (isset($_SERVER['HTTP_CONNECTION'])) {
-            header('x-custom-rest-server: RestLt');
-            header('Allow: POST, GET, PUT, DELETE, PATCH, HEAD');
-            header('Connection: close');
+        if (! $this->status) {
+            $this->status = self::OK;
+        }
 
-            if (!$this->status) {
-                $this->status = self::OK;
-            }
-            if ($this->statusReasonPhrase) {
-                header('HTTP/1.1 ' . $this->status . ' ' . $this->statusReasonPhrase);
+        if ($this->statusReasonPhrase) {
+            header('HTTP/1.1 ' . $this->status . ' ' . $this->statusReasonPhrase);
+        } else {
+            if (is_callable('http_response_code')) {
+                http_response_code($this->status);
             } else {
-                if (is_callable('http_response_code')) {
-                    http_response_code($this->status);
-                } else {
-                    header('HTTP/1.1 ' . $this->status);
-                }
+                header('HTTP/1.1 ' . $this->status);
             }
+        }
 
-            foreach ($this->headers as $header => $value) {
-                $hStr = $header . ': ' . $value;
-                header($hStr, true);
-            }
+        header('x-custom-rest-server: RestLt');
+        header('Allow: POST, GET, PUT, DELETE, PATCH, HEAD');
+        foreach ($this->headers as $header => $value) {
+            $hStr = $header . ': ' . $value;
+            header($hStr, true);
+        }
+
+        if (isset($_SERVER['HTTP_CONNECTION'])) {
+            header('Connection: ' . $_SERVER['HTTP_CONNECTION']);
         }
 
         $method = $this->getRequestRouter()
