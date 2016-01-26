@@ -194,7 +194,7 @@ class Response implements \restlt\ResponseInterface
         if (class_exists($class)) {
             return new $class($router->getRequest(), $this);
         }
-        $this->getLog()->log('Resource class ' . $class . ' was not found', LogLevel::CRITICAL);
+        $this->getLog()->log('Resource class ' . $class . ' was not found', LogLevel::ERROR);
         throw ServerException::notFound();
     }
 
@@ -250,7 +250,6 @@ class Response implements \restlt\ResponseInterface
                     // Assume that every code thrown with an exception is an HTTP code
                     if ($e->getCode()) {
                         $this->setStatus($e->getCode(), $e->getMessage());
-                        $this->getLog()->log($e->getMessage() . PHP_EOL . $e->getTraceAsString(), LogLevel::INFO);
                     } else {
                         $this->setStatus(self::INTERNALSERVERERROR, 'Internal Server Error');
                     }
@@ -266,8 +265,7 @@ class Response implements \restlt\ResponseInterface
                     } else {
                         $this->setStatus(Response::INTERNALSERVERERROR);
                     }
-
-                    $this->getLog()->log($e->getMessage() . PHP_EOL . $e->getTraceAsString(), LogLevel::CRITICAL);
+                    $this->getLog()->log($e->getMessage() . PHP_EOL . $e->getTraceAsString(), LogLevel::ERROR);
                     $this->executeCallbacks(Resource::ON_AFTER, $route->getFunctionName(), $cbs, array(
                         $router->getRequest(),
                         $this,
@@ -625,8 +623,7 @@ class Response implements \restlt\ResponseInterface
             E_COMPILE_ERROR
         ))) {
             $msg = 'An error with message ' . $error['message'] . ' occured at line ' . $error['line'] . ' in ' . $error['file'];
-            $this->getLog()->log($msg, $this->getLog()
-                ->getLogLevel());
+            $this->getLog()->log($msg, LogLevel::CRITICAL);
             $this->setStatus(Response::INTERNALSERVERERROR);
             $this->displayError = new ServerException('Internal Server Error', Response::INTERNALSERVERERROR);
             $ret = $this->_send(null, $this->getConversionStrategy(Response::APPLICATION_JSON));
@@ -687,7 +684,7 @@ class Response implements \restlt\ResponseInterface
     public function getLog()
     {
         if (! $this->log) {
-            $this->log = new Log(new NullLogger(), 'critical');
+            $this->log = new Log(new NullLogger(), LogLevel::ERROR);
         }
         return $this->log;
     }

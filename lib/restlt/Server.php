@@ -10,10 +10,10 @@
 * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
 * the Software, and to permit persons to whom the Software is furnished to do so,
 * subject to the following conditions:
-
+ *
 * The above copyright notice and this permission notice shall be included in all
 * copies or substantial portions of the Software.
-
+ *
 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
 * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
@@ -147,7 +147,8 @@ class Server
             if (true === $this->autoDocs) {
                 $docMeta = $this->getSelfAutoDocsMeta();
             }
-            $this->getLog()->log('RestLt: REQUEST ' . $url . PHP_EOL . $this->getRequest()
+            $this->getLog()->log('RestLt: REQUEST ' . $this->getRequest()
+                ->getMethod() . ' '.  $url . PHP_EOL . $this->getRequest()
                 ->getRawPost(), LogLevel::INFO, [
                 $this->name
             ]);
@@ -160,15 +161,11 @@ class Server
             $this->getResponse()->setStatus(Response::INTERNALSERVERERROR);
             $this->getResponse()->setRequestRouter($this->getRequestRouter());
             $ret = $this->getResponse()->send();
-            $msg = 'RestLt: Exception Message' . PHP_EOL . $e->getMessage() . PHP_EOL;
-            $msg .= 'RestLt: Exception Code' . PHP_EOL . $e->getCode() . PHP_EOL;
-            $msg .= 'RestLt: Exception Trace' . PHP_EOL . $e->getTraceAsString();
-            $this->getLog()->log($msg, LogLevel::CRITICAL, [
-                $this->name
-            ]);
         }
         $end = microtime(true);
-        $this->getLog()->log('RestLt: RESPONSE to ' . $url . PHP_EOL . $ret . ' Total framework + resource time ::' . ($end - $start), LogLevel::INFO, [
+
+        $this->getLog()->log('RestLt: RESPONSE to ' . $this->getRequest()
+            ->getMethod() . ' ' . $url . PHP_EOL . $ret . ' Total framework + resource time ::' . ($end - $start), LogLevel::INFO, [
             $this->name
         ]);
         return $ret;
@@ -177,10 +174,8 @@ class Server
     /**
      * FQCN
      *
-     * @param string $className
-     *            - FQCN
-     * @param
-     *            string - full path to file
+     * @param string $className - FQCN
+     * @param string - full path to file
      * @return \restlt\Server
      */
     public function registerResourceClass($className, $fileName = null)
@@ -208,10 +203,8 @@ class Server
      * The resources will be loaded if they are PSR-0 compliant.
      * Make sure they can be autoloaded using the latter standard.
      *
-     * @param string $folderPath
-     *            - full path to folder where to find these resources
-     * @param string $namespace
-     *            - the FQCN for the resources
+     * @param string $folderPath - full path to folder where to find these resources
+     * @param string $namespace - the FQCN for the resources
      * @return \restlt\Server
      */
     public function registerResourceFolder($folderPath, $namespace = '\\')
@@ -449,7 +442,7 @@ class Server
     public function getLog()
     {
         if (! $this->log) {
-            $this->log = new Log(new NullLogger(), 'critical');
+            $this->log = new Log(new NullLogger(), LogLevel::ERROR);
         }
         return $this->log;
     }
@@ -457,8 +450,7 @@ class Server
     /**
      *
      * @param LoggerInterface $logger
-     * @param $logLevel -
-     *            set default logging PSR-3 levels for all calls made through the framework's logger
+     * @param $logLevel - set default logging PSR-3 levels for all calls made through the framework's logger
      * @return \restlt\Server
      */
     public function setLoggerImplementation(LoggerInterface $logger)

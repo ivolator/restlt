@@ -29,6 +29,7 @@ namespace restlt\log;
  *
  */
 use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 
 /**
  *
@@ -50,7 +51,7 @@ class Log
      */
     protected $logLevel = null;
 
-    public function __construct(LoggerInterface $psrLogger, $level = 'critical')
+    public function __construct(LoggerInterface $psrLogger, $level = LogLevel::ERROR)
     {
         $this->logLevel = $level;
         $this->psrLogger = $psrLogger;
