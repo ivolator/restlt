@@ -125,11 +125,13 @@ class MetadataBuilder implements MetadataBuilderInterface{
 		} else {
 		    yield null;
 		}
-		//add selfdocumenting
-		$docs = $this->server->getSelfAutoDocsMeta();
-		$keys = array_keys($docs);
-		$vals = array_values($docs);
-		yield $keys[0] => $vals[0];
+	    if ($this->server->getSelfAutoDocsMeta()) {
+            // add selfdocumenting
+            $docs = $this->server->getSelfAutoDocsMeta();
+            $keys = array_keys($docs);
+            $vals = array_values($docs);
+    		yield $keys[0] => $vals[0];
+        }
 	}
 
 	/**
