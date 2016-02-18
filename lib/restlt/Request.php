@@ -1,5 +1,6 @@
 <?php
 namespace restlt;
+
 /**
  * The MIT License (MIT)
  *
@@ -11,10 +12,10 @@ namespace restlt;
  * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
  * the Software, and to permit persons to whom the Software is furnished to do so,
  * subject to the following conditions:
-
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
-
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
  * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
@@ -27,207 +28,236 @@ namespace restlt;
  * @author Vo
  *
  */
-
 use restlt\exceptions\ServerException;
 
-class Request implements \restlt\RequestInterface {
+class Request implements \restlt\RequestInterface
+{
 
-	const POST = 'POST';
-	const GET = 'GET';
-	const PUT = 'PUT';
-	const DELETE = 'DELETE';
-	const PATCH = 'PATCH';
-	const HEAD = 'HEAD';
+    const POST = 'POST';
 
-	protected $supportedMethods = array ('POST', 'GET', 'PUT', 'DELETE', 'PATCH', 'HEAD' );
-	/**
-	 *
-	 * @var array
-	 */
-	protected $queryParams = array ();
+    const GET = 'GET';
 
-	/**
-	 *
-	 * @var array
-	 */
-	protected $postParams = array ();
+    const PUT = 'PUT';
 
-	/**
-	 *
-	 * @var string
-	 */
-	protected $rawPost = null;
+    const DELETE = 'DELETE';
 
-	/**
-	 *
-	 * @var string
-	 */
-	protected $uri;
+    const PATCH = 'PATCH';
 
-	/**
-	 *
-	 * @var string
-	 */
-	protected $method = null;
+    const HEAD = 'HEAD';
 
-	/**
-	 *
-	 * @var array
-	 */
-	protected $headers = array ();
+    protected $supportedMethods = array(
+        'POST',
+        'GET',
+        'PUT',
+        'DELETE',
+        'PATCH',
+        'HEAD'
+    );
 
-	/**
-	 *
-	 * @var string XML | JSON | TEXT
-	 */
-	protected $contentType = null;
+    /**
+     *
+     * @var array
+     */
+    protected $queryParams = [];
 
-	/**
-	 */
-	public function __construct() {
-		$this->rawPost = file_get_contents ( "php://input" );
-		$this->postParams = $_POST;
-		$this->queryParams = $_GET;
-		$_POST = null;
-		$_GET = null;
-		$this->headers = $this->buildHeadersList ( ! empty ( $_SERVER ) ? $_SERVER : array () );
-	}
+    /**
+     *
+     * @var array
+     */
+    protected $postParams = [];
 
-	/**
-	 *
-	 * @param string $paramName
-	 * - the POST or GET parameter name
-	 * @param string $returnDefault
-	 * - return this if there is nothing in $paramName
-	 * @return Ambigous <>|string
-	 */
-	public function get($paramName, $returnDefault = null) {
-		$params = array_merge ( $this->postParams, $this->queryParams );
-		if (isset ( $params [$paramName] ))
-			return $params [$paramName];
-		return $returnDefault;
-	}
+    /**
+     *
+     * @var string
+     */
+    protected $rawPost = null;
 
-	/**
-	 *
-	 * @return the $queryStringParams
-	 */
-	public function getQueryParams() {
-		return $this->queryParams;
-	}
+    /**
+     *
+     * @var string
+     */
+    protected $uri;
 
-	/**
-	 *
-	 * @return the $postParams
-	 */
-	public function getPostParams() {
-		return $this->postParams;
-	}
+    /**
+     *
+     * @var string
+     */
+    protected $method = null;
 
-	/**
-	 *
-	 * @return the $rawPost
-	 */
-	public function getRawPost() {
-		return $this->rawPost;
-	}
+    /**
+     *
+     * @var array
+     */
+    protected $headers = [];
 
-	/**
-	 *
-	 * @return the $headers
-	 */
-	public function getHeaders() {
-		return $this->headers;
-	}
+    /**
+     *
+     * @var string XML | JSON | TEXT
+     */
+    protected $contentType = null;
 
-	/**
-	 *
-	 * @param array $SERVER
-	 * @return array
-	 */
-	protected function buildHeadersList(array $SERVER = array()) {
-		$ret = array ();
+    /**
+     */
+    public function __construct()
+    {
+        $this->rawPost = file_get_contents("php://input");
+        $this->postParams = $_POST;
+        $this->queryParams = $_GET;
+        $_POST = [];
+        $_GET = [];
+        $this->headers = $this->buildHeadersList(! empty($_SERVER) ? $_SERVER : []);
+    }
 
-		if ($SERVER) {
-			foreach ( $SERVER as $k => $v ) {
-				if (stristr ( $k, 'http_' )) {
-					$res = str_ireplace ( 'http_', '', $k );
-					$ret [$res] = $v;
-				}
-			}
-		}
-		return $ret;
-	}
+    /**
+     *
+     * @param string $paramName - the POST or GET parameter name
+     * @param string $returnDefault - return this if there is nothing in $paramName
+     * @return Ambigous <>|string
+     */
+    public function get($paramName, $returnDefault = null)
+    {
+        $params = array_merge($this->postParams, $this->queryParams);
+        if (isset($params[$paramName]))
+            return $params[$paramName];
+        return $returnDefault;
+    }
 
-	/**
-	 *
-	 * @return the $url
-	 */
-	public function getUri() {
-		if (! $this->uri) {
-			$res = parse_url ( '/' . trim($_SERVER ['REQUEST_URI'],'/') );
-			$this->uri = $res ['path'] ? $res ['path'] : '/';
-			$this->uri = str_replace('//', '/', $this->uri);
-		}
-		return $this->uri;
-	}
+    /**
+     *
+     * @return the $queryStringParams
+     */
+    public function getQueryParams()
+    {
+        return $this->queryParams;
+    }
 
-	/**
-	 *
-	 * @return the $method
-	 */
-	public function getMethod() {
-		if (! $this->method) {
-			$this->method = ! empty ( $_SERVER ['X-HTTP-METHOD-OVERRIDE'] ) ? $_SERVER ['X-HTTP-METHOD-OVERRIDE'] : $_SERVER ['REQUEST_METHOD'];
-		}
-		if (! in_array ( $this->method, array (Request::POST, Request::GET, Request::PUT, Request::DELETE, Request::PATCH, Request::HEAD ) )) {
-			throw new ServerException ( 'Invalid Method', Response::METHODNOTALLOWED );
-		}
-		return strtoupper ( $this->method );
-	}
+    /**
+     *
+     * @return the $postParams
+     */
+    public function getPostParams()
+    {
+        return $this->postParams;
+    }
 
-	/**
-	 *
-	 * @return the $contentType
-	 */
-	public function getContentType() {
-		$this->contentType = Response::TEXT_PLAIN;
-		if (stripos ( $this->headers ['ACCEPT'], 'json' )) {
-			$this->contentType = Response::APPLICATION_JSON;
-		} elseif (stripos ( $this->headers ['ACCEPT'], 'xml' ) || stripos ( $this->headers ['ACCEPT'], 'html' )) {
-			$this->contentType = Response::APPLICATION_XML;
-		}
-		return $this->contentType;
-	}
+    /**
+     *
+     * @return the $rawPost
+     */
+    public function getRawPost()
+    {
+        return $this->rawPost;
+    }
 
-	public function __toString() {
-		$get = print_r($this->queryParams,true);
-		$post = print_r($this->postParams,true) ;
-		$rawPost = print_r($this->rawPost ,true);
-		$headers = print_r($this->headers , true);
-		$ret = 'Headers : ' . PHP_EOL . $headers . PHP_EOL;
-		if($this->queryParams){
-			$ret .= 'GET     : ' . PHP_EOL . $get . PHP_EOL;
-		}
-		if($this->postParams){
-			$ret .= 'POST    : ' . PHP_EOL . $post . PHP_EOL;
-		}
-		if($this->rawPost){
-			$ret .= 'Raw     : ' . PHP_EOL . $rawPost . PHP_EOL;
-		}
-		return $ret;
-	}
+    /**
+     *
+     * @return the $headers
+     */
+    public function getHeaders()
+    {
+        return $this->headers;
+    }
 
-	/**
-	 *
-	 * @return boolean
-	 */
-	function isHttpsRequest()
-	{
-	    $ret = false;
-	    if (! empty($_SERVER['HTTPS']) || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) {
-	        $ret = true;
-	    }
-	    return $ret;
-	}
+    /**
+     *
+     * @param array $SERVER
+     * @return array
+     */
+    protected function buildHeadersList(array $SERVER = array())
+    {
+        $ret = [];
+
+        if ($SERVER) {
+            foreach ($SERVER as $k => $v) {
+                if (stristr($k, 'http_')) {
+                    $res = str_ireplace('http_', '', $k);
+                    $ret[$res] = $v;
+                }
+            }
+        }
+        return $ret;
+    }
+
+    /**
+     *
+     * @return the $url
+     */
+    public function getUri()
+    {
+        if (! $this->uri) {
+            $res = parse_url('/' . trim($_SERVER['REQUEST_URI'], '/'));
+            $this->uri = $res['path'] ? $res['path'] : '/';
+            $this->uri = str_replace('//', '/', $this->uri);
+        }
+        return $this->uri;
+    }
+
+    /**
+     *
+     * @return the $method
+     */
+    public function getMethod()
+    {
+        if (! $this->method) {
+            $this->method = ! empty($_SERVER['X-HTTP-METHOD-OVERRIDE']) ? $_SERVER['X-HTTP-METHOD-OVERRIDE'] : $_SERVER['REQUEST_METHOD'];
+        }
+        if (! in_array($this->method, array(
+            Request::POST,
+            Request::GET,
+            Request::PUT,
+            Request::DELETE,
+            Request::PATCH,
+            Request::HEAD
+        ))) {
+            throw new ServerException('Invalid Method', Response::METHODNOTALLOWED);
+        }
+        return strtoupper($this->method);
+    }
+
+    /**
+     *
+     * @return the $contentType
+     */
+    public function getContentType()
+    {
+        $this->contentType = Response::TEXT_PLAIN;
+        if (stripos($this->headers['ACCEPT'], 'json')) {
+            $this->contentType = Response::APPLICATION_JSON;
+        } elseif (stripos($this->headers['ACCEPT'], 'xml') || stripos($this->headers['ACCEPT'], 'html')) {
+            $this->contentType = Response::APPLICATION_XML;
+        }
+        return $this->contentType;
+    }
+
+    public function __toString()
+    {
+        $get = print_r($this->queryParams, true);
+        $post = print_r($this->postParams, true);
+        $rawPost = print_r($this->rawPost, true);
+        $headers = print_r($this->headers, true);
+        $ret = 'Headers : ' . PHP_EOL . $headers . PHP_EOL;
+        if ($this->queryParams) {
+            $ret .= 'GET     : ' . PHP_EOL . $get . PHP_EOL;
+        }
+        if ($this->postParams) {
+            $ret .= 'POST    : ' . PHP_EOL . $post . PHP_EOL;
+        }
+        if ($this->rawPost) {
+            $ret .= 'Raw     : ' . PHP_EOL . $rawPost . PHP_EOL;
+        }
+        return $ret;
+    }
+
+    /**
+     *
+     * @return boolean
+     */
+    function isHttpsRequest()
+    {
+        $ret = false;
+        if (! empty($_SERVER['HTTPS']) || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) {
+            $ret = true;
+        }
+        return $ret;
+    }
 }
