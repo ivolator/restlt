@@ -231,11 +231,13 @@ class Request implements \restlt\RequestInterface
 
     public function __toString()
     {
+        $uri = print_r($this->uri, true);
         $get = print_r($this->queryParams, true);
         $post = print_r($this->postParams, true);
         $rawPost = print_r($this->rawPost, true);
         $headers = print_r($this->headers, true);
-        $ret = 'Headers : ' . PHP_EOL . $headers . PHP_EOL;
+        $ret = 'URI: '. $uri;
+        $ret .= 'Headers : ' . PHP_EOL . $headers . PHP_EOL;
         if ($this->queryParams) {
             $ret .= 'GET     : ' . PHP_EOL . $get . PHP_EOL;
         }

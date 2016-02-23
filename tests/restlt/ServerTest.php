@@ -47,7 +47,7 @@ class ServerTest extends RestLiteTest {
 
 
 		$this->mockServer->expects ( $this->any() )->method ( 'getLog' )->will ( $this->returnValue ( new \restlt\log\Log(new NullLogger(), 'critical') ) );
-
+		$_SERVER['REQUEST_METHOD'] = 'GET';
 		echo $this->mockServer->serve ( false );
 		$this->expectOutputString ( 'responsestring' );
 	}

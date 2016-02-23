@@ -267,8 +267,7 @@ class Response implements \restlt\ResponseInterface
                     }
                     $this->getLog()->log($e->getMessage() . PHP_EOL . $e->getTraceAsString(), LogLevel::ERROR);
                     $this->executeCallbacks(Resource::ON_AFTER, $route->getFunctionName(), $cbs, array(
-                        $router->getRequest(),
-                        $this,
+                        $resourceObj,
                         $ret
                     ));
                     $this->displayError = new \Exception('Internal server error', $this->status);
@@ -347,7 +346,7 @@ class Response implements \restlt\ResponseInterface
             $this->addHeader('Content-Type', $contentType);
         }
 
-        $ret = $this->_send($data ? $data : null, $conversionStrategy);
+        $ret = $this->sendResult($data ? $data : null, $conversionStrategy);
 
         return $ret;
     }
@@ -379,7 +378,7 @@ class Response implements \restlt\ResponseInterface
      *
      * @param string $data
      */
-    protected function _send($data = null, $conversionStrategy)
+    public function sendResult($data = null, $conversionStrategy)
     {
         if (! $this->status) {
             $this->status = self::OK;
@@ -435,7 +434,7 @@ class Response implements \restlt\ResponseInterface
      * @param string $contentType
      * @return TypeConversionStrategyInterface
      */
-    protected function getConversionStrategy($contentType)
+    public function getConversionStrategy($contentType)
     {
         $class = null;
         // check for user registered output strategies
@@ -626,7 +625,7 @@ class Response implements \restlt\ResponseInterface
             $this->getLog()->log($msg, LogLevel::CRITICAL);
             $this->setStatus(Response::INTERNALSERVERERROR);
             $this->displayError = new ServerException('Internal Server Error', Response::INTERNALSERVERERROR);
-            $ret = $this->_send(null, $this->getConversionStrategy(Response::APPLICATION_JSON));
+            $ret = $this->sendResult(null, $this->getConversionStrategy(Response::APPLICATION_JSON));
             echo $ret;
             exit();
         }

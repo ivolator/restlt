@@ -50,7 +50,7 @@ class Resource implements ResourceInterface
 
     /**
      *
-     * @var Response
+     * @var \restlt\Response
      */
     protected $response = null;
 
